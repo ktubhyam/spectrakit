@@ -1,0 +1,92 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "spectrakit"
+dynamic = ["version"]
+description = "Python toolkit for spectral data processing: format parsers, baseline correction, normalization, and similarity matching."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Tubhyam Karthikeyan", email = "takarthikeyan25@gmail.com" },
+]
+keywords = [
+    "spectroscopy",
+    "chemometrics",
+    "IR",
+    "Raman",
+    "NIR",
+    "baseline-correction",
+    "normalization",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Chemistry",
+]
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+]
+
+[project.optional-dependencies]
+io = [
+    "h5py>=3.8",
+    # spc-spectra has a broken build (missing numpy build dep); install manually if needed
+]
+cli = [
+    "typer>=0.9",
+    "rich>=13.0",
+]
+all = [
+    "spectrakit[io,cli]",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.4",
+    "mypy>=1.8",
+]
+
+[project.scripts]
+spectrakit = "spectrakit.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/ktubhyam/spectrakit"
+Repository = "https://github.com/ktubhyam/spectrakit"
+Issues = "https://github.com/ktubhyam/spectrakit/issues"
+
+[tool.hatch.version]
+path = "src/spectrakit/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/spectrakit"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM"]
+ignore = ["E501", "N806", "SIM102", "SIM108"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["spectrakit"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
