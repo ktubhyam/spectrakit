@@ -6,6 +6,15 @@ and spectral similarity matching for vibrational spectroscopy data.
 """
 from spectrakit._version import __version__
 
+# Exceptions
+from spectrakit.exceptions import (
+    DependencyError,
+    EmptySpectrumError,
+    FileFormatError,
+    SpectraKitError,
+    SpectrumShapeError,
+)
+
 # Baseline correction
 from spectrakit.baseline import (
     baseline_als,
@@ -34,6 +43,13 @@ from spectrakit.spectrum import Spectrum
 
 __all__ = [
     "__version__",
+    # Exceptions
+    "SpectraKitError",
+    "SpectrumShapeError",
+    "FileFormatError",
+    "DependencyError",
+    "EmptySpectrumError",
+    # Core types
     "Spectrum",
     "read_jcamp",
     "read_spc",
