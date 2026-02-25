@@ -1,0 +1,3 @@
+# Spectrum
+
+::: spectrakit.spectrum.Spectrum

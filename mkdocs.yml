@@ -1,0 +1,89 @@
+site_name: SpectraKit
+site_description: Python toolkit for spectral data processing
+site_url: https://ktubhyam.github.io/spectrakit/
+repo_url: https://github.com/ktubhyam/spectrakit
+repo_name: ktubhyam/spectrakit
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+    - content.code.annotate
+    - search.suggest
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+  - attr_list
+  - md_in_html
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: true
+            show_root_heading: true
+            heading_level: 2
+            docstring_style: google
+            show_signature_annotations: true
+            separate_signature: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quickstart.md
+  - Guides:
+      - Processing Workflow: guides/workflow.md
+      - Pipeline: guides/pipeline.md
+      - scikit-learn Integration: guides/sklearn.md
+  - API Reference:
+      - Overview: api/index.md
+      - Spectrum: api/spectrum.md
+      - Pipeline: api/pipeline.md
+      - Baseline: api/baseline.md
+      - Normalize: api/normalize.md
+      - Smooth: api/smooth.md
+      - Derivative: api/derivative.md
+      - Scatter: api/scatter.md
+      - Transform: api/transform.md
+      - Operations: api/ops.md
+      - Peaks: api/peaks.md
+      - Similarity: api/similarity.md
+      - IO: api/io.md
+      - Plot: api/plot.md
+      - Contrib: api/contrib.md
+      - sklearn: api/sklearn.md
+      - Exceptions: api/exceptions.md
+  - Changelog: changelog.md
