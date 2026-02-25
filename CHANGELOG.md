@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.8.1] - 2026-02-25
+
+### Changed
+- Updated PyPI description and keywords to reflect v1.8.0 features (despiking, signal quality, peak analysis)
+- Added Codecov integration with coverage upload from CI
+
 ## [1.8.0] - 2026-02-25
 
 ### Added
