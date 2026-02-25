@@ -288,6 +288,66 @@ class TestReadHDF5:
         with pytest.raises(DependencyError, match="h5py"):
             write_hdf5(spec, "/fake/output.h5")
 
+    @pytest.mark.skipif(not _has_h5py(), reason="h5py not installed")
+    def test_hdf5_roundtrip(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
+        """Write then read back HDF5."""
+        from spectrakit.io.hdf5 import read_hdf5, write_hdf5
+        from spectrakit.spectrum import Spectrum
+
+        original = Spectrum(
+            intensities=np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
+            wavenumbers=np.linspace(400, 4000, 5),
+            metadata={"instrument": "Bruker", "resolution": 4},
+        )
+        h5_path = tmp_path / "roundtrip.h5"
+        write_hdf5(original, h5_path)
+
+        loaded = read_hdf5(h5_path)
+        assert loaded.source_format == "hdf5"
+        np.testing.assert_array_equal(loaded.intensities, original.intensities)
+        np.testing.assert_array_equal(loaded.wavenumbers, original.wavenumbers)
+        assert loaded.metadata["instrument"] == "Bruker"
+
+    @pytest.mark.skipif(not _has_h5py(), reason="h5py not installed")
+    def test_hdf5_write_without_wavenumbers(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
+        """Write HDF5 without wavenumbers."""
+        from spectrakit.io.hdf5 import read_hdf5, write_hdf5
+        from spectrakit.spectrum import Spectrum
+
+        spec = Spectrum(intensities=np.array([1.0, 2.0, 3.0]))
+        h5_path = tmp_path / "no_wn.h5"
+        write_hdf5(spec, h5_path)
+
+        loaded = read_hdf5(h5_path)
+        np.testing.assert_array_equal(loaded.intensities, spec.intensities)
+        assert loaded.wavenumbers is None
+
+    @pytest.mark.skipif(not _has_h5py(), reason="h5py not installed")
+    def test_hdf5_file_not_found(self) -> None:
+        """Reading nonexistent HDF5 raises FileNotFoundError."""
+        from spectrakit.io.hdf5 import read_hdf5
+
+        with pytest.raises(FileNotFoundError):
+            read_hdf5("/nonexistent/file.h5")
+
+    @pytest.mark.skipif(not _has_h5py(), reason="h5py not installed")
+    def test_hdf5_metadata_type_error_fallback(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
+        """Non-serializable metadata values are stored as strings."""
+        from spectrakit.io.hdf5 import read_hdf5, write_hdf5
+        from spectrakit.spectrum import Spectrum
+
+        spec = Spectrum(
+            intensities=np.array([1.0, 2.0]),
+            metadata={"dict_val": {"nested": "dict"}},  # dicts can't be h5 attrs
+        )
+        h5_path = tmp_path / "meta.h5"
+        write_hdf5(spec, h5_path)
+
+        loaded = read_hdf5(h5_path)
+        # Dict was stored as string via the TypeError fallback
+        assert "dict_val" in loaded.metadata
+        assert "nested" in str(loaded.metadata["dict_val"])
+
 
 # ── SPC (dependency error path) ─────────────────────────────────────
 

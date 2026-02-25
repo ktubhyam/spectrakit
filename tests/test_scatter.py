@@ -53,6 +53,17 @@ class TestScatterMSC:
         result = scatter_msc(batch, reference=ref)
         assert result.shape == (5, 100)
 
+    def test_near_zero_slope(self) -> None:
+        """When slope is near zero, MSC returns spectrum - intercept."""
+        # A constant spectrum against a varying reference produces near-zero slope
+        reference = np.linspace(1, 10, 100)
+        # Spectrum is constant (no correlation with reference) + offset
+        spectrum = np.full(100, 5.0)
+        result = scatter_msc(spectrum, reference=reference)
+        assert result.shape == (100,)
+        # Should not crash; result should be finite
+        assert np.all(np.isfinite(result))
+
     def test_3d_raises(self) -> None:
         with pytest.raises(SpectrumShapeError):
             scatter_msc(np.ones((2, 3, 4)))
@@ -128,3 +139,14 @@ class TestScatterEMSC:
         ref = rng.random(80)
         result = scatter_emsc(batch, reference=ref, poly_order=1)
         assert result.shape == (5, 80)
+
+    def test_near_zero_multiplicative_coefficient(self) -> None:
+        """When reference coefficient is near zero, EMSC removes polynomial baseline."""
+        # A spectrum that is purely polynomial (no correlation with reference)
+        reference = np.random.default_rng(42).random(100)
+        x = np.linspace(-1, 1, 100)
+        # Spectrum is a pure polynomial with no reference component
+        spectrum = 3.0 * x**2 + 2.0 * x + 1.0
+        result = scatter_emsc(spectrum, reference=reference, poly_order=2)
+        assert result.shape == (100,)
+        assert np.all(np.isfinite(result))
