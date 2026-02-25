@@ -5,6 +5,8 @@ import logging
 
 import numpy as np
 
+from spectrakit._validate import apply_along_spectra, ensure_float64, validate_1d_or_2d
+
 logger = logging.getLogger(__name__)
 
 DEFAULT_DEGREE = 5
@@ -32,15 +34,24 @@ def baseline_polynomial(
     Returns:
         Estimated baseline, same shape as intensities.
     """
-    if intensities.ndim == 2:
-        return np.array([
-            baseline_polynomial(row, degree=degree, max_iter=max_iter, tol=tol)
-            for row in intensities
-        ])
+    intensities = ensure_float64(intensities)
+    validate_1d_or_2d(intensities)
 
+    return apply_along_spectra(
+        _baseline_polynomial_1d, intensities, degree=degree, max_iter=max_iter, tol=tol
+    )
+
+
+def _baseline_polynomial_1d(
+    intensities: np.ndarray,
+    degree: int = DEFAULT_DEGREE,
+    max_iter: int = DEFAULT_MAX_ITER,
+    tol: float = DEFAULT_TOL,
+) -> np.ndarray:
+    """Iterative polynomial baseline for a single 1-D spectrum."""
     n = len(intensities)
     x = np.arange(n, dtype=np.float64)
-    y = intensities.astype(np.float64)
+    y = intensities
     mask = np.ones(n, dtype=bool)
 
     for _ in range(max_iter):

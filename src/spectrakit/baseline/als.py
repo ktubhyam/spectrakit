@@ -12,6 +12,8 @@ import numpy as np
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
 
+from spectrakit._validate import apply_along_spectra, ensure_float64, validate_1d_or_2d
+
 logger = logging.getLogger(__name__)
 
 DEFAULT_LAMBDA = 1e6
@@ -48,18 +50,28 @@ def baseline_als(
     Examples:
         >>> corrected = intensities - baseline_als(intensities)
     """
-    if intensities.ndim == 2:
-        return np.array([
-            baseline_als(row, lam=lam, p=p, max_iter=max_iter, tol=tol)
-            for row in intensities
-        ])
+    intensities = ensure_float64(intensities)
+    validate_1d_or_2d(intensities)
 
+    return apply_along_spectra(
+        _baseline_als_1d, intensities, lam=lam, p=p, max_iter=max_iter, tol=tol
+    )
+
+
+def _baseline_als_1d(
+    intensities: np.ndarray,
+    lam: float = DEFAULT_LAMBDA,
+    p: float = DEFAULT_P,
+    max_iter: int = DEFAULT_MAX_ITER,
+    tol: float = DEFAULT_TOL,
+) -> np.ndarray:
+    """ALS baseline for a single 1-D spectrum."""
     n = len(intensities)
     D = sparse.diags([1, -2, 1], [0, 1, 2], shape=(n - 2, n))
     H = lam * D.T @ D
 
     w = np.ones(n)
-    y = intensities.astype(np.float64)
+    y = intensities
 
     for _ in range(max_iter):
         W = sparse.diags(w, 0)

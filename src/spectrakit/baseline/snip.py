@@ -11,6 +11,13 @@ import logging
 
 import numpy as np
 
+from spectrakit._validate import (
+    EPSILON,
+    apply_along_spectra,
+    ensure_float64,
+    validate_1d_or_2d,
+)
+
 logger = logging.getLogger(__name__)
 
 DEFAULT_MAX_HALF_WINDOW = 40
@@ -35,13 +42,24 @@ def baseline_snip(
     Returns:
         Estimated baseline, same shape as intensities.
     """
-    if intensities.ndim == 2:
-        return np.array([
-            baseline_snip(row, max_half_window=max_half_window, decreasing=decreasing)
-            for row in intensities
-        ])
+    intensities = ensure_float64(intensities)
+    validate_1d_or_2d(intensities)
 
-    y = np.log(np.log(np.sqrt(np.maximum(intensities, 1e-10) + 1) + 1) + 1)
+    return apply_along_spectra(
+        _baseline_snip_1d,
+        intensities,
+        max_half_window=max_half_window,
+        decreasing=decreasing,
+    )
+
+
+def _baseline_snip_1d(
+    intensities: np.ndarray,
+    max_half_window: int = DEFAULT_MAX_HALF_WINDOW,
+    decreasing: bool = True,
+) -> np.ndarray:
+    """SNIP baseline for a single 1-D spectrum."""
+    y = np.log(np.log(np.sqrt(np.maximum(intensities, EPSILON) + 1) + 1) + 1)
 
     if decreasing:
         window_range = range(max_half_window, 0, -1)
@@ -56,5 +74,5 @@ def baseline_snip(
             y_new[i] = min(y[i], avg)
         y = y_new
 
-    baseline = (np.exp(np.exp(y) - 1) - 1) ** 2 - 1e-10
+    baseline = (np.exp(np.exp(y) - 1) - 1) ** 2 - EPSILON
     return np.maximum(baseline, 0.0)
