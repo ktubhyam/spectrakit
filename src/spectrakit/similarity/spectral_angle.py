@@ -35,4 +35,4 @@ def similarity_spectral_angle(a: np.ndarray, b: np.ndarray) -> float | np.ndarra
     cos_angles = dots / (norm_a * norms_b + EPSILON)
     cos_angles = np.clip(cos_angles, -1.0, 1.0)
 
-    return np.arccos(cos_angles)
+    return np.arccos(cos_angles)  # type: ignore[no-any-return]

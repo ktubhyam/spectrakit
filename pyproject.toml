@@ -111,3 +111,17 @@ python_version = "3.10"
 strict = true
 warn_return_any = true
 warn_unused_configs = true
+disable_error_code = ["type-arg"]
+
+[[tool.mypy.overrides]]
+module = [
+    "scipy.*",
+    "h5py",
+    "spc",
+    "typer",
+    "lmfit",
+    "pybaselines",
+    "sklearn.*",
+    "matplotlib.*",
+]
+ignore_missing_imports = true

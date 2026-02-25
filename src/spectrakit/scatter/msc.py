@@ -67,6 +67,6 @@ def _msc_single(spectrum: np.ndarray, reference: np.ndarray) -> np.ndarray:
     slope, intercept = coeffs[0], coeffs[1]
 
     if abs(slope) < 1e-10:
-        return spectrum - intercept
+        return spectrum - intercept  # type: ignore[no-any-return]
 
-    return (spectrum - intercept) / slope
+    return (spectrum - intercept) / slope  # type: ignore[no-any-return]

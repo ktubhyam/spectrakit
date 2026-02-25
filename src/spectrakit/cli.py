@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import Any
 
 
-def _get_app():  # type: ignore[no-untyped-def]
+def _get_app() -> Any:
     """Lazy-import typer to avoid hard dependency."""
     try:
         import typer
@@ -26,7 +27,7 @@ def _get_app():  # type: ignore[no-untyped-def]
 app = _get_app()
 
 
-@app.command()
+@app.command()  # type: ignore[untyped-decorator]
 def info(path: str) -> None:
     """Print metadata and summary statistics for a spectral file."""
     file_path = Path(path)
@@ -69,7 +70,7 @@ def info(path: str) -> None:
             print(f"  {key}: {value}")
 
 
-@app.command()
+@app.command()  # type: ignore[untyped-decorator]
 def convert(input_path: str, output_path: str) -> None:
     """Convert a spectral file to HDF5 format."""
     file_path = Path(input_path)

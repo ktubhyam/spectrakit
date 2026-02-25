@@ -27,9 +27,9 @@ def normalize_vector(intensities: np.ndarray) -> np.ndarray:
         norm = np.linalg.norm(intensities)
         if norm < EPSILON:
             return intensities
-        return intensities / norm
+        return intensities / norm  # type: ignore[no-any-return]
 
     norms = np.linalg.norm(intensities, axis=1, keepdims=True)
     norms = np.where(norms < EPSILON, 1.0, norms)
 
-    return intensities / norms
+    return intensities / norms  # type: ignore[no-any-return]

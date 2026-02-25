@@ -72,4 +72,4 @@ def _smooth_whittaker_1d(
     W = sparse.eye(n, format="csc")
     Z = W + lam * D.T @ D
 
-    return spsolve(Z, intensities)
+    return spsolve(Z, intensities)  # type: ignore[no-any-return]

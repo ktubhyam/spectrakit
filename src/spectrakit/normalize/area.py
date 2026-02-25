@@ -35,11 +35,11 @@ def normalize_area(
         area = np.trapezoid(np.abs(intensities), x=wavenumbers)
         if area < EPSILON:
             return intensities
-        return intensities / area
+        return intensities / area  # type: ignore[no-any-return]
 
     areas = np.array([np.trapezoid(np.abs(row), x=wavenumbers) for row in intensities]).reshape(
         -1, 1
     )
-    areas = np.where(areas < EPSILON, 1.0, areas)
+    areas = np.where(areas < EPSILON, 1.0, areas)  # type: ignore[assignment]
 
-    return intensities / areas
+    return intensities / areas  # type: ignore[no-any-return]

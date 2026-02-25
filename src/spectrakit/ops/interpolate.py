@@ -60,4 +60,4 @@ def _interpolate_1d(
         kind=kind,
         fill_value="extrapolate",
     )
-    return f(new_wavenumbers)
+    return f(new_wavenumbers)  # type: ignore[no-any-return]

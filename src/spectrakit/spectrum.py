@@ -69,20 +69,20 @@ class Spectrum:
     def n_points(self) -> int:
         """Number of spectral data points (W)."""
         if self.intensities.ndim == 1:
-            return self.intensities.shape[0]
-        return self.intensities.shape[1]
+            return int(self.intensities.shape[0])
+        return int(self.intensities.shape[1])
 
     @property
     def n_spectra(self) -> int:
         """Number of spectra (N). Returns 1 for single spectrum."""
         if self.intensities.ndim == 1:
             return 1
-        return self.intensities.shape[0]
+        return int(self.intensities.shape[0])
 
     @property
     def shape(self) -> tuple[int, ...]:
         """Shape of the intensities array."""
-        return self.intensities.shape
+        return tuple(self.intensities.shape)
 
     def copy(self) -> Spectrum:
         """Return a deep copy."""

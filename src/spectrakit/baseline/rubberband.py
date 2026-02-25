@@ -68,4 +68,4 @@ def _baseline_rubberband_1d(intensities: np.ndarray) -> np.ndarray:
         kind="linear",
         fill_value="extrapolate",
     )
-    return f(x)
+    return f(x)  # type: ignore[no-any-return]

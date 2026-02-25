@@ -67,5 +67,5 @@ def transform_atr_correction(
     correction = wavenumbers / np.max(wavenumbers)
 
     if intensities.ndim == 1:
-        return intensities * correction
-    return intensities * correction[np.newaxis, :]
+        return intensities * correction  # type: ignore[no-any-return]
+    return intensities * correction[np.newaxis, :]  # type: ignore[no-any-return]

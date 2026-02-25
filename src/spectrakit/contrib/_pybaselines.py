@@ -139,7 +139,7 @@ def _pybaselines_1d(
 
     result = fn(intensities, **kwargs)
     # pybaselines returns (baseline, params_dict)
-    return result[0]
+    return result[0]  # type: ignore[no-any-return]
 
 
 def list_pybaselines_methods() -> dict[str, list[str]]:

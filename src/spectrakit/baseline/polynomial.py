@@ -62,7 +62,7 @@ def _baseline_polynomial_1d(
         new_mask = y <= baseline
         if np.sum(new_mask != mask) / n < tol:
             break
-        mask = new_mask
+        mask = new_mask  # type: ignore[assignment]
 
         if np.sum(mask) < degree + 1:
             break

@@ -40,8 +40,8 @@ try:
     _HAS_SKLEARN = True
 except ImportError:
     _HAS_SKLEARN = False
-    BaseEstimator = object  # type: ignore[assignment,misc]
-    TransformerMixin = object  # type: ignore[assignment,misc]
+    BaseEstimator = object
+    TransformerMixin = object
 
 
 class SpectralTransformer(BaseEstimator, TransformerMixin):  # type: ignore[misc]

@@ -26,4 +26,4 @@ def similarity_euclidean(a: np.ndarray, b: np.ndarray) -> float | np.ndarray:
     if b.ndim == 1:
         return float(np.linalg.norm(a - b))
 
-    return np.linalg.norm(b - a, axis=1)
+    return np.linalg.norm(b - a, axis=1)  # type: ignore[no-any-return]

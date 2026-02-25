@@ -38,4 +38,4 @@ def similarity_cosine(a: np.ndarray, b: np.ndarray) -> float | np.ndarray:
     denoms = norms_b * norm_a
     denoms = np.where(denoms < EPSILON, 1.0, denoms)
 
-    return dots / denoms
+    return dots / denoms  # type: ignore[no-any-return]

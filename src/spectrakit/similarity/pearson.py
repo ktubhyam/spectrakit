@@ -34,4 +34,4 @@ def similarity_pearson(a: np.ndarray, b: np.ndarray) -> float | np.ndarray:
     denom = denom_a * denom_b
     denom = np.where(denom < EPSILON, 1.0, denom)
 
-    return numerator / denom
+    return numerator / denom  # type: ignore[no-any-return]

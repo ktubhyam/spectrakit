@@ -67,7 +67,7 @@ def _derivative_savgol_1d(
     deriv: int = DEFAULT_DERIV,
 ) -> np.ndarray:
     """Savitzky-Golay derivative for a single 1-D spectrum."""
-    return savgol_filter(
+    return savgol_filter(  # type: ignore[no-any-return]
         intensities,
         window_length=window_length,
         polyorder=polyorder,

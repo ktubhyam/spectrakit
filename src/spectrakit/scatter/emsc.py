@@ -92,8 +92,8 @@ def _emsc_single(
     if abs(b) < 1e-10:
         # Can't correct, return spectrum minus polynomial baseline
         baseline = design_matrix[:, 1:] @ coeffs[1:]
-        return spectrum - baseline
+        return spectrum - baseline  # type: ignore[no-any-return]
 
     # Corrected = (spectrum - intercept - polynomial) / b
     polynomial_and_intercept = design_matrix[:, 1:] @ coeffs[1:]
-    return (spectrum - polynomial_and_intercept) / b
+    return (spectrum - polynomial_and_intercept) / b  # type: ignore[no-any-return]

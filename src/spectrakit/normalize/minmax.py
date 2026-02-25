@@ -29,11 +29,11 @@ def normalize_minmax(intensities: np.ndarray) -> np.ndarray:
         rng = mx - mn
         if rng < EPSILON:
             return np.zeros_like(intensities)
-        return (intensities - mn) / rng
+        return (intensities - mn) / rng  # type: ignore[no-any-return]
 
     mins = intensities.min(axis=1, keepdims=True)
     maxs = intensities.max(axis=1, keepdims=True)
     rngs = maxs - mins
     rngs = np.where(rngs < EPSILON, 1.0, rngs)
 
-    return (intensities - mins) / rngs
+    return (intensities - mins) / rngs  # type: ignore[no-any-return]

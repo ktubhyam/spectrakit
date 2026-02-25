@@ -62,4 +62,4 @@ def _smooth_savgol_1d(
     polyorder: int = DEFAULT_POLYORDER,
 ) -> np.ndarray:
     """Savitzky-Golay smoothing for a single 1-D spectrum."""
-    return savgol_filter(intensities, window_length=window_length, polyorder=polyorder)
+    return savgol_filter(intensities, window_length=window_length, polyorder=polyorder)  # type: ignore[no-any-return]

@@ -82,6 +82,6 @@ def _baseline_als_1d(
         w_new = np.where(y > z, p, 1.0 - p)
         if np.sum(np.abs(w_new - w)) < tol:
             break
-        w = w_new
+        w = w_new  # type: ignore[assignment]
 
-    return z
+    return z  # type: ignore[no-any-return]

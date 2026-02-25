@@ -29,4 +29,4 @@ def spectral_average(intensities: np.ndarray) -> np.ndarray:
     if intensities.ndim == 1:
         return intensities.copy()
 
-    return np.mean(intensities, axis=0)
+    return np.mean(intensities, axis=0)  # type: ignore[no-any-return]

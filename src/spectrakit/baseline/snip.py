@@ -76,4 +76,4 @@ def _baseline_snip_1d(
         y = y_new
 
     baseline = (np.exp(np.exp(y) - 1) - 1) ** 2 - EPSILON
-    return np.maximum(baseline, 0.0)
+    return np.maximum(baseline, 0.0)  # type: ignore[no-any-return]

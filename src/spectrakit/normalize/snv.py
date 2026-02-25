@@ -31,11 +31,11 @@ def normalize_snv(intensities: np.ndarray) -> np.ndarray:
         std = np.std(intensities)
         if std < EPSILON:
             logger.warning("SNV: near-zero std (%.2e), returning zero-centered", std)
-            return intensities - mean
-        return (intensities - mean) / std
+            return intensities - mean  # type: ignore[no-any-return]
+        return (intensities - mean) / std  # type: ignore[no-any-return]
 
     means = np.mean(intensities, axis=1, keepdims=True)
     stds = np.std(intensities, axis=1, keepdims=True)
     stds = np.where(stds < EPSILON, 1.0, stds)
 
-    return (intensities - means) / stds
+    return (intensities - means) / stds  # type: ignore[no-any-return]
