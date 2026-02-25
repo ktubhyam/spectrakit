@@ -37,6 +37,21 @@ class TestCLIDependency:
         assert result.returncode == 1
         assert "typer" in result.stderr.lower()
 
+    def test_get_app_without_typer_in_process(self) -> None:
+        """_get_app raises SystemExit(1) and prints error when typer missing."""
+        from io import StringIO
+        from unittest.mock import patch
+
+        from spectrakit.cli import _get_app
+
+        fake_stderr = StringIO()
+        with (
+            patch.dict(sys.modules, {"typer": None}),
+            patch("sys.stderr", fake_stderr),
+            pytest.raises(SystemExit, match="1"),
+        ):
+            _get_app()
+
     def test_cli_main_entry(self) -> None:
         """Running cli.py as __main__ should show help."""
         result = subprocess.run(

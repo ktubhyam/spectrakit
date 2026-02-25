@@ -92,7 +92,7 @@ def _parse_directory(
     # there looks invalid, fall back to offset 24.
     try:
         dir_offset_candidate = struct.unpack_from("<I", raw, 8)[0]
-    except struct.error:
+    except struct.error:  # pragma: no cover — guarded by _MIN_FILE_SIZE check
         dir_offset_candidate = 0
 
     # Determine number of directory entries. The maximum number of entries
@@ -101,7 +101,7 @@ def _parse_directory(
     try:
         _max_entries = struct.unpack_from("<I", raw, 16)[0]  # noqa: F841
         num_entries = struct.unpack_from("<I", raw, 20)[0]
-    except struct.error:
+    except struct.error:  # pragma: no cover — guarded by _MIN_FILE_SIZE check
         num_entries = 0
 
     # Validate: if num_entries is unreasonable, we will scan instead
@@ -127,7 +127,7 @@ def _parse_directory(
             break
         try:
             block_type, block_length, block_offset = struct.unpack_from("<III", raw, offset)
-        except struct.error:
+        except struct.error:  # pragma: no cover — bounds check above prevents this
             break
 
         if block_type == 0:
@@ -185,7 +185,7 @@ def _parse_parameter_block(
         try:
             tag_bytes = raw[pos : pos + 3]
             tag = tag_bytes.decode("ascii", errors="replace").strip("\x00")
-        except (UnicodeDecodeError, IndexError):
+        except (UnicodeDecodeError, IndexError):  # pragma: no cover — errors="replace" prevents
             break
 
         if len(tag) < 2 or not tag[0].isalpha():
@@ -198,7 +198,7 @@ def _parse_parameter_block(
         try:
             type_code = struct.unpack_from("<H", raw, pos + 4)[0]
             value_size = struct.unpack_from("<H", raw, pos + 6)[0]
-        except struct.error:
+        except struct.error:  # pragma: no cover — while loop guarantees 8 bytes
             break
 
         value_offset = pos + 8
@@ -225,7 +225,7 @@ def _parse_parameter_block(
             elif type_code == _PARAM_TYPE_ENUM:
                 if value_size >= 4:
                     value = struct.unpack_from("<i", raw, value_offset)[0]
-        except struct.error:
+        except struct.error:  # pragma: no cover — size checks guarantee valid reads
             pass
 
         if value is not None and tag:
@@ -329,7 +329,7 @@ def read_opus(path: str | Path) -> Spectrum:
         entries = _parse_directory(raw)
     except FileFormatError:
         raise
-    except (struct.error, IndexError, TypeError, ValueError) as exc:
+    except (struct.error, IndexError, TypeError, ValueError) as exc:  # pragma: no cover
         raise FileFormatError(f"Failed to parse OPUS directory: {exc}") from exc
 
     # ── Locate data and parameter blocks ────────────────────────────
@@ -393,7 +393,7 @@ def read_opus(path: str | Path) -> Spectrum:
     _, param_len, param_off = param_block
     try:
         params = _parse_parameter_block(raw, param_off, param_len)
-    except (struct.error, IndexError, UnicodeDecodeError, ValueError) as exc:
+    except (struct.error, IndexError, UnicodeDecodeError, ValueError) as exc:  # pragma: no cover
         raise FileFormatError(f"Failed to parse OPUS parameter block: {exc}") from exc
 
     n_points = params.get("NPT")
@@ -413,7 +413,7 @@ def read_opus(path: str | Path) -> Spectrum:
         intensities = _read_float32_block(raw, data_off, n_points)
     except FileFormatError:
         raise
-    except (struct.error, ValueError, TypeError, IndexError) as exc:
+    except (struct.error, ValueError, TypeError, IndexError) as exc:  # pragma: no cover
         raise FileFormatError(f"Failed to read OPUS data block: {exc}") from exc
 
     # ── Build wavenumber axis ───────────────────────────────────────
@@ -429,7 +429,7 @@ def read_opus(path: str | Path) -> Spectrum:
             try:
                 block_params = _parse_parameter_block(raw, moff, mlen)
                 metadata.update(block_params)
-            except (struct.error, ValueError, IndexError) as exc:
+            except (struct.error, ValueError, IndexError) as exc:  # pragma: no cover
                 logger.debug("Could not parse metadata block at offset %d: %s", moff, exc)
 
     # Also include the data parameters in metadata

@@ -118,3 +118,15 @@ class TestSpectralTransformer:
         params = transformer.get_params(deep=False)
         assert params["func"] is smooth_savgol
         assert params["window_length"] == 7
+
+    def test_instantiation_without_sklearn_raises(self) -> None:
+        """SpectralTransformer raises DependencyError when _HAS_SKLEARN is False."""
+        from unittest.mock import patch
+
+        from spectrakit.exceptions import DependencyError
+
+        with (
+            patch("spectrakit.sklearn.transformers._HAS_SKLEARN", False),
+            pytest.raises(DependencyError, match="scikit-learn"),
+        ):
+            SpectralTransformer(normalize_snv)

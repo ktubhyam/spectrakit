@@ -25,6 +25,10 @@ def similarity_pearson(query: np.ndarray, reference: np.ndarray) -> float | np.n
     Raises:
         SpectrumShapeError: If *query* or *reference* is not 1-D or 2-D.
         EmptySpectrumError: If inputs have zero elements.
+
+    Note:
+        The 2-D × 2-D case uses matrix multiplication (``O(M*N*W)``).
+        For large *M* or *N*, consider batching queries to manage memory.
     """
     query = ensure_float64(query)
     reference = ensure_float64(reference)

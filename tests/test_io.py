@@ -373,6 +373,73 @@ class TestReadSPC:
         with pytest.raises(DependencyError, match="spc-spectra"):
             read_spc("/fake/file.spc")
 
+    def test_read_spc_file_not_found_mocked(self, tmp_path: Path) -> None:
+        """read_spc raises FileNotFoundError for missing file."""
+        from types import ModuleType
+        from unittest.mock import MagicMock
+
+        fake_spc = ModuleType("spc")
+        fake_spc.File = MagicMock()  # type: ignore[attr-defined]
+
+        with patch.dict(sys.modules, {"spc": fake_spc}):
+            from spectrakit.io.spc import read_spc
+
+            with pytest.raises(FileNotFoundError, match="SPC file not found"):
+                read_spc(tmp_path / "nonexistent.spc")
+
+    def test_read_spc_single_trace_mocked(self, tmp_path: Path) -> None:
+        """read_spc with single-trace file via mocked spc module."""
+        from types import ModuleType
+        from unittest.mock import MagicMock
+
+        fake_spc = ModuleType("spc")
+        mock_sub = MagicMock()
+        mock_sub.y = [1.0, 2.0, 3.0]
+        mock_file = MagicMock()
+        mock_file.x = [400.0, 500.0, 600.0]
+        mock_file.fnsub = 1
+        mock_file.sub = [mock_sub]
+        mock_file.fexper = "Absorbance"
+        fake_spc.File = MagicMock(return_value=mock_file)  # type: ignore[attr-defined]
+
+        spc_path = tmp_path / "test.spc"
+        spc_path.write_bytes(b"\x00" * 100)
+
+        with patch.dict(sys.modules, {"spc": fake_spc}):
+            from spectrakit.io.spc import read_spc
+
+            result = read_spc(spc_path)
+            assert result.intensities.shape == (3,)
+            assert result.source_format == "spc"
+            assert result.metadata["fnsub"] == 1
+
+    def test_read_spc_multi_trace_mocked(self, tmp_path: Path) -> None:
+        """read_spc with multi-trace file via mocked spc module."""
+        from types import ModuleType
+        from unittest.mock import MagicMock
+
+        fake_spc = ModuleType("spc")
+        sub1 = MagicMock()
+        sub1.y = [1.0, 2.0, 3.0]
+        sub2 = MagicMock()
+        sub2.y = [4.0, 5.0, 6.0]
+        mock_file = MagicMock()
+        mock_file.x = [400.0, 500.0, 600.0]
+        mock_file.fnsub = 2
+        mock_file.sub = [sub1, sub2]
+        mock_file.fexper = "Absorbance"
+        fake_spc.File = MagicMock(return_value=mock_file)  # type: ignore[attr-defined]
+
+        spc_path = tmp_path / "multi.spc"
+        spc_path.write_bytes(b"\x00" * 100)
+
+        with patch.dict(sys.modules, {"spc": fake_spc}):
+            from spectrakit.io.spc import read_spc
+
+            result = read_spc(spc_path)
+            assert result.intensities.shape == (2, 3)
+            assert result.metadata["fnsub"] == 2
+
 
 # ── OPUS ─────────────────────────────────────────────────────────────
 
@@ -934,6 +1001,32 @@ class TestReadOPUS:
         spec = read_opus(opus_path)
         assert spec.n_points == n_points  # noqa: E501
 
+    def test_no_data_block_raises(self, tmp_path: Path) -> None:
+        """OPUS file with only parameter blocks (no data) raises FileFormatError."""
+        from spectrakit.io.opus import read_opus
+
+        # Build an OPUS file with a parameter block (0x1F) and instrument block (0x20)
+        # but NO data blocks (0x0F, 0x07, 0x0B).
+        param_content = _build_opus_param_entry("NPT", 10)
+        inst_content = _build_opus_param_entry("INS", "Vertex70")
+
+        header_size = 24
+        dir_size = 3 * 12  # 2 entries + sentinel
+        param_offset = header_size + dir_size
+        inst_offset = param_offset + len(param_content)
+
+        header = struct.pack("<IIIIII", 0x0A0A, 0, header_size, 0, 10, 2)
+        dir_param = struct.pack("<III", 0x1F, len(param_content), param_offset)
+        dir_inst = struct.pack("<III", 0x20, len(inst_content), inst_offset)
+        dir_sentinel = struct.pack("<III", 0, 0, 0)
+
+        raw = header + dir_param + dir_inst + dir_sentinel + param_content + inst_content
+        opus_path = tmp_path / "no_data.0"
+        opus_path.write_bytes(raw)
+
+        with pytest.raises(FileFormatError, match="No spectral data block"):
+            read_opus(opus_path)
+
 
 # ── OPUS internal function tests ───────────────────────────────────
 
@@ -1097,6 +1190,29 @@ class TestOpusParseParameterBlock:
         block = entry1 + entry2
         params = _parse_parameter_block(block, 0, len(block))
         assert params.get("INS") == "Hello"
+        assert params.get("NPT") == 42
+
+    def test_non_aligned_value_size_pads_correctly(self) -> None:
+        """value_size not divisible by 4 triggers alignment padding (line 241)."""
+        from spectrakit.io.opus import _parse_parameter_block
+
+        # Build a string param with value_size=5 (not 4-byte aligned)
+        # tag(3) + pad(1) + type_code(2) + value_size(2) + value(5) = 13 bytes
+        # entry_size = 8 + 5 = 13, remainder = 1, padded to 16
+        tag1 = b"TST\x00"
+        header1 = struct.pack("<HH", 2, 5)  # type=string, size=5
+        value1 = b"Hello"  # 5 bytes, not 4-byte aligned
+        # Pad the block so the second entry is findable after alignment
+        padding1 = b"\x00" * 3  # pad to 16 bytes total
+
+        # Second entry: int param to verify parser advances past alignment
+        tag2 = b"NPT\x00"
+        header2 = struct.pack("<HH", 0, 4)  # type=int, size=4
+        value2 = struct.pack("<i", 42)
+
+        block = tag1 + header1 + value1 + padding1 + tag2 + header2 + value2
+        params = _parse_parameter_block(block, 0, len(block))
+        assert params.get("TST") == "Hello"
         assert params.get("NPT") == 42
 
     def test_struct_error_in_type_code(self) -> None:

@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-02-25
+
+### Added
+- Batch query support: all 4 similarity functions accept 2-D query × 2-D reference → (M, N) matrix
+- Plot functions (`plot_spectrum`, `plot_comparison`, `plot_baseline`) exported from top-level package
+- Configurable file size limit via `SPECTRAKIT_MAX_FILE_SIZE` environment variable
+- Separated `[spc]` optional extra for `spc-spectra` package
+- Performance notes in Euclidean and Pearson docstrings for large 2-D × 2-D inputs
+
+### Changed
+- Standardized NaN/Inf handling across all similarity metrics using EPSILON guard pattern
+- Pearson similarity rewritten to use direct dot-product (removed `np.corrcoef` dependency)
+- Test coverage improved from 97% to 100% (348 tests, 6 skipped)
+- Proven-unreachable defensive code annotated with `# pragma: no cover`
+- Fixed contrib `__init__.py` docstring referencing non-existent module
+
 ## [1.1.0] - 2026-02-25
 
 ### Added

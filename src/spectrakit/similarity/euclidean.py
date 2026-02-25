@@ -27,6 +27,10 @@ def similarity_euclidean(query: np.ndarray, reference: np.ndarray) -> float | np
     Raises:
         SpectrumShapeError: If *query* or *reference* is not 1-D or 2-D.
         EmptySpectrumError: If inputs have zero elements.
+
+    Note:
+        The 2-D × 2-D case allocates an ``(M, N, W)`` intermediate array.
+        For large *M*, *N*, or *W*, consider batching queries to manage memory.
     """
     query = ensure_float64(query)
     reference = ensure_float64(reference)

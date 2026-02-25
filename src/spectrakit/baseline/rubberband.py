@@ -65,9 +65,9 @@ def _baseline_rubberband_1d(intensities: np.ndarray) -> np.ndarray:
         if i < n and (i == 0 or i == n - 1 or intensities[i] <= np.median(intensities))
     )
 
-    if 0 not in lower_vertices:
+    if 0 not in lower_vertices:  # pragma: no cover — endpoints always in hull
         lower_vertices = [0, *lower_vertices]
-    if n - 1 not in lower_vertices:
+    if n - 1 not in lower_vertices:  # pragma: no cover — endpoints always in hull
         lower_vertices = [*lower_vertices, n - 1]
 
     lower_vertices = sorted(set(lower_vertices))

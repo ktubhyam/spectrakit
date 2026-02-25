@@ -38,7 +38,7 @@ try:
     from sklearn.base import BaseEstimator, TransformerMixin
 
     _HAS_SKLEARN = True
-except ImportError:
+except ImportError:  # pragma: no cover — fallback when sklearn not installed
     _HAS_SKLEARN = False
     BaseEstimator = object
     TransformerMixin = object

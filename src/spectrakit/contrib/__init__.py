@@ -3,5 +3,6 @@
 These modules require additional dependencies and are not imported
 by default. Import them directly::
 
-    from spectrakit.contrib import pybaselines_backend
+    from spectrakit.contrib._pybaselines import pybaselines_method
+    from spectrakit.contrib._lmfit import fit_peaks
 """

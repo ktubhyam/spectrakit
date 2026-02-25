@@ -94,5 +94,5 @@ def convert(input_path: str, output_path: str) -> None:
     print(f"Converted {file_path.name} -> {output_path}")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     app()
