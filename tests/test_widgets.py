@@ -42,9 +42,7 @@ def _read_entry(data: bytes, offset: int) -> tuple[dict, int]:
     Returns:
         Tuple of (entry_dict, new_offset).
     """
-    n_points, has_wavenum, label_len = struct.unpack_from(
-        _ENTRY_PREFIX_FMT, data, offset
-    )
+    n_points, has_wavenum, label_len = struct.unpack_from(_ENTRY_PREFIX_FMT, data, offset)
     offset += struct.calcsize(_ENTRY_PREFIX_FMT)
 
     label = data[offset : offset + label_len].decode("utf-8")
@@ -131,12 +129,8 @@ class TestSpectrumToBinary:
         for i in range(3):
             entry, offset = _read_entry(data, offset)
             assert entry["label"] == f"batch_{i}"
-            np.testing.assert_array_almost_equal(
-                entry["intensities"], intensities[i]
-            )
-            np.testing.assert_array_almost_equal(
-                entry["wavenumbers"], wavenumbers
-            )
+            np.testing.assert_array_almost_equal(entry["intensities"], intensities[i])
+            np.testing.assert_array_almost_equal(entry["wavenumbers"], wavenumbers)
 
         assert offset == len(data)
 
@@ -182,9 +176,7 @@ class TestSpectrumToBinary:
         _, offset = _read_header(data)
         entry, _ = _read_entry(data, offset)
         # Decoded as float64 should match original values
-        np.testing.assert_array_almost_equal(
-            entry["intensities"], [1.0, 2.0, 3.0]
-        )
+        np.testing.assert_array_almost_equal(entry["intensities"], [1.0, 2.0, 3.0])
 
     def test_large_spectrum(self) -> None:
         """Serialize a spectrum with 10,000 points."""
@@ -236,16 +228,12 @@ class TestSpectraToBinary:
         entry_a, offset = _read_entry(data, offset)
         assert entry_a["label"] == "alpha"
         assert entry_a["n_points"] == 3
-        np.testing.assert_array_almost_equal(
-            entry_a["intensities"], [1.0, 2.0, 3.0]
-        )
+        np.testing.assert_array_almost_equal(entry_a["intensities"], [1.0, 2.0, 3.0])
 
         entry_b, offset = _read_entry(data, offset)
         assert entry_b["label"] == "beta"
         assert entry_b["n_points"] == 2
-        np.testing.assert_array_almost_equal(
-            entry_b["intensities"], [4.0, 5.0]
-        )
+        np.testing.assert_array_almost_equal(entry_b["intensities"], [4.0, 5.0])
 
         assert offset == len(data)
 
@@ -360,7 +348,9 @@ class TestBinaryFormatInvariants:
 
         expected_size = (
             4  # header: n_spectra
-            + 4 + 4 + 4  # entry prefix: n_points, has_wavenum, label_len
+            + 4
+            + 4
+            + 4  # entry prefix: n_points, has_wavenum, label_len
             + len(label_bytes)  # label
             + n_points * 8  # intensities (float64)
         )
@@ -381,7 +371,9 @@ class TestBinaryFormatInvariants:
 
         expected_size = (
             4  # header: n_spectra
-            + 4 + 4 + 4  # entry prefix
+            + 4
+            + 4
+            + 4  # entry prefix
             + len(label_bytes)  # label
             + n_points * 8  # intensities
             + n_points * 8  # wavenumbers

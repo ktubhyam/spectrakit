@@ -181,8 +181,7 @@ def _read_esm() -> str:
     """
     if not _ESM_PATH.exists():
         logger.warning(
-            "Frontend bundle not found at %s. "
-            "Run 'npm run build' in %s to build it.",
+            "Frontend bundle not found at %s. Run 'npm run build' in %s to build it.",
             _ESM_PATH,
             _FRONTEND_DIR,
         )

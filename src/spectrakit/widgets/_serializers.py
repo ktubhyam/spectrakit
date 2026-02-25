@@ -90,8 +90,7 @@ def spectrum_to_binary(spectrum: Spectrum) -> bytes:
         labels = [f"{base_label}_{i}" for i in range(intensities.shape[0])]
     else:
         raise ValueError(
-            f"Expected 1D or 2D intensities, got {intensities.ndim}D "
-            f"with shape {intensities.shape}"
+            f"Expected 1D or 2D intensities, got {intensities.ndim}D with shape {intensities.shape}"
         )
 
     n_spectra = len(rows)
@@ -142,9 +141,7 @@ def spectra_to_binary(spectra: list[Spectrum]) -> bytes:
     for spec in spectra:
         intensities = np.asarray(spec.intensities, dtype=np.float64)
         wavenumbers = (
-            np.asarray(spec.wavenumbers, dtype=np.float64)
-            if spec.wavenumbers is not None
-            else None
+            np.asarray(spec.wavenumbers, dtype=np.float64) if spec.wavenumbers is not None else None
         )
 
         if intensities.ndim == 1:
@@ -152,11 +149,13 @@ def spectra_to_binary(spectra: list[Spectrum]) -> bytes:
         elif intensities.ndim == 2:
             base_label = spec.label or "spectrum"
             for i in range(intensities.shape[0]):
-                entries.append((
-                    intensities[i],
-                    wavenumbers,
-                    f"{base_label}_{i}",
-                ))
+                entries.append(
+                    (
+                        intensities[i],
+                        wavenumbers,
+                        f"{base_label}_{i}",
+                    )
+                )
         else:
             raise ValueError(
                 f"Expected 1D or 2D intensities, got {intensities.ndim}D "
