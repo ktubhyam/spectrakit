@@ -153,6 +153,110 @@ class TestNaNWarnings:
             similarity_euclidean(query, reference)
 
 
+class TestDegenerateInputConsistency:
+    """Verify all metrics return consistent values for degenerate inputs."""
+
+    def test_zero_vectors_cosine(self) -> None:
+        """Cosine returns 0.0 for zero vectors."""
+        assert similarity_cosine(np.zeros(5), np.ones(5)) == 0.0
+
+    def test_zero_vectors_spectral_angle(self) -> None:
+        """Spectral angle returns 0.0 for zero vectors."""
+        assert similarity_spectral_angle(np.zeros(5), np.ones(5)) == 0.0
+
+    def test_zero_vectors_euclidean(self) -> None:
+        """Euclidean returns distance (not 0) for zero query vs nonzero ref."""
+        result = similarity_euclidean(np.zeros(3), np.array([3.0, 4.0, 0.0]))
+        assert abs(result - 5.0) < 1e-10
+
+    def test_constant_pearson(self) -> None:
+        """Pearson returns 0.0 for constant spectra (zero std)."""
+        assert similarity_pearson(np.ones(10), np.arange(10, dtype=float)) == 0.0
+
+    def test_constant_batch_pearson(self) -> None:
+        """Pearson batch returns 0.0 for rows with zero std."""
+        query = np.ones(5)
+        ref = np.array([[1.0, 2.0, 3.0, 4.0, 5.0], [7.0, 7.0, 7.0, 7.0, 7.0]])
+        result = similarity_pearson(query, ref)
+        assert result[1] == 0.0  # constant row
+
+
+class TestBatchQuerySupport:
+    """Verify 2D query (batch) against 1D or 2D reference."""
+
+    def test_cosine_2d_query_1d_ref(self) -> None:
+        """Batch queries against a single reference."""
+        queries = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+        ref = np.array([1.0, 0.0, 0.0])
+        result = similarity_cosine(queries, ref)
+        assert result.shape == (2,)
+        np.testing.assert_allclose(result[0], 1.0, atol=1e-10)
+        np.testing.assert_allclose(result[1], 0.0, atol=1e-10)
+
+    def test_cosine_2d_query_2d_ref(self) -> None:
+        """All-pairs similarity matrix."""
+        queries = np.eye(3)
+        refs = np.eye(3)
+        result = similarity_cosine(queries, refs)
+        assert result.shape == (3, 3)
+        np.testing.assert_allclose(result, np.eye(3), atol=1e-10)
+
+    def test_pearson_2d_query_1d_ref(self) -> None:
+        queries = np.array([[1.0, 2.0, 3.0], [3.0, 2.0, 1.0]])
+        ref = np.array([1.0, 2.0, 3.0])
+        result = similarity_pearson(queries, ref)
+        assert result.shape == (2,)
+        np.testing.assert_allclose(result[0], 1.0, atol=1e-10)
+        np.testing.assert_allclose(result[1], -1.0, atol=1e-10)
+
+    def test_pearson_2d_query_2d_ref(self) -> None:
+        queries = np.array([[1.0, 2.0, 3.0], [3.0, 2.0, 1.0]])
+        refs = np.array([[1.0, 2.0, 3.0], [3.0, 2.0, 1.0]])
+        result = similarity_pearson(queries, refs)
+        assert result.shape == (2, 2)
+        np.testing.assert_allclose(result[0, 0], 1.0, atol=1e-10)
+        np.testing.assert_allclose(result[0, 1], -1.0, atol=1e-10)
+        np.testing.assert_allclose(result[1, 0], -1.0, atol=1e-10)
+        np.testing.assert_allclose(result[1, 1], 1.0, atol=1e-10)
+
+    def test_spectral_angle_2d_query_1d_ref(self) -> None:
+        queries = np.array([[1.0, 0.0], [0.0, 1.0]])
+        ref = np.array([1.0, 0.0])
+        result = similarity_spectral_angle(queries, ref)
+        assert result.shape == (2,)
+        np.testing.assert_allclose(result[0], 0.0, atol=1e-4)
+        np.testing.assert_allclose(result[1], np.pi / 2, atol=1e-4)
+
+    def test_spectral_angle_2d_query_2d_ref(self) -> None:
+        queries = np.eye(3)
+        refs = np.eye(3)
+        result = similarity_spectral_angle(queries, refs)
+        assert result.shape == (3, 3)
+        for i in range(3):
+            np.testing.assert_allclose(result[i, i], 0.0, atol=1e-4)
+            for j in range(3):
+                if i != j:
+                    np.testing.assert_allclose(result[i, j], np.pi / 2, atol=1e-4)
+
+    def test_euclidean_2d_query_1d_ref(self) -> None:
+        queries = np.array([[3.0, 4.0], [0.0, 0.0]])
+        ref = np.array([0.0, 0.0])
+        result = similarity_euclidean(queries, ref)
+        assert result.shape == (2,)
+        np.testing.assert_allclose(result[0], 5.0, atol=1e-10)
+        np.testing.assert_allclose(result[1], 0.0, atol=1e-10)
+
+    def test_euclidean_2d_query_2d_ref(self) -> None:
+        queries = np.array([[0.0, 0.0], [3.0, 4.0]])
+        refs = np.array([[3.0, 4.0], [0.0, 0.0]])
+        result = similarity_euclidean(queries, refs)
+        assert result.shape == (2, 2)
+        np.testing.assert_allclose(result[0, 0], 5.0, atol=1e-10)
+        np.testing.assert_allclose(result[0, 1], 0.0, atol=1e-10)
+        np.testing.assert_allclose(result[1, 0], 0.0, atol=1e-10)
+        np.testing.assert_allclose(result[1, 1], 5.0, atol=1e-10)
+
+
 class TestKeywordArgCompat:
     """Ensure the new query/reference param names work as kwargs."""
 

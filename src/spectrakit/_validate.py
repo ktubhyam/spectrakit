@@ -8,6 +8,7 @@ the package — they are not re-exported from ``spectrakit.__init__``.
 from __future__ import annotations
 
 import logging
+import os
 import warnings
 from collections.abc import Callable
 from typing import Any
@@ -21,8 +22,32 @@ logger = logging.getLogger(__name__)
 EPSILON: float = 1e-10
 """Shared near-zero threshold for division guards."""
 
-MAX_FILE_SIZE: int = 500 * 1024 * 1024  # 500 MB
-"""Maximum file size (in bytes) accepted by I/O readers."""
+_DEFAULT_MAX_FILE_SIZE: int = 500 * 1024 * 1024  # 500 MB
+
+
+def _read_max_file_size() -> int:
+    """Read the maximum file size from env or use the default (500 MB).
+
+    Set ``SPECTRAKIT_MAX_FILE_SIZE`` (in bytes) to override.
+    """
+    env = os.environ.get("SPECTRAKIT_MAX_FILE_SIZE")
+    if env is not None:
+        try:
+            return int(env)
+        except ValueError:
+            logger.warning(
+                "Invalid SPECTRAKIT_MAX_FILE_SIZE=%r, using default %d bytes",
+                env,
+                _DEFAULT_MAX_FILE_SIZE,
+            )
+    return _DEFAULT_MAX_FILE_SIZE
+
+
+MAX_FILE_SIZE: int = _read_max_file_size()
+"""Maximum file size (in bytes) accepted by I/O readers.
+
+Override with the ``SPECTRAKIT_MAX_FILE_SIZE`` environment variable.
+"""
 
 
 def ensure_float64(data: Any) -> np.ndarray:

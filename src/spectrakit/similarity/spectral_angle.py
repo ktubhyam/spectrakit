@@ -14,33 +14,61 @@ def similarity_spectral_angle(query: np.ndarray, reference: np.ndarray) -> float
     angle means more similar. Range: [0, pi].
 
     Args:
-        query: Query spectrum, shape ``(W,)``.
+        query: Query spectrum, shape ``(W,)`` or ``(M, W)``.
         reference: Reference spectrum shape ``(W,)``, or library shape ``(N, W)``.
 
     Returns:
-        Angle in radians in [0, pi]. Scalar or array of shape ``(N,)``.
+        Angle in radians in [0, pi].
+
+        - query ``(W,)`` + reference ``(W,)`` → scalar
+        - query ``(W,)`` + reference ``(N, W)`` → array ``(N,)``
+        - query ``(M, W)`` + reference ``(W,)`` → array ``(M,)``
+        - query ``(M, W)`` + reference ``(N, W)`` → matrix ``(M, N)``
 
     Raises:
-        SpectrumShapeError: If *reference* is not 1-D or 2-D.
-        EmptySpectrumError: If *reference* has zero elements.
+        SpectrumShapeError: If *query* or *reference* is not 1-D or 2-D.
+        EmptySpectrumError: If inputs have zero elements.
     """
     query = ensure_float64(query)
     reference = ensure_float64(reference)
+    validate_1d_or_2d(query, name="query")
     validate_1d_or_2d(reference, name="reference")
     warn_if_not_finite(query, name="query")
     warn_if_not_finite(reference, name="reference")
 
-    if reference.ndim == 1:
-        cos_angle = np.dot(query, reference) / (
-            np.linalg.norm(query) * np.linalg.norm(reference) + EPSILON
-        )
-        cos_angle = np.clip(cos_angle, -1.0, 1.0)
+    # 1D query vs 1D reference → scalar
+    if query.ndim == 1 and reference.ndim == 1:
+        denom = np.linalg.norm(query) * np.linalg.norm(reference)
+        if denom < EPSILON:
+            return 0.0
+        cos_angle = np.clip(np.dot(query, reference) / denom, -1.0, 1.0)
         return float(np.arccos(cos_angle))
 
-    dots = reference @ query
-    norm_query = np.linalg.norm(query)
-    norms_ref = np.linalg.norm(reference, axis=1)
-    cos_angles = dots / (norm_query * norms_ref + EPSILON)
-    cos_angles = np.clip(cos_angles, -1.0, 1.0)
+    # 1D query vs 2D reference → (N,)
+    if query.ndim == 1 and reference.ndim == 2:
+        dots = reference @ query
+        norm_query = np.linalg.norm(query)
+        norms_ref = np.linalg.norm(reference, axis=1)
+        denoms = norm_query * norms_ref
+        denoms = np.where(denoms < EPSILON, 1.0, denoms)
+        cos_angles = np.clip(dots / denoms, -1.0, 1.0)
+        return np.arccos(cos_angles)  # type: ignore[no-any-return]
 
+    # 2D query vs 1D reference → (M,)
+    if query.ndim == 2 and reference.ndim == 1:
+        dots = query @ reference
+        norms_query = np.linalg.norm(query, axis=1)
+        norm_ref = np.linalg.norm(reference)
+        denoms = norms_query * norm_ref
+        denoms = np.where(denoms < EPSILON, 1.0, denoms)
+        cos_angles = np.clip(dots / denoms, -1.0, 1.0)
+        return np.arccos(cos_angles)  # type: ignore[no-any-return]
+
+    # 2D query vs 2D reference → (M, N)
+    dots = query @ reference.T
+    norms_query = np.linalg.norm(query, axis=1, keepdims=True)
+    norms_ref = np.linalg.norm(reference, axis=1, keepdims=True)
+    denoms = norms_query @ norms_ref.T
+    denoms = np.where(denoms < EPSILON, 1.0, denoms)
+    cos_angles = np.clip(dots / denoms, -1.0, 1.0)
     return np.arccos(cos_angles)  # type: ignore[no-any-return]

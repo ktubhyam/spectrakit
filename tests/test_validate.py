@@ -200,3 +200,25 @@ class TestValidateFileSize:
     def test_error_message_contains_filename(self) -> None:
         with pytest.raises(ValueError, match="huge.opus"):
             validate_file_size(MAX_FILE_SIZE + 1, path_name="huge.opus")
+
+
+class TestMaxFileSizeEnvVar:
+    """Verify SPECTRAKIT_MAX_FILE_SIZE environment variable override."""
+
+    def test_env_var_overrides_default(self) -> None:
+        from unittest.mock import patch
+
+        from spectrakit._validate import _DEFAULT_MAX_FILE_SIZE, _read_max_file_size
+
+        with patch.dict("os.environ", {"SPECTRAKIT_MAX_FILE_SIZE": "1024"}):
+            assert _read_max_file_size() == 1024
+        # Without the env var, should return default
+        assert _read_max_file_size() == _DEFAULT_MAX_FILE_SIZE
+
+    def test_invalid_env_var_uses_default(self) -> None:
+        from unittest.mock import patch
+
+        from spectrakit._validate import _DEFAULT_MAX_FILE_SIZE, _read_max_file_size
+
+        with patch.dict("os.environ", {"SPECTRAKIT_MAX_FILE_SIZE": "not_a_number"}):
+            assert _read_max_file_size() == _DEFAULT_MAX_FILE_SIZE

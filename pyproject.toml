@@ -41,7 +41,11 @@ dependencies = [
 [project.optional-dependencies]
 io = [
     "h5py>=3.8",
-    # spc-spectra has a broken build (missing numpy build dep); install manually if needed
+]
+spc = [
+    # spc-spectra has a broken build on some platforms (missing numpy build dep).
+    # Install separately if needed: pip install spc-spectra
+    "spc-spectra>=0.4",
 ]
 cli = [
     "typer>=0.9",
@@ -60,7 +64,7 @@ plot = [
     "matplotlib>=3.7",
 ]
 all = [
-    "spectrakit[io,cli,baselines,fitting,sklearn,plot]",
+    "spectrakit[io,spc,cli,baselines,fitting,sklearn,plot]",
 ]
 docs = [
     "mkdocs>=1.5",

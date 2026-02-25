@@ -42,6 +42,9 @@ from spectrakit.peaks import PeakResult, peaks_find, peaks_integrate
 # Pipeline
 from spectrakit.pipeline import Pipeline
 
+# Plotting (requires matplotlib)
+from spectrakit.plot import plot_baseline, plot_comparison, plot_spectrum
+
 # Scatter correction
 from spectrakit.scatter import scatter_emsc, scatter_msc
 
@@ -103,4 +106,8 @@ __all__ = [
     "peaks_integrate",
     "PeakResult",
     "Pipeline",
+    # Plotting
+    "plot_spectrum",
+    "plot_comparison",
+    "plot_baseline",
 ]
