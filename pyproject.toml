@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "spectrakit"
+name = "pyspectrakit"
 dynamic = ["version"]
 description = "Python toolkit for spectral data processing: format parsers, baseline correction, normalization, and similarity matching."
 readme = "README.md"
@@ -64,7 +64,7 @@ plot = [
     "matplotlib>=3.7",
 ]
 all = [
-    "spectrakit[io,spc,cli,baselines,fitting,sklearn,plot]",
+    "pyspectrakit[io,spc,cli,baselines,fitting,sklearn,plot]",
 ]
 docs = [
     "mkdocs>=1.5",
