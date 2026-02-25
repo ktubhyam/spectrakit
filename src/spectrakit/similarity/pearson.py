@@ -48,10 +48,11 @@ def similarity_pearson(query: np.ndarray, reference: np.ndarray) -> float | np.n
     if query.ndim == 1 and reference.ndim == 1:
         qc = query - np.mean(query)
         rc = reference - np.mean(reference)
-        denom = np.linalg.norm(qc) * np.linalg.norm(rc)
-        if denom < EPSILON:
+        nq = np.linalg.norm(qc)
+        nr = np.linalg.norm(rc)
+        if nq < EPSILON or nr < EPSILON:
             return 0.0
-        return float(np.dot(qc, rc) / denom)
+        return float(np.dot(qc, rc) / (nq * nr))
 
     # 1D query vs 2D reference → (N,)
     if query.ndim == 1 and reference.ndim == 2:

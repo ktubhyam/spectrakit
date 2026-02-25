@@ -2,6 +2,8 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 dist/
+!src/spectrakit/widgets/_frontend/dist/
+src/spectrakit/widgets/_frontend/dist/*.map
 build/
 .eggs/
 *.egg

@@ -47,10 +47,11 @@ def similarity_cosine(query: np.ndarray, reference: np.ndarray) -> float | np.nd
     # 1D query vs 1D reference → scalar
     if query.ndim == 1 and reference.ndim == 1:
         dot = np.dot(query, reference)
-        denom = np.linalg.norm(query) * np.linalg.norm(reference)
-        if denom < EPSILON:
+        nq = np.linalg.norm(query)
+        nr = np.linalg.norm(reference)
+        if nq < EPSILON or nr < EPSILON:
             return 0.0
-        return float(dot / denom)
+        return float(dot / (nq * nr))
 
     # 1D query vs 2D reference → (N,)
     if query.ndim == 1 and reference.ndim == 2:

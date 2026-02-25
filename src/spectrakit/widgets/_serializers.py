@@ -97,7 +97,7 @@ def spectrum_to_binary(spectrum: Spectrum) -> bytes:
     n_spectra = len(rows)
     parts: list[bytes] = [struct.pack(_HEADER_FMT, n_spectra)]
 
-    for row, label in zip(rows, labels):
+    for row, label in zip(rows, labels, strict=True):
         parts.append(_serialize_entry(row, wavenumbers, label))
 
     logger.debug(
