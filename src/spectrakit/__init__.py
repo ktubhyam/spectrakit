@@ -40,6 +40,9 @@ from spectrakit.similarity import (
     similarity_pearson,
     similarity_spectral_angle,
 )
+
+# Smoothing
+from spectrakit.smooth import smooth_savgol, smooth_whittaker
 from spectrakit.spectrum import Spectrum
 
 __all__ = [
@@ -70,5 +73,7 @@ __all__ = [
     "similarity_pearson",
     "similarity_spectral_angle",
     "similarity_euclidean",
+    "smooth_savgol",
+    "smooth_whittaker",
     "Pipeline",
 ]
