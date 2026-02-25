@@ -17,6 +17,7 @@
 import { useModelState } from "@anywidget/react";
 import { useMemo } from "react";
 import { SpectraView } from "spectraview";
+import type { Spectrum } from "spectraview";
 
 /** Decoded spectrum data for a single trace. */
 interface DecodedSpectrum {
@@ -45,7 +46,6 @@ function decodeBinarySpectra(buffer: DataView): DecodedSpectrum[] {
   const spectra: DecodedSpectrum[] = [];
 
   for (let i = 0; i < nSpectra; i++) {
-    // Entry prefix: n_points, has_wavenumbers, label_byte_length
     const nPoints = buffer.getUint32(offset, true);
     offset += 4;
 
@@ -55,7 +55,6 @@ function decodeBinarySpectra(buffer: DataView): DecodedSpectrum[] {
     const labelByteLen = buffer.getUint32(offset, true);
     offset += 4;
 
-    // Label string
     const labelBytes = new Uint8Array(
       buffer.buffer,
       buffer.byteOffset + offset,
@@ -64,7 +63,6 @@ function decodeBinarySpectra(buffer: DataView): DecodedSpectrum[] {
     const label = decoder.decode(labelBytes);
     offset += labelByteLen;
 
-    // Intensities: n_points * float64
     const intensities = new Float64Array(
       buffer.buffer.slice(
         buffer.byteOffset + offset,
@@ -73,7 +71,6 @@ function decodeBinarySpectra(buffer: DataView): DecodedSpectrum[] {
     );
     offset += nPoints * 8;
 
-    // Wavenumbers (optional)
     let wavenumbers: Float64Array | null = null;
     if (hasWavenumbers) {
       wavenumbers = new Float64Array(
@@ -92,55 +89,64 @@ function decodeBinarySpectra(buffer: DataView): DecodedSpectrum[] {
 }
 
 /**
- * Convert decoded spectra into the trace format expected by SpectraView.
- *
- * Each spectrum becomes a trace with x (wavenumbers) and y (intensities)
- * arrays. If wavenumbers are not provided, integer indices are used.
+ * Convert decoded spectra into the Spectrum[] format expected by SpectraView.
  */
-function toSpectraViewData(spectra: DecodedSpectrum[]) {
-  return spectra.map((spec) => ({
-    name: spec.label,
-    x: spec.wavenumbers
-      ? Array.from(spec.wavenumbers)
-      : Array.from({ length: spec.intensities.length }, (_, i) => i),
-    y: Array.from(spec.intensities),
-  }));
+function toSpectraViewSpectra(decoded: DecodedSpectrum[]): Spectrum[] {
+  return decoded.map((spec, i) => {
+    const n = spec.intensities.length;
+    const x =
+      spec.wavenumbers ??
+      Float64Array.from({ length: n }, (_, j) => j);
+
+    return {
+      id: `spectrum-${i}`,
+      label: spec.label || `Spectrum ${i + 1}`,
+      x,
+      y: spec.intensities,
+      xUnit: "cm\u207B\u00B9",
+      yUnit: "Absorbance",
+      type: "IR" as const,
+      visible: true,
+    };
+  });
+}
+
+/** Parse a CSS dimension string to a pixel number. */
+function parseDimension(value: string, fallback: number): number {
+  const num = parseInt(value, 10);
+  return Number.isFinite(num) ? num : fallback;
 }
 
 /**
  * Main widget component rendered inside the anywidget container.
  *
  * Reads synced traitlet values from the Python model and renders
- * a SpectraView chart. The binary spectrum data is decoded and
- * memoized to avoid re-parsing on every render.
+ * a SpectraView chart.
  */
 export function SpectrumWidget() {
   const [spectrumData] = useModelState<DataView>("spectrum_data");
-  const [title] = useModelState<string>("title");
-  const [xLabel] = useModelState<string>("x_label");
-  const [yLabel] = useModelState<string>("y_label");
   const [width] = useModelState<string>("width");
   const [height] = useModelState<string>("height");
   const [xReversed] = useModelState<boolean>("x_reversed");
   const [showGrid] = useModelState<boolean>("show_grid");
-  const [showLegend] = useModelState<boolean>("show_legend");
   const [theme] = useModelState<string>("theme");
 
-  // Decode binary data, memoized on the buffer reference
-  const traces = useMemo(() => {
+  const spectra = useMemo(() => {
     if (!spectrumData || spectrumData.byteLength === 0) {
       return [];
     }
-    const decoded = decodeBinarySpectra(spectrumData);
-    return toSpectraViewData(decoded);
+    return toSpectraViewSpectra(decodeBinarySpectra(spectrumData));
   }, [spectrumData]);
 
-  if (traces.length === 0) {
+  const w = parseDimension(width, 720);
+  const h = parseDimension(height, 400);
+
+  if (spectra.length === 0) {
     return (
       <div
         style={{
-          width,
-          height,
+          width: width || "100%",
+          height: height || "500px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -159,16 +165,16 @@ export function SpectrumWidget() {
   }
 
   return (
-    <div style={{ width, height }}>
+    <div style={{ width: width || "100%", height: height || "500px" }}>
       <SpectraView
-        traces={traces}
-        title={title}
-        xLabel={xLabel}
-        yLabel={yLabel}
-        xReversed={xReversed}
+        spectra={spectra}
+        width={w}
+        height={h}
+        reverseX={xReversed}
         showGrid={showGrid}
-        showLegend={showLegend}
-        theme={theme}
+        showToolbar={true}
+        showCrosshair={true}
+        theme={(theme === "dark" ? "dark" : "light") as "light" | "dark"}
       />
     </div>
   );

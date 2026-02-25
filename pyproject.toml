@@ -119,10 +119,25 @@ exclude = [
     ".gitignore",
     "CITATION.cff",
     "mkdocs.yml",
+    "src/spectrakit/widgets/_frontend/node_modules/",
+    "src/spectrakit/widgets/_frontend/dist/*.map",
 ]
+
+[tool.hatch.build.targets.sdist.force-include]
+"src/spectrakit/widgets/_frontend/dist/index.js" = "src/spectrakit/widgets/_frontend/dist/index.js"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/spectrakit"]
+exclude = [
+    "src/spectrakit/widgets/_frontend/node_modules/",
+    "src/spectrakit/widgets/_frontend/src/",
+    "src/spectrakit/widgets/_frontend/*.json",
+    "src/spectrakit/widgets/_frontend/*.ts",
+    "src/spectrakit/widgets/_frontend/dist/*.map",
+]
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/spectrakit/widgets/_frontend/dist/index.js" = "spectrakit/widgets/_frontend/dist/index.js"
 
 [tool.ruff]
 target-version = "py310"
