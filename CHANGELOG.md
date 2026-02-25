@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.7.2] - 2026-02-25
+
+### Fixed
+- CI: install numpy before `spc-spectra` in `test-optional` job to fix broken build (`spc-spectra` imports numpy during setup.py)
+
 ## [1.7.1] - 2026-02-25
 
 ### Added
