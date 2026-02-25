@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://ktubhyam.github.io/spectrakit/api/peaks/">
+        <link rel="canonical" href="https://ktubhyam.github.io/spectrakit/api/quality/">
       
       
-        <link rel="prev" href="../ops/">
+        <link rel="prev" href="../despike/">
       
       
-        <link rel="next" href="../similarity/">
+        <link rel="next" href="../ops/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Peaks - SpectraKit</title>
+        <title>Quality - SpectraKit</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#peak-analysis" class="md-skip">
+        <a href="#signal-quality" class="md-skip">
           Skip to content
         </a>
       
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Peaks
+              Quality
             
           </span>
         </div>
@@ -1016,10 +1016,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../quality/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1035,6 +1062,48 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#spectrakit.quality.quality_snr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quality_snr
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spectrakit.quality.quality_roughness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quality_roughness
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1072,37 +1141,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Peaks
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../peaks/" class="md-nav__link">
         
   
   
@@ -1118,59 +1160,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#spectrakit.peaks.peaks_find" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        peaks_find
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#spectrakit.peaks.PeakResult" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PeakResult
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#spectrakit.peaks.peaks_integrate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        peaks_integrate
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1606,10 +1595,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#spectrakit.peaks.peaks_find" class="md-nav__link">
+  <a href="#spectrakit.quality.quality_snr" class="md-nav__link">
     <span class="md-ellipsis">
       
-        peaks_find
+        quality_snr
       
     </span>
   </a>
@@ -1617,21 +1606,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#spectrakit.peaks.PeakResult" class="md-nav__link">
+  <a href="#spectrakit.quality.quality_roughness" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PeakResult
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#spectrakit.peaks.peaks_integrate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        peaks_integrate
+        quality_roughness
       
     </span>
   </a>
@@ -1658,31 +1636,38 @@
   
 
 
-<h1 id="peak-analysis">Peak Analysis<a class="headerlink" href="#peak-analysis" title="Permanent link">&para;</a></h1>
+<h1 id="signal-quality">Signal Quality<a class="headerlink" href="#signal-quality" title="Permanent link">&para;</a></h1>
+<p>Metrics for assessing spectral data quality.</p>
 
 
 <div class="doc doc-object doc-function">
 
 
-<h2 id="spectrakit.peaks.peaks_find" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">spectrakit.peaks.peaks_find</span>
+<h2 id="spectrakit.quality.quality_snr" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">spectrakit.quality.quality_snr</span>
 
 
-<a href="#spectrakit.peaks.peaks_find" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">peaks_find</span><span class="p">(</span>
+<a href="#spectrakit.quality.quality_snr" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">quality_snr</span><span class="p">(</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">intensities</span><span class="p">:</span> <span class="n">ndarray</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">wavenumbers</span><span class="p">:</span> <span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">distance</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_DISTANCE</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">prominence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PeakResult</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">signal_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">noise_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 </code></pre></div>
 
     <div class="doc doc-contents first">
 
-        <p>Find peaks in a 1-D spectrum.</p>
-<p>Wraps <code>scipy.signal.find_peaks</code> with spectroscopy-friendly
-defaults and returns a structured result.</p>
+        <p>Estimate the signal-to-noise ratio of spectral data.</p>
+<p>Two modes of operation:</p>
+<ol>
+<li><strong>Explicit regions</strong> — provide both <em>signal_range</em> and <em>noise_range</em>
+   as <code>(start_idx, end_idx)</code> index slices.
+   <code>SNR = mean(signal_region) / std(noise_region)</code>.</li>
+<li><strong>Automatic (2nd derivative)</strong> — omit both ranges.  Noise is
+   estimated from <code>std(diff(intensities, n=2)) / sqrt(6)</code>
+   (white-noise correction).  Signal is peak-to-peak amplitude.</li>
+</ol>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1705,7 +1690,7 @@ defaults and returns a structured result.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Spectral intensities, shape <code>(W,)</code>.</p>
+                <p>Spectral intensities, shape <code>(W,)</code> or <code>(N, W)</code>.</p>
               </div>
             </td>
             <td>
@@ -1714,15 +1699,15 @@ defaults and returns a structured result.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>wavenumbers</code>
+                <code>signal_range</code>
             </td>
             <td>
-                  <code><span title="numpy.ndarray">ndarray</span> | None</code>
+                  <code><span title="tuple">tuple</span>[<span title="int">int</span>, <span title="int">int</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Wavenumber axis, shape <code>(W,)</code>. Used to report
-peak positions in wavenumber units.</p>
+                <p><code>(start_idx, end_idx)</code> index slice for the signal
+region.  Must be provided together with <em>noise_range</em>.</p>
               </div>
             </td>
             <td>
@@ -1731,48 +1716,15 @@ peak positions in wavenumber units.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>height</code>
+                <code>noise_range</code>
             </td>
             <td>
-                  <code><span title="float">float</span> | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Minimum peak height. If <code>None</code>, uses the 10th
-percentile of the spectrum as a threshold.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>distance</code>
-            </td>
-            <td>
-                  <code><span title="int">int</span></code>
+                  <code><span title="tuple">tuple</span>[<span title="int">int</span>, <span title="int">int</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Minimum number of points between peaks.</p>
-              </div>
-            </td>
-            <td>
-                  <code><span title="spectrakit.peaks.find.DEFAULT_DISTANCE">DEFAULT_DISTANCE</span></code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>prominence</code>
-            </td>
-            <td>
-                  <code><span title="float">float</span> | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Minimum peak prominence. If <code>None</code>, no
-prominence filter is applied.</p>
+                <p><code>(start_idx, end_idx)</code> index slice for the noise
+region.  Must be provided together with <em>signal_range</em>.</p>
               </div>
             </td>
             <td>
@@ -1794,16 +1746,21 @@ prominence filter is applied.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title="spectrakit.peaks.PeakResult
-
-
-  
-      dataclass
-   (spectrakit.peaks.find.PeakResult)" href="#spectrakit.peaks.PeakResult">PeakResult</a></code>
+                  <code><span title="float">float</span> | <span title="numpy.ndarray">ndarray</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p><code>PeakResult</code> with indices, heights, and optional wavenumbers.</p>
+                <p>SNR value.  Scalar <code>float</code> for 1-D input, array of shape</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="float">float</span> | <span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>(N,)</code> for a 2-D batch.</p>
               </div>
             </td>
           </tr>
@@ -1826,407 +1783,47 @@ prominence filter is applied.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>If input is not 1-D.</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-            <details class="mkdocstrings-source">
-              <summary>Source code in <code>src/spectrakit/peaks/find.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span>
-<span class="normal"><a href="#__codelineno-0-39">39</a></span>
-<span class="normal"><a href="#__codelineno-0-40">40</a></span>
-<span class="normal"><a href="#__codelineno-0-41">41</a></span>
-<span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span>
-<span class="normal"><a href="#__codelineno-0-44">44</a></span>
-<span class="normal"><a href="#__codelineno-0-45">45</a></span>
-<span class="normal"><a href="#__codelineno-0-46">46</a></span>
-<span class="normal"><a href="#__codelineno-0-47">47</a></span>
-<span class="normal"><a href="#__codelineno-0-48">48</a></span>
-<span class="normal"><a href="#__codelineno-0-49">49</a></span>
-<span class="normal"><a href="#__codelineno-0-50">50</a></span>
-<span class="normal"><a href="#__codelineno-0-51">51</a></span>
-<span class="normal"><a href="#__codelineno-0-52">52</a></span>
-<span class="normal"><a href="#__codelineno-0-53">53</a></span>
-<span class="normal"><a href="#__codelineno-0-54">54</a></span>
-<span class="normal"><a href="#__codelineno-0-55">55</a></span>
-<span class="normal"><a href="#__codelineno-0-56">56</a></span>
-<span class="normal"><a href="#__codelineno-0-57">57</a></span>
-<span class="normal"><a href="#__codelineno-0-58">58</a></span>
-<span class="normal"><a href="#__codelineno-0-59">59</a></span>
-<span class="normal"><a href="#__codelineno-0-60">60</a></span>
-<span class="normal"><a href="#__codelineno-0-61">61</a></span>
-<span class="normal"><a href="#__codelineno-0-62">62</a></span>
-<span class="normal"><a href="#__codelineno-0-63">63</a></span>
-<span class="normal"><a href="#__codelineno-0-64">64</a></span>
-<span class="normal"><a href="#__codelineno-0-65">65</a></span>
-<span class="normal"><a href="#__codelineno-0-66">66</a></span>
-<span class="normal"><a href="#__codelineno-0-67">67</a></span>
-<span class="normal"><a href="#__codelineno-0-68">68</a></span>
-<span class="normal"><a href="#__codelineno-0-69">69</a></span>
-<span class="normal"><a href="#__codelineno-0-70">70</a></span>
-<span class="normal"><a href="#__codelineno-0-71">71</a></span>
-<span class="normal"><a href="#__codelineno-0-72">72</a></span>
-<span class="normal"><a href="#__codelineno-0-73">73</a></span>
-<span class="normal"><a href="#__codelineno-0-74">74</a></span>
-<span class="normal"><a href="#__codelineno-0-75">75</a></span>
-<span class="normal"><a href="#__codelineno-0-76">76</a></span>
-<span class="normal"><a href="#__codelineno-0-77">77</a></span>
-<span class="normal"><a href="#__codelineno-0-78">78</a></span>
-<span class="normal"><a href="#__codelineno-0-79">79</a></span>
-<span class="normal"><a href="#__codelineno-0-80">80</a></span>
-<span class="normal"><a href="#__codelineno-0-81">81</a></span>
-<span class="normal"><a href="#__codelineno-0-82">82</a></span>
-<span class="normal"><a href="#__codelineno-0-83">83</a></span>
-<span class="normal"><a href="#__codelineno-0-84">84</a></span>
-<span class="normal"><a href="#__codelineno-0-85">85</a></span>
-<span class="normal"><a href="#__codelineno-0-86">86</a></span>
-<span class="normal"><a href="#__codelineno-0-87">87</a></span>
-<span class="normal"><a href="#__codelineno-0-88">88</a></span>
-<span class="normal"><a href="#__codelineno-0-89">89</a></span>
-<span class="normal"><a href="#__codelineno-0-90">90</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="k">def</span><span class="w"> </span><span class="nf">peaks_find</span><span class="p">(</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>    <span class="n">intensities</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>    <span class="n">wavenumbers</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a>    <span class="n">height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>    <span class="n">distance</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_DISTANCE</span><span class="p">,</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="n">prominence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PeakResult</span><span class="p">:</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Find peaks in a 1-D spectrum.</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">    Wraps ``scipy.signal.find_peaks`` with spectroscopy-friendly</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">    defaults and returns a structured result.</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="sd">        intensities: Spectral intensities, shape ``(W,)``.</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="sd">        wavenumbers: Wavenumber axis, shape ``(W,)``. Used to report</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="sd">            peak positions in wavenumber units.</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="sd">        height: Minimum peak height. If ``None``, uses the 10th</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">            percentile of the spectrum as a threshold.</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="sd">        distance: Minimum number of points between peaks.</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">        prominence: Minimum peak prominence. If ``None``, no</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="sd">            prominence filter is applied.</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="sd">        ``PeakResult`` with indices, heights, and optional wavenumbers.</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="sd">        SpectrumShapeError: If input is not 1-D.</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a>    <span class="n">intensities</span> <span class="o">=</span> <span class="n">ensure_float64</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="n">validate_1d_or_2d</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a>    <span class="k">if</span> <span class="n">intensities</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>        <span class="k">raise</span> <span class="n">SpectrumShapeError</span><span class="p">(</span><span class="s2">&quot;peaks_find requires a 1-D spectrum. For batches, call per-row.&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a>    <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>        <span class="n">height</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">intensities</span><span class="p">,</span> <span class="n">DEFAULT_HEIGHT_PERCENTILE</span><span class="p">))</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a>    <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="n">height</span><span class="p">,</span> <span class="s2">&quot;distance&quot;</span><span class="p">:</span> <span class="n">distance</span><span class="p">}</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a>    <span class="k">if</span> <span class="n">prominence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a>        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;prominence&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prominence</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a>    <span class="n">indices</span><span class="p">,</span> <span class="n">properties</span> <span class="o">=</span> <span class="n">scipy_find_peaks</span><span class="p">(</span><span class="n">intensities</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a>    <span class="n">peak_wavenumbers</span> <span class="o">=</span> <span class="kc">None</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a>    <span class="k">if</span> <span class="n">wavenumbers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a>        <span class="n">wavenumbers</span> <span class="o">=</span> <span class="n">ensure_float64</span><span class="p">(</span><span class="n">wavenumbers</span><span class="p">)</span>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>        <span class="n">peak_wavenumbers</span> <span class="o">=</span> <span class="n">wavenumbers</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>    <span class="k">return</span> <span class="n">PeakResult</span><span class="p">(</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a>        <span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a>        <span class="n">heights</span><span class="o">=</span><span class="n">intensities</span><span class="p">[</span><span class="n">indices</span><span class="p">],</span>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a>        <span class="n">wavenumbers</span><span class="o">=</span><span class="n">peak_wavenumbers</span><span class="p">,</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a>        <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">,</span>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a>    <span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h2 id="spectrakit.peaks.PeakResult" class="doc doc-heading">
-            <span class="doc doc-object-name doc-class-name">spectrakit.peaks.PeakResult</span>
-
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span>
-
-<a href="#spectrakit.peaks.PeakResult" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-    <div class="doc doc-contents first">
-
-
-
-        <p>Container for peak detection results.</p>
-
-
-<p><span class="doc-section-title">Attributes:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td><code><span title="spectrakit.peaks.PeakResult.indices">indices</span></code></td>
-            <td>
-                  <code><span title="numpy.ndarray">ndarray</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Array of peak indices, shape <code>(P,)</code>.</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><span title="spectrakit.peaks.PeakResult.heights">heights</span></code></td>
-            <td>
-                  <code><span title="numpy.ndarray">ndarray</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Peak heights at the detected positions, shape <code>(P,)</code>.</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><span title="spectrakit.peaks.PeakResult.wavenumbers">wavenumbers</span></code></td>
-            <td>
-                  <code><span title="numpy.ndarray">ndarray</span> | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Peak wavenumber positions if wavenumbers were
-provided, shape <code>(P,)</code>. <code>None</code> otherwise.</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-
-
-
-
-
-
-              <details class="mkdocstrings-source">
-                <summary>Source code in <code>src/spectrakit/peaks/find.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-20">20</a></span>
-<span class="normal"><a href="#__codelineno-0-21">21</a></span>
-<span class="normal"><a href="#__codelineno-0-22">22</a></span>
-<span class="normal"><a href="#__codelineno-0-23">23</a></span>
-<span class="normal"><a href="#__codelineno-0-24">24</a></span>
-<span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
-<span class="normal"><a href="#__codelineno-0-31">31</a></span>
-<span class="normal"><a href="#__codelineno-0-32">32</a></span>
-<span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="nd">@dataclass</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="k">class</span><span class="w"> </span><span class="nc">PeakResult</span><span class="p">:</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Container for peak detection results.</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a>
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">    Attributes:</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="sd">        indices: Array of peak indices, shape ``(P,)``.</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">        heights: Peak heights at the detected positions, shape ``(P,)``.</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">        wavenumbers: Peak wavenumber positions if wavenumbers were</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">            provided, shape ``(P,)``. ``None`` otherwise.</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a>    <span class="n">indices</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>    <span class="n">heights</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="n">wavenumbers</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>    <span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-              </details>
-
-
-
-<div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-<h2 id="spectrakit.peaks.peaks_integrate" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">spectrakit.peaks.peaks_integrate</span>
-
-
-<a href="#spectrakit.peaks.peaks_integrate" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">peaks_integrate</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">intensities</span><span class="p">:</span> <span class="n">ndarray</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">wavenumbers</span><span class="p">:</span> <span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">ranges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">float</span>
-</code></pre></div>
-
-    <div class="doc doc-contents first">
-
-        <p>Integrate peak areas over specified wavenumber ranges.</p>
-<p>If <code>ranges</code> is provided, computes the trapezoidal integral for
-each range. Otherwise, integrates the entire spectrum.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>intensities</code>
-            </td>
-            <td>
-                  <code><span title="numpy.ndarray">ndarray</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Spectral intensities, shape <code>(W,)</code>.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>wavenumbers</code>
-            </td>
-            <td>
-                  <code><span title="numpy.ndarray">ndarray</span> | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Wavenumber axis, shape <code>(W,)</code>. Required when
-<code>ranges</code> is specified.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>ranges</code>
-            </td>
-            <td>
-                  <code><span title="list">list</span>[<span title="tuple">tuple</span>[<span title="float">float</span>, <span title="float">float</span>]] | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>List of <code>(start, end)</code> wavenumber ranges to integrate.
-Each range defines a spectral region. If <code>None</code>, integrates
-the full spectrum.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="numpy.ndarray">ndarray</span> | <span title="float">float</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>If <code>ranges</code> is <code>None</code>, a scalar (total area). If <code>ranges</code></p>
+                <p>If <em>intensities</em> is not 1-D or 2-D.</p>
               </div>
             </td>
           </tr>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="numpy.ndarray">ndarray</span> | <span title="float">float</span></code>
+                  <code><a class="autorefs autorefs-internal" title="spectrakit.exceptions.EmptySpectrumError" href="../exceptions/#spectrakit.exceptions.EmptySpectrumError">EmptySpectrumError</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>is provided, an array of shape <code>(len(ranges),)</code> with the area</p>
+                <p>If <em>intensities</em> has zero elements.</p>
               </div>
             </td>
           </tr>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="numpy.ndarray">ndarray</span> | <span title="float">float</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>for each range.</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-<p><span class="doc-section-title">Raises:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
           <tr class="doc-section-item">
             <td>
                   <code><span title="ValueError">ValueError</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>If <em>ranges</em> is specified but <em>wavenumbers</em> is <code>None</code>.</p>
+                <p>If only one of <em>signal_range</em> / <em>noise_range</em> is given.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If ranges produce empty slices or are out of bounds.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If spectrum has fewer than 3 points in automatic mode.</p>
               </div>
             </td>
           </tr>
@@ -2234,12 +1831,18 @@ the full spectrum.</p>
     </table>
 
 
+<p><span class="doc-section-title">Examples:</span></p>
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">spectrakit</span><span class="w"> </span><span class="kn">import</span> <span class="n">quality_snr</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">clean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">quality_snr</span><span class="p">(</span><span class="n">clean</span><span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="go">32.1...</span>
+</code></pre></div>
+
+
             <details class="mkdocstrings-source">
-              <summary>Source code in <code>src/spectrakit/peaks/integrate.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-15">15</a></span>
-<span class="normal"><a href="#__codelineno-0-16">16</a></span>
-<span class="normal"><a href="#__codelineno-0-17">17</a></span>
-<span class="normal"><a href="#__codelineno-0-18">18</a></span>
+              <summary>Source code in <code>src/spectrakit/quality/snr.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-18">18</a></span>
 <span class="normal"><a href="#__codelineno-0-19">19</a></span>
 <span class="normal"><a href="#__codelineno-0-20">20</a></span>
 <span class="normal"><a href="#__codelineno-0-21">21</a></span>
@@ -2292,63 +1895,327 @@ the full spectrum.</p>
 <span class="normal"><a href="#__codelineno-0-68">68</a></span>
 <span class="normal"><a href="#__codelineno-0-69">69</a></span>
 <span class="normal"><a href="#__codelineno-0-70">70</a></span>
-<span class="normal"><a href="#__codelineno-0-71">71</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="k">def</span><span class="w"> </span><span class="nf">peaks_integrate</span><span class="p">(</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16"></a>    <span class="n">intensities</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17"></a>    <span class="n">wavenumbers</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18"></a>    <span class="n">ranges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">float</span><span class="p">:</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Integrate peak areas over specified wavenumber ranges.</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">    If ``ranges`` is provided, computes the trapezoidal integral for</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">    each range. Otherwise, integrates the entire spectrum.</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a>
-<a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">        intensities: Spectral intensities, shape ``(W,)``.</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">        wavenumbers: Wavenumber axis, shape ``(W,)``. Required when</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">            ``ranges`` is specified.</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">        ranges: List of ``(start, end)`` wavenumber ranges to integrate.</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">            Each range defines a spectral region. If ``None``, integrates</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">            the full spectrum.</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">        If ``ranges`` is ``None``, a scalar (total area). If ``ranges``</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">        is provided, an array of shape ``(len(ranges),)`` with the area</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">        for each range.</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">        ValueError: If *ranges* is specified but *wavenumbers* is ``None``.</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>    <span class="n">intensities</span> <span class="o">=</span> <span class="n">ensure_float64</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="n">validate_1d_or_2d</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>    <span class="k">if</span> <span class="n">intensities</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a>        <span class="k">raise</span> <span class="n">SpectrumShapeError</span><span class="p">(</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>            <span class="sa">f</span><span class="s2">&quot;peaks_integrate requires 1-D input, got shape </span><span class="si">{</span><span class="n">intensities</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">. &quot;</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a>            <span class="s2">&quot;Apply row-by-row for 2-D batches.&quot;</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>        <span class="p">)</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="n">warn_if_not_finite</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a>    <span class="k">if</span> <span class="n">ranges</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">trapezoid</span><span class="p">(</span><span class="n">intensities</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">wavenumbers</span><span class="p">))</span>
+<span class="normal"><a href="#__codelineno-0-71">71</a></span>
+<span class="normal"><a href="#__codelineno-0-72">72</a></span>
+<span class="normal"><a href="#__codelineno-0-73">73</a></span>
+<span class="normal"><a href="#__codelineno-0-74">74</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="k">def</span><span class="w"> </span><span class="nf">quality_snr</span><span class="p">(</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>    <span class="n">intensities</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a>    <span class="n">signal_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>    <span class="n">noise_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate the signal-to-noise ratio of spectral data.</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">    Two modes of operation:</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">    1. **Explicit regions** — provide both *signal_range* and *noise_range*</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">       as ``(start_idx, end_idx)`` index slices.</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">       ``SNR = mean(signal_region) / std(noise_region)``.</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">    2. **Automatic (2nd derivative)** — omit both ranges.  Noise is</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">       estimated from ``std(diff(intensities, n=2)) / sqrt(6)``</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">       (white-noise correction).  Signal is peak-to-peak amplitude.</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">        intensities: Spectral intensities, shape ``(W,)`` or ``(N, W)``.</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">        signal_range: ``(start_idx, end_idx)`` index slice for the signal</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">            region.  Must be provided together with *noise_range*.</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">        noise_range: ``(start_idx, end_idx)`` index slice for the noise</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">            region.  Must be provided together with *signal_range*.</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">        SNR value.  Scalar ``float`` for 1-D input, array of shape</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">        ``(N,)`` for a 2-D batch.</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">        SpectrumShapeError: If *intensities* is not 1-D or 2-D.</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">        EmptySpectrumError: If *intensities* has zero elements.</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">        ValueError: If only one of *signal_range* / *noise_range* is given.</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="sd">        ValueError: If ranges produce empty slices or are out of bounds.</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="sd">        ValueError: If spectrum has fewer than 3 points in automatic mode.</span>
 <a id="__codelineno-0-52" name="__codelineno-0-52"></a>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a>    <span class="k">if</span> <span class="n">wavenumbers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;wavenumbers are required when ranges is specified&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>    <span class="n">wavenumbers</span> <span class="o">=</span> <span class="n">ensure_float64</span><span class="p">(</span><span class="n">wavenumbers</span><span class="p">)</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="n">areas</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="sd">        &gt;&gt;&gt; from spectrakit import quality_snr</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">        &gt;&gt;&gt; clean = np.sin(np.linspace(0, 2 * np.pi, 200))</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="sd">        &gt;&gt;&gt; quality_snr(clean)  # doctest: +SKIP</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="sd">        32.1...</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>    <span class="n">intensities</span> <span class="o">=</span> <span class="n">ensure_float64</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>    <span class="n">validate_1d_or_2d</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>    <span class="n">warn_if_not_finite</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>    <span class="n">has_signal</span> <span class="o">=</span> <span class="n">signal_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>    <span class="n">has_noise</span> <span class="o">=</span> <span class="n">noise_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="k">if</span> <span class="n">has_signal</span> <span class="o">!=</span> <span class="n">has_noise</span><span class="p">:</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;signal_range and noise_range must both be provided or both omitted&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="k">if</span> <span class="n">has_signal</span> <span class="ow">and</span> <span class="n">has_noise</span><span class="p">:</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>        <span class="k">assert</span> <span class="n">signal_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># for type narrowing</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>        <span class="k">assert</span> <span class="n">noise_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>        <span class="k">return</span> <span class="n">_snr_explicit</span><span class="p">(</span><span class="n">intensities</span><span class="p">,</span> <span class="n">signal_range</span><span class="p">,</span> <span class="n">noise_range</span><span class="p">)</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a>    <span class="k">return</span> <span class="n">_snr_auto</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="spectrakit.quality.quality_roughness" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">spectrakit.quality.quality_roughness</span>
+
+
+<a href="#spectrakit.quality.quality_roughness" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">quality_roughness</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">intensities</span><span class="p">:</span> <span class="n">ndarray</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_ORDER</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+</code></pre></div>
+
+    <div class="doc doc-contents first">
+
+        <p>Compute spectral roughness as the RMS of finite differences.</p>
+<p>Lower values indicate smoother spectra; higher values indicate
+noisier or spikier data.  Useful for comparing preprocessing
+outcomes or flagging low-quality acquisitions.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>intensities</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Spectral intensities, shape <code>(W,)</code> or <code>(N, W)</code>.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>order</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Finite difference order (1 = first difference, 2 = second,
+etc.).  Default is 1.</p>
+              </div>
+            </td>
+            <td>
+                  <code><span title="spectrakit.quality.roughness.DEFAULT_ORDER">DEFAULT_ORDER</span></code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="float">float</span> | <span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Roughness value.  Scalar <code>float</code> for 1-D input, array of shape</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="float">float</span> | <span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>(N,)</code> for a 2-D batch.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="spectrakit.exceptions.SpectrumShapeError" href="../exceptions/#spectrakit.exceptions.SpectrumShapeError">SpectrumShapeError</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <em>intensities</em> is not 1-D or 2-D.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="spectrakit.exceptions.EmptySpectrumError" href="../exceptions/#spectrakit.exceptions.EmptySpectrumError">EmptySpectrumError</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <em>intensities</em> has zero elements.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <em>order</em> &lt; 1 or <em>order</em> &gt;= spectrum length.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Examples:</span></p>
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">spectrakit</span><span class="w"> </span><span class="kn">import</span> <span class="n">quality_roughness</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">smooth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">quality_roughness</span><span class="p">(</span><span class="n">smooth</span><span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="go">0.044...</span>
+</code></pre></div>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/spectrakit/quality/roughness.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#__codelineno-0-33">33</a></span>
+<span class="normal"><a href="#__codelineno-0-34">34</a></span>
+<span class="normal"><a href="#__codelineno-0-35">35</a></span>
+<span class="normal"><a href="#__codelineno-0-36">36</a></span>
+<span class="normal"><a href="#__codelineno-0-37">37</a></span>
+<span class="normal"><a href="#__codelineno-0-38">38</a></span>
+<span class="normal"><a href="#__codelineno-0-39">39</a></span>
+<span class="normal"><a href="#__codelineno-0-40">40</a></span>
+<span class="normal"><a href="#__codelineno-0-41">41</a></span>
+<span class="normal"><a href="#__codelineno-0-42">42</a></span>
+<span class="normal"><a href="#__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#__codelineno-0-46">46</a></span>
+<span class="normal"><a href="#__codelineno-0-47">47</a></span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span>
+<span class="normal"><a href="#__codelineno-0-49">49</a></span>
+<span class="normal"><a href="#__codelineno-0-50">50</a></span>
+<span class="normal"><a href="#__codelineno-0-51">51</a></span>
+<span class="normal"><a href="#__codelineno-0-52">52</a></span>
+<span class="normal"><a href="#__codelineno-0-53">53</a></span>
+<span class="normal"><a href="#__codelineno-0-54">54</a></span>
+<span class="normal"><a href="#__codelineno-0-55">55</a></span>
+<span class="normal"><a href="#__codelineno-0-56">56</a></span>
+<span class="normal"><a href="#__codelineno-0-57">57</a></span>
+<span class="normal"><a href="#__codelineno-0-58">58</a></span>
+<span class="normal"><a href="#__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span>
+<span class="normal"><a href="#__codelineno-0-61">61</a></span>
+<span class="normal"><a href="#__codelineno-0-62">62</a></span>
+<span class="normal"><a href="#__codelineno-0-63">63</a></span>
+<span class="normal"><a href="#__codelineno-0-64">64</a></span>
+<span class="normal"><a href="#__codelineno-0-65">65</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="k">def</span><span class="w"> </span><span class="nf">quality_roughness</span><span class="p">(</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a>    <span class="n">intensities</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>    <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_ORDER</span><span class="p">,</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute spectral roughness as the RMS of finite differences.</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">    Lower values indicate smoother spectra; higher values indicate</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">    noisier or spikier data.  Useful for comparing preprocessing</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="sd">    outcomes or flagging low-quality acquisitions.</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">        intensities: Spectral intensities, shape ``(W,)`` or ``(N, W)``.</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">        order: Finite difference order (1 = first difference, 2 = second,</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">            etc.).  Default is 1.</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">        Roughness value.  Scalar ``float`` for 1-D input, array of shape</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">        ``(N,)`` for a 2-D batch.</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">        SpectrumShapeError: If *intensities* is not 1-D or 2-D.</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">        EmptySpectrumError: If *intensities* has zero elements.</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">        ValueError: If *order* &lt; 1 or *order* &gt;= spectrum length.</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">        &gt;&gt;&gt; from spectrakit import quality_roughness</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">        &gt;&gt;&gt; smooth = np.sin(np.linspace(0, 2 * np.pi, 100))</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">        &gt;&gt;&gt; quality_roughness(smooth)  # doctest: +SKIP</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">        0.044...</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="n">intensities</span> <span class="o">=</span> <span class="n">ensure_float64</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="n">validate_1d_or_2d</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a>    <span class="n">warn_if_not_finite</span><span class="p">(</span><span class="n">intensities</span><span class="p">)</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a>    <span class="k">if</span> <span class="n">order</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;order must be &gt;= 1, got </span><span class="si">{</span><span class="n">order</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>    <span class="n">width</span> <span class="o">=</span> <span class="n">intensities</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>    <span class="k">if</span> <span class="n">order</span> <span class="o">&gt;=</span> <span class="n">width</span><span class="p">:</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;order (</span><span class="si">{</span><span class="n">order</span><span class="si">}</span><span class="s2">) must be less than spectrum length (</span><span class="si">{</span><span class="n">width</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 <a id="__codelineno-0-58" name="__codelineno-0-58"></a>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">ranges</span><span class="p">:</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a>        <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a>        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">wavenumbers</span> <span class="o">&gt;=</span> <span class="n">low</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">wavenumbers</span> <span class="o">&lt;=</span> <span class="n">high</span><span class="p">)</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="k">if</span> <span class="n">intensities</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>        <span class="n">diffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">intensities</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">diffs</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
 <a id="__codelineno-0-62" name="__codelineno-0-62"></a>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a>            <span class="n">areas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a>            <span class="k">continue</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>        <span class="n">region_wn</span> <span class="o">=</span> <span class="n">wavenumbers</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a>        <span class="n">region_y</span> <span class="o">=</span> <span class="n">intensities</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>        <span class="n">areas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">trapezoid</span><span class="p">(</span><span class="n">region_y</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">region_wn</span><span class="p">)))</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">areas</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>    <span class="c1"># 2-D: vectorized along axis=1</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>    <span class="n">diffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">intensities</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">diffs</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># type: ignore[return-value]</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
