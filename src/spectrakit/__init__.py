@@ -51,6 +51,9 @@ from spectrakit.similarity import (
 from spectrakit.smooth import smooth_savgol, smooth_whittaker
 from spectrakit.spectrum import Spectrum
 
+# Transform
+from spectrakit.transform import transform_atr_correction, transform_kubelka_munk
+
 __all__ = [
     "__version__",
     # Exceptions
@@ -85,5 +88,7 @@ __all__ = [
     "derivative_gap_segment",
     "scatter_msc",
     "scatter_emsc",
+    "transform_kubelka_munk",
+    "transform_atr_correction",
     "Pipeline",
 ]
