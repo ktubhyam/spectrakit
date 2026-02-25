@@ -329,7 +329,7 @@ def read_opus(path: str | Path) -> Spectrum:
         entries = _parse_directory(raw)
     except FileFormatError:
         raise
-    except Exception as exc:
+    except (struct.error, IndexError, TypeError, ValueError) as exc:
         raise FileFormatError(f"Failed to parse OPUS directory: {exc}") from exc
 
     # ── Locate data and parameter blocks ────────────────────────────
@@ -393,7 +393,7 @@ def read_opus(path: str | Path) -> Spectrum:
     _, param_len, param_off = param_block
     try:
         params = _parse_parameter_block(raw, param_off, param_len)
-    except Exception as exc:
+    except (struct.error, IndexError, UnicodeDecodeError, ValueError) as exc:
         raise FileFormatError(f"Failed to parse OPUS parameter block: {exc}") from exc
 
     n_points = params.get("NPT")
@@ -413,7 +413,7 @@ def read_opus(path: str | Path) -> Spectrum:
         intensities = _read_float32_block(raw, data_off, n_points)
     except FileFormatError:
         raise
-    except Exception as exc:
+    except (struct.error, ValueError, TypeError, IndexError) as exc:
         raise FileFormatError(f"Failed to read OPUS data block: {exc}") from exc
 
     # ── Build wavenumber axis ───────────────────────────────────────
