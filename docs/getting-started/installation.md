@@ -5,8 +5,11 @@
 SpectraKit requires Python 3.10+ and depends only on NumPy and SciPy:
 
 ```bash
-pip install spectrakit
+pip install pyspectrakit
 ```
+
+> **Note:** The PyPI distribution name is `pyspectrakit` (due to a naming conflict).
+> The import name is simply `import spectrakit`.
 
 ## Optional Dependencies
 
@@ -14,25 +17,25 @@ SpectraKit uses optional extras for features that require additional packages:
 
 ```bash
 # File format support (h5py for HDF5)
-pip install spectrakit[io]
+pip install pyspectrakit[io]
 
 # Command-line interface
-pip install spectrakit[cli]
+pip install pyspectrakit[cli]
 
 # pybaselines backend (200+ baseline methods)
-pip install spectrakit[baselines]
+pip install pyspectrakit[baselines]
 
 # lmfit backend (peak fitting)
-pip install spectrakit[fitting]
+pip install pyspectrakit[fitting]
 
 # scikit-learn transformer bridge
-pip install spectrakit[sklearn]
+pip install pyspectrakit[sklearn]
 
 # Plotting utilities
-pip install spectrakit[plot]
+pip install pyspectrakit[plot]
 
 # Everything
-pip install spectrakit[all]
+pip install pyspectrakit[all]
 ```
 
 ## Development Install

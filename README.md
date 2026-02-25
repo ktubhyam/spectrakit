@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/ktubhyam/spectrakit/actions/workflows/ci.yml/badge.svg)](https://github.com/ktubhyam/spectrakit/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/ktubhyam/spectrakit/branch/main/graph/badge.svg)](https://codecov.io/gh/ktubhyam/spectrakit)
-[![PyPI](https://img.shields.io/pypi/v/spectrakit.svg)](https://pypi.org/project/spectrakit/)
+[![PyPI](https://img.shields.io/pypi/v/pyspectrakit.svg)](https://pypi.org/project/pyspectrakit/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Typed](https://img.shields.io/badge/typing-strict-blue.svg)](https://peps.python.org/pep-0561/)
@@ -22,19 +22,22 @@ dependencies.
 ## Installation
 
 ```bash
-pip install spectrakit
+pip install pyspectrakit
 ```
+
+> **Note:** The PyPI distribution name is `pyspectrakit` (due to a naming conflict).
+> The import name is simply `import spectrakit`.
 
 Optional extras for additional functionality:
 
 ```bash
-pip install spectrakit[io]         # HDF5 file support
-pip install spectrakit[cli]        # Command-line interface
-pip install spectrakit[baselines]  # pybaselines backend (200+ methods)
-pip install spectrakit[fitting]    # lmfit peak fitting
-pip install spectrakit[sklearn]    # scikit-learn integration
-pip install spectrakit[plot]       # Plotting utilities
-pip install spectrakit[all]        # Everything above
+pip install pyspectrakit[io]         # HDF5 file support
+pip install pyspectrakit[cli]        # Command-line interface
+pip install pyspectrakit[baselines]  # pybaselines backend (200+ methods)
+pip install pyspectrakit[fitting]    # lmfit peak fitting
+pip install pyspectrakit[sklearn]    # scikit-learn integration
+pip install pyspectrakit[plot]       # Plotting utilities
+pip install pyspectrakit[all]        # Everything above
 ```
 
 ## Quick Start
@@ -186,7 +189,7 @@ predictions = pipe.predict(X_test)
 from spectrakit.plot import plot_spectrum, plot_comparison, plot_baseline
 ```
 
-Requires `pip install spectrakit[plot]`.
+Requires `pip install pyspectrakit[plot]`.
 
 ## Spectrum Container
 
@@ -205,7 +208,7 @@ spec = Spectrum(
 ## CLI
 
 ```bash
-pip install spectrakit[cli]
+pip install pyspectrakit[cli]
 
 spectrakit info ethanol.dx
 spectrakit convert ethanol.dx ethanol.h5
