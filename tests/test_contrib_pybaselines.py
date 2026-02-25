@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import sys
+from unittest.mock import patch
+
 import numpy as np
 import pytest
 
@@ -33,6 +36,14 @@ class TestPybaselinesDependencyError:
     @pytest.mark.skipif(_has_pybaselines(), reason="pybaselines IS installed")
     def test_get_pybaselines_raises(self) -> None:
         with pytest.raises(DependencyError, match="pybaselines"):
+            _get_pybaselines()
+
+    def test_get_pybaselines_raises_mocked(self) -> None:
+        """_get_pybaselines raises DependencyError (mock missing import)."""
+        with (
+            patch.dict(sys.modules, {"pybaselines": None, "pybaselines.Baseline": None}),
+            pytest.raises(DependencyError, match="pybaselines"),
+        ):
             _get_pybaselines()
 
 

@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import struct
+import sys
 from pathlib import Path
+from unittest.mock import patch
 
 import numpy as np
 import pytest
@@ -280,6 +282,22 @@ class TestReadHDF5:
 
         spec = Spectrum(intensities=np.array([1.0, 2.0, 3.0]))
         with pytest.raises(DependencyError, match="h5py"):
+            write_hdf5(spec, "/fake/output.h5")
+
+    def test_read_hdf5_without_h5py_mocked(self) -> None:
+        """read_hdf5 raises DependencyError (mock missing import)."""
+        from spectrakit.io.hdf5 import read_hdf5
+
+        with patch.dict(sys.modules, {"h5py": None}), pytest.raises(DependencyError, match="h5py"):
+            read_hdf5("/fake/file.h5")
+
+    def test_write_hdf5_without_h5py_mocked(self) -> None:
+        """write_hdf5 raises DependencyError (mock missing import)."""
+        from spectrakit.io.hdf5 import write_hdf5
+        from spectrakit.spectrum import Spectrum
+
+        spec = Spectrum(intensities=np.array([1.0, 2.0, 3.0]))
+        with patch.dict(sys.modules, {"h5py": None}), pytest.raises(DependencyError, match="h5py"):
             write_hdf5(spec, "/fake/output.h5")
 
     @pytest.mark.skipif(not _has_h5py(), reason="h5py not installed")
@@ -720,3 +738,425 @@ class TestReadOPUS:
 
         with pytest.raises(FileFormatError, match="NPT"):
             read_opus(opus_path)
+
+    def test_npt_zero_raises(self, tmp_path: Path) -> None:
+        """NPT = 0 raises FileFormatError."""
+        from spectrakit.io.opus import read_opus
+
+        param_content = _build_opus_param_entry("NPT", 0)
+        param_content += _build_opus_param_entry("FXV", 400.0)
+        param_content += _build_opus_param_entry("LXV", 4000.0)
+
+        data_content = np.ones(10, dtype=np.float32).tobytes()
+
+        header_size = 24
+        data_offset = header_size + 36
+        param_offset = data_offset + len(data_content)
+
+        header = struct.pack("<IIIIII", 0x0A0A, 0, header_size, 0, 10, 2)
+        dir_data = struct.pack("<III", 0x0F, len(data_content), data_offset)
+        dir_params = struct.pack("<III", 0x1F, len(param_content), param_offset)
+        dir_sentinel = struct.pack("<III", 0, 0, 0)
+
+        raw = header + dir_data + dir_params + dir_sentinel + data_content + param_content
+        opus_path = tmp_path / "npt_zero.0"
+        opus_path.write_bytes(raw)
+
+        with pytest.raises(FileFormatError, match="Invalid NPT"):
+            read_opus(opus_path)
+
+    def test_os_error_reading_file(self, tmp_path: Path) -> None:
+        """Unreadable file raises FileFormatError."""
+        from spectrakit.io.opus import read_opus
+
+        opus_path = tmp_path / "unreadable.0"
+        opus_path.write_bytes(b"\x00" * 100)
+        opus_path.chmod(0o000)
+
+        try:
+            with pytest.raises((FileFormatError, PermissionError)):
+                read_opus(opus_path)
+        finally:
+            opus_path.chmod(0o644)
+
+    def test_fallback_data_block_type(self, tmp_path: Path) -> None:
+        """Falls back to single-channel sample block when AB not present."""
+        from spectrakit.io.opus import read_opus
+
+        n_points = 15
+        param_content = _build_opus_param_entry("NPT", n_points)
+        param_content += _build_opus_param_entry("FXV", 400.0)
+        param_content += _build_opus_param_entry("LXV", 4000.0)
+        data_content = np.ones(n_points, dtype=np.float32).tobytes()
+
+        header_size = 24
+        data_offset = header_size + 36
+        param_offset = data_offset + len(data_content)
+
+        header = struct.pack("<IIIIII", 0x0A0A, 0, header_size, 0, 10, 2)
+        # Use SC_SAMPLE (0x07) instead of AB (0x0F) and SC_STATUS (0x17) param
+        dir_data = struct.pack("<III", 0x07, len(data_content), data_offset)
+        dir_params = struct.pack("<III", 0x17, len(param_content), param_offset)
+        dir_sentinel = struct.pack("<III", 0, 0, 0)
+
+        raw = header + dir_data + dir_params + dir_sentinel + data_content + param_content
+        opus_path = tmp_path / "sc_sample.0"
+        opus_path.write_bytes(raw)
+
+        spec = read_opus(opus_path)
+        assert spec.n_points == n_points
+
+    def test_unpaired_data_and_param_blocks(self, tmp_path: Path) -> None:
+        """Data block with non-matching param block type still parses."""
+        from spectrakit.io.opus import read_opus
+
+        n_points = 10
+        param_content = _build_opus_param_entry("NPT", n_points)
+        param_content += _build_opus_param_entry("FXV", 500.0)
+        param_content += _build_opus_param_entry("LXV", 3000.0)
+        data_content = np.ones(n_points, dtype=np.float32).tobytes()
+
+        header_size = 24
+        data_offset = header_size + 36
+        param_offset = data_offset + len(data_content)
+
+        header = struct.pack("<IIIIII", 0x0A0A, 0, header_size, 0, 10, 2)
+        # AB data (0x0F) but RF_STATUS params (0x1B) - mismatched pair
+        # Falls through the zip loop, then picks them up separately
+        dir_data = struct.pack("<III", 0x0F, len(data_content), data_offset)
+        dir_params = struct.pack("<III", 0x1B, len(param_content), param_offset)
+        dir_sentinel = struct.pack("<III", 0, 0, 0)
+
+        raw = header + dir_data + dir_params + dir_sentinel + data_content + param_content
+        opus_path = tmp_path / "unpaired.0"
+        opus_path.write_bytes(raw)
+
+        spec = read_opus(opus_path)
+        assert spec.n_points == n_points
+
+    def test_dir_offset_from_header_pointer(self, tmp_path: Path) -> None:
+        """Directory pointer at offset 8 is used when it points to valid data."""
+        from spectrakit.io.opus import read_opus
+
+        n_points = 10
+        param_content = _build_opus_param_entry("NPT", n_points)
+        param_content += _build_opus_param_entry("FXV", 400.0)
+        param_content += _build_opus_param_entry("LXV", 4000.0)
+        data_content = np.ones(n_points, dtype=np.float32).tobytes()
+
+        # Put directory at offset 24 as usual but also set offset 8 to point there
+        header_size = 24
+        dir_size = 36
+        data_offset = header_size + dir_size
+        param_offset = data_offset + len(data_content)
+
+        # offset 8 points to 24 (same as default)
+        header = struct.pack("<IIIIII", 0x0A0A, 0, 24, 0, 10, 2)
+        dir_data = struct.pack("<III", 0x0F, len(data_content), data_offset)
+        dir_params = struct.pack("<III", 0x1F, len(param_content), param_offset)
+        dir_sentinel = struct.pack("<III", 0, 0, 0)
+
+        raw = header + dir_data + dir_params + dir_sentinel + data_content + param_content
+        opus_path = tmp_path / "dir_ptr.0"
+        opus_path.write_bytes(raw)
+
+        spec = read_opus(opus_path)
+        assert spec.n_points == n_points
+
+    def test_metadata_block_with_instrument_params(self, tmp_path: Path) -> None:
+        """Instrument/sample parameter blocks are collected as metadata."""
+        from spectrakit.io.opus import read_opus
+
+        n_points = 10
+        # Main param block with NPT, FXV, LXV
+        param_content = _build_opus_param_entry("NPT", n_points)
+        param_content += _build_opus_param_entry("FXV", 400.0)
+        param_content += _build_opus_param_entry("LXV", 4000.0)
+
+        # Instrument metadata block (type 0x20)
+        inst_content = _build_opus_param_entry("INS", "Vertex70")
+        inst_content += _build_opus_param_entry("RES", 4.0)
+
+        data_content = np.ones(n_points, dtype=np.float32).tobytes()
+
+        header_size = 24
+        dir_size = 4 * 12  # 3 entries + sentinel
+        data_offset = header_size + dir_size
+        param_offset = data_offset + len(data_content)
+        inst_offset = param_offset + len(param_content)
+
+        header = struct.pack("<IIIIII", 0x0A0A, 0, header_size, 0, 10, 3)
+        dir_data = struct.pack("<III", 0x0F, len(data_content), data_offset)
+        dir_params = struct.pack("<III", 0x1F, len(param_content), param_offset)
+        dir_inst = struct.pack("<III", 0x20, len(inst_content), inst_offset)
+        dir_sentinel = struct.pack("<III", 0, 0, 0)
+
+        raw = (
+            header
+            + dir_data
+            + dir_params
+            + dir_inst
+            + dir_sentinel
+            + data_content
+            + param_content
+            + inst_content
+        )
+        opus_path = tmp_path / "with_instrument.0"
+        opus_path.write_bytes(raw)
+
+        spec = read_opus(opus_path)
+        assert spec.metadata.get("INS") == "Vertex70"
+
+    def test_large_num_entries_triggers_scan(self, tmp_path: Path) -> None:
+        """num_entries > 200 falls back to scanning mode."""
+        from spectrakit.io.opus import read_opus
+
+        n_points = 10
+        param_content = _build_opus_param_entry("NPT", n_points)
+        param_content += _build_opus_param_entry("FXV", 400.0)
+        param_content += _build_opus_param_entry("LXV", 4000.0)
+        data_content = np.ones(n_points, dtype=np.float32).tobytes()
+
+        header_size = 24
+        data_offset = header_size + 36
+        param_offset = data_offset + len(data_content)
+
+        # Set num_entries to 999 (> 200 threshold) to trigger scan mode
+        header = struct.pack("<IIIIII", 0x0A0A, 0, header_size, 0, 10, 999)
+        dir_data = struct.pack("<III", 0x0F, len(data_content), data_offset)
+        dir_params = struct.pack("<III", 0x1F, len(param_content), param_offset)
+        dir_sentinel = struct.pack("<III", 0, 0, 0)
+
+        raw = header + dir_data + dir_params + dir_sentinel + data_content + param_content
+        opus_path = tmp_path / "scan_mode.0"
+        opus_path.write_bytes(raw)
+
+        spec = read_opus(opus_path)
+        assert spec.n_points == n_points  # noqa: E501
+
+
+# ── OPUS internal function tests ───────────────────────────────────
+
+
+class TestOpusParseDirectory:
+    """Direct tests for _parse_directory internals."""
+
+    def test_too_small_raises(self) -> None:
+        from spectrakit.io.opus import _parse_directory
+
+        with pytest.raises(FileFormatError, match="too small"):
+            _parse_directory(b"\x00" * 10)
+
+    def test_no_valid_entries_raises(self) -> None:
+        from spectrakit.io.opus import _parse_directory
+
+        # Valid header but all-zero directory entries
+        header = struct.pack("<IIIIII", 0x0A0A, 0, 24, 0, 10, 1)
+        sentinel = struct.pack("<III", 0, 0, 0)
+        with pytest.raises(FileFormatError, match="No valid directory"):
+            _parse_directory(header + sentinel)
+
+    def test_truncated_dir_entry_stops_gracefully(self) -> None:
+        from spectrakit.io.opus import _parse_directory
+
+        # Header says 2 entries but only room for 1 + partial
+        header = struct.pack("<IIIIII", 0x0A0A, 0, 24, 0, 10, 2)
+        entry = struct.pack("<III", 0x0F, 100, 60)  # valid entry pointing within file
+        # Add enough bytes to make offset 60 valid
+        padding = b"\x00" * 60
+        raw = header + entry + padding
+        entries = _parse_directory(raw)
+        assert len(entries) >= 1
+
+    def test_short_file_struct_error_fallback(self) -> None:
+        """File exactly at minimum size triggers struct.error fallback in header parsing."""
+        from spectrakit.io.opus import _parse_directory
+
+        # 24 bytes: enough to pass size check, but struct fields at offset 8, 16, 20
+        # need valid data. Put a valid entry at offset 24 is impossible (no room).
+        # This tests the fallback paths.
+        raw = b"\x0a\x0a\x00\x00" + b"\x00" * 4 + b"\x00" * 4 + b"\x00" * 12
+        with pytest.raises(FileFormatError, match="No valid directory"):
+            _parse_directory(raw)
+
+    def test_dir_entry_scanning_stops_at_end(self) -> None:
+        """Directory scanning stops when offset + 12 exceeds raw length."""
+        from spectrakit.io.opus import _parse_directory
+
+        # Header with num_entries=0 (triggers scan mode), dir at offset 24
+        header = struct.pack("<IIIIII", 0x0A0A, 0, 24, 0, 10, 0)
+        # One valid entry, then NOT enough room for another
+        entry = struct.pack("<III", 0x0F, 100, 36)
+        # Add just enough data so offset 36 is valid (within file)
+        padding = b"\x00" * 16
+        raw = header + entry + padding
+        entries = _parse_directory(raw)
+        assert len(entries) >= 1
+
+    def test_out_of_bounds_offset_skipped(self) -> None:
+        from spectrakit.io.opus import _parse_directory
+
+        header = struct.pack("<IIIIII", 0x0A0A, 0, 24, 0, 10, 2)
+        # Entry with offset beyond file size — should be skipped
+        bad_entry = struct.pack("<III", 0x0F, 100, 999999)
+        # A valid entry
+        good_entry = struct.pack("<III", 0x1F, 50, 60)
+        sentinel = struct.pack("<III", 0, 0, 0)
+        padding = b"\x00" * 60
+        raw = header + bad_entry + good_entry + sentinel + padding
+        entries = _parse_directory(raw)
+        # Only the good entry should survive
+        assert len(entries) == 1
+        assert entries[0][0] == 0x1F
+
+
+class TestOpusParseParameterBlock:
+    """Direct tests for _parse_parameter_block internals."""
+
+    def test_int_parameter(self) -> None:
+        from spectrakit.io.opus import _parse_parameter_block
+
+        entry = _build_opus_param_entry("NPT", 42)
+        params = _parse_parameter_block(entry, 0, len(entry))
+        assert params["NPT"] == 42
+
+    def test_double_parameter(self) -> None:
+        from spectrakit.io.opus import _parse_parameter_block
+
+        entry = _build_opus_param_entry("FXV", 400.0)
+        params = _parse_parameter_block(entry, 0, len(entry))
+        assert abs(params["FXV"] - 400.0) < 1e-6
+
+    def test_string_parameter(self) -> None:
+        from spectrakit.io.opus import _parse_parameter_block
+
+        entry = _build_opus_param_entry("INS", "TestInstr")
+        params = _parse_parameter_block(entry, 0, len(entry))
+        assert params["INS"] == "TestInstr"
+
+    def test_invalid_tag_skipped(self) -> None:
+        from spectrakit.io.opus import _parse_parameter_block
+
+        # Build a block starting with non-alpha bytes (invalid tag)
+        bad_block = b"\x00\x00\x00\x00" * 4
+        good_entry = _build_opus_param_entry("NPT", 10)
+        block = bad_block + good_entry
+        params = _parse_parameter_block(block, 0, len(block))
+        assert params.get("NPT") == 10
+
+    def test_truncated_value_stops(self) -> None:
+        from spectrakit.io.opus import _parse_parameter_block
+
+        # A tag header claiming a value_size larger than remaining bytes
+        tag = b"NPT\x00"
+        # type_code=0 (int), value_size=9999 (way larger than available)
+        header = struct.pack("<HH", 0, 9999)
+        block = tag + header
+        # Should stop gracefully without error
+        params = _parse_parameter_block(block, 0, len(block))
+        assert "NPT" not in params
+
+    def test_empty_block(self) -> None:
+        from spectrakit.io.opus import _parse_parameter_block
+
+        params = _parse_parameter_block(b"", 0, 0)
+        assert params == {}
+
+    def test_float32_parameter(self) -> None:
+        """Float param with value_size=4 should be read as float32."""
+        from spectrakit.io.opus import _parse_parameter_block
+
+        tag = b"TST\x00"
+        # type_code=1 (float), value_size=4 (float32, not double)
+        header = struct.pack("<HH", 1, 4)
+        value = struct.pack("<f", 3.14)
+        entry = tag + header + value
+        params = _parse_parameter_block(entry, 0, len(entry))
+        assert abs(params["TST"] - 3.14) < 0.01
+
+    def test_enum_parameter(self) -> None:
+        """Enum type (code=3) with value_size >= 4 should be read as int."""
+        from spectrakit.io.opus import _parse_parameter_block
+
+        tag = b"ENM\x00"
+        # type_code=3 (enum), value_size=4
+        header = struct.pack("<HH", 3, 4)
+        value = struct.pack("<i", 7)
+        entry = tag + header + value
+        params = _parse_parameter_block(entry, 0, len(entry))
+        assert params["ENM"] == 7
+
+    def test_alignment_padding(self) -> None:
+        """Entries with non-4-byte-aligned sizes get properly padded."""
+        from spectrakit.io.opus import _parse_parameter_block
+
+        # First entry: string with odd size (5 bytes + null, padded to 8)
+        entry1 = _build_opus_param_entry("INS", "Hello")
+        # Second entry: int
+        entry2 = _build_opus_param_entry("NPT", 42)
+        block = entry1 + entry2
+        params = _parse_parameter_block(block, 0, len(block))
+        assert params.get("INS") == "Hello"
+        assert params.get("NPT") == 42
+
+    def test_struct_error_in_type_code(self) -> None:
+        """Truncated type_code header triggers struct.error break."""
+        from spectrakit.io.opus import _parse_parameter_block
+
+        # Valid 3-char tag + pad, but then only 1 byte instead of 4 (type_code + value_size)
+        block = b"NPT\x00\x00"
+        params = _parse_parameter_block(block, 0, len(block))
+        assert params == {}
+
+
+class TestOpusReadFloat32Block:
+    """Direct tests for _read_float32_block."""
+
+    def test_reads_correct_values(self) -> None:
+        from spectrakit.io.opus import _read_float32_block
+
+        expected = np.array([1.0, 2.0, 3.0], dtype=np.float32)
+        raw = expected.tobytes()
+        result = _read_float32_block(raw, 0, 3)
+        np.testing.assert_allclose(result, expected.astype(np.float64))
+
+    def test_insufficient_bytes_raises(self) -> None:
+        from spectrakit.io.opus import _read_float32_block
+
+        with pytest.raises(FileFormatError, match="float32"):
+            _read_float32_block(b"\x00" * 4, 0, 10)
+
+    def test_offset_respected(self) -> None:
+        from spectrakit.io.opus import _read_float32_block
+
+        prefix = b"\xff" * 8
+        data = np.array([5.0, 6.0], dtype=np.float32).tobytes()
+        raw = prefix + data
+        result = _read_float32_block(raw, 8, 2)
+        np.testing.assert_allclose(result, [5.0, 6.0])
+
+
+# ── JCAMP edge cases ──────────────────────────────────────────────
+
+
+class TestReadJCAMPEdgeCases:
+    def test_blank_lines_skipped(self, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+        """Blank lines in a JCAMP file are silently skipped."""
+        content = (
+            "##TITLE=Blank Lines Test\n"
+            "\n"
+            "##XYDATA=(X++(Y..Y))\n"
+            "\n"
+            "400.0 0.1 0.2\n"
+            "\n"
+            "600.0 0.3 0.4\n"
+            "\n"
+            "##END=\n"
+        )
+        jdx_path = tmp_path / "blanks.dx"
+        jdx_path.write_text(content)
+
+        from spectrakit.io.jcamp import read_jcamp
+
+        spec = read_jcamp(jdx_path)
+        assert spec.n_points == 4

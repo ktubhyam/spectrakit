@@ -91,3 +91,30 @@ class TestSpectralTransformer:
 
         assert base_est is BaseEstimator
         assert transformer_mixin is TransformerMixin
+
+    def test_check_sklearn_missing_raises(self) -> None:
+        """_check_sklearn raises DependencyError when sklearn is not importable."""
+        import sys
+        from unittest.mock import patch
+
+        from spectrakit.exceptions import DependencyError
+        from spectrakit.sklearn.transformers import _check_sklearn
+
+        with (
+            patch.dict(sys.modules, {"sklearn": None, "sklearn.base": None}),
+            pytest.raises(DependencyError, match="scikit-learn"),
+        ):
+            _check_sklearn()
+
+    def test_set_params_returns_self(self) -> None:
+        """set_params should return self for chaining."""
+        transformer = SpectralTransformer(normalize_snv)
+        result = transformer.set_params(func=smooth_savgol)
+        assert result is transformer
+
+    def test_get_params_deep_false(self) -> None:
+        """get_params(deep=False) returns the same as deep=True for this class."""
+        transformer = SpectralTransformer(smooth_savgol, window_length=7)
+        params = transformer.get_params(deep=False)
+        assert params["func"] is smooth_savgol
+        assert params["window_length"] == 7

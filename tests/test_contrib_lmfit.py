@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import sys
+from unittest.mock import patch
+
 import numpy as np
 import pytest
 
@@ -29,6 +32,14 @@ class TestFitPeaksDependencyError:
     @pytest.mark.skipif(_has_lmfit(), reason="lmfit IS installed")
     def test_get_lmfit_raises(self) -> None:
         with pytest.raises(DependencyError, match="lmfit"):
+            _get_lmfit()
+
+    def test_get_lmfit_raises_mocked(self) -> None:
+        """_get_lmfit raises DependencyError even when lmfit IS installed (mock)."""
+        with (
+            patch.dict(sys.modules, {"lmfit": None}),
+            pytest.raises(DependencyError, match="lmfit"),
+        ):
             _get_lmfit()
 
 
@@ -108,3 +119,8 @@ class TestFitPeaks:
     def test_unknown_model_raises(self) -> None:
         with pytest.raises(ValueError, match="Unknown model"):
             fit_peaks(np.ones(100), np.arange(100), [50.0], model="invalid")
+
+    def test_empty_peak_positions_raises(self) -> None:
+        """Empty peak_positions list raises ValueError."""
+        with pytest.raises(ValueError, match="At least one peak"):
+            fit_peaks(np.ones(100), np.arange(100), peak_positions=[])

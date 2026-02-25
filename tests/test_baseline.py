@@ -86,3 +86,39 @@ class TestBaselineRubberband:
         bl = baseline_rubberband(y)
         assert bl.shape == (100,)
         np.testing.assert_allclose(bl, 5.0, atol=0.1)
+
+    def test_batch_2d(self) -> None:
+        """2D batch path for rubberband."""
+        rng = np.random.default_rng(42)
+        batch = rng.random((3, 100)) + 0.5
+        bl = baseline_rubberband(batch)
+        assert bl.shape == batch.shape
+
+    def test_peak_with_linear_baseline(self) -> None:
+        """Gaussian peak on linear baseline — exercises lower hull vertex selection."""
+        n = 200
+        x = np.linspace(0, 10, n)
+        baseline_true = 0.5 * x  # linear ramp
+        peak = 3.0 * np.exp(-0.5 * ((x - 5) / 0.5) ** 2)
+        y = baseline_true + peak
+        bl = baseline_rubberband(y)
+        assert bl.shape == (n,)
+        # Rubberband should approximate the true baseline (below the peak)
+        np.testing.assert_allclose(bl, baseline_true, atol=0.5)
+
+    def test_monotonic_increasing(self) -> None:
+        """Monotonically increasing spectrum — endpoints always in hull."""
+        y = np.linspace(0, 10, 100)
+        bl = baseline_rubberband(y)
+        assert bl.shape == (100,)
+        # Baseline should be approximately the line itself
+        np.testing.assert_allclose(bl, y, atol=0.5)
+
+    def test_short_spectrum(self) -> None:
+        """Very short spectrum (3 points) exercises endpoint logic."""
+        y = np.array([1.0, 5.0, 2.0])
+        bl = baseline_rubberband(y)
+        assert bl.shape == (3,)
+        # Endpoints should be in the hull
+        assert bl[0] <= y[0] + 0.01
+        assert bl[2] <= y[2] + 0.01

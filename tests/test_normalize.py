@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from spectrakit.normalize import normalize_area, normalize_minmax, normalize_snv, normalize_vector
 
@@ -93,3 +94,40 @@ class TestNormalizeVector:
         zero = np.zeros(50)
         result = normalize_vector(zero)
         np.testing.assert_array_equal(result, zero)
+
+    def test_zero_vector_2d_warns(self) -> None:
+        """2D batch with zero-norm rows warns."""
+        batch = np.zeros((3, 50))
+        batch[1] = np.arange(50, dtype=np.float64)  # one valid row
+        with pytest.warns(UserWarning, match="near-zero norm"):
+            result = normalize_vector(batch)
+        assert result.shape == batch.shape
+        # Valid row should be unit-normed
+        assert abs(np.linalg.norm(result[1]) - 1.0) < 1e-10
+
+
+class TestNormalize2DDegenerate:
+    """Test 2D batch degenerate paths that emit warnings."""
+
+    def test_snv_2d_constant_rows_warn(self) -> None:
+        """2D batch with constant rows emits warning."""
+        batch = np.ones((3, 50))
+        with pytest.warns(UserWarning, match="near-zero std"):
+            result = normalize_snv(batch)
+        assert result.shape == batch.shape
+        # All rows should be zero-centered (all zeros)
+        np.testing.assert_allclose(result, 0.0, atol=1e-10)
+
+    def test_minmax_2d_constant_rows_warn(self) -> None:
+        """2D batch with constant rows emits warning."""
+        batch = np.ones((3, 50)) * 5.0
+        with pytest.warns(UserWarning, match="near-zero range"):
+            result = normalize_minmax(batch)
+        assert result.shape == batch.shape
+
+    def test_area_2d_near_zero_warns(self) -> None:
+        """2D batch with near-zero area rows emits warning."""
+        batch = np.full((3, 50), 1e-20)
+        with pytest.warns(UserWarning, match="near-zero area"):
+            result = normalize_area(batch)
+        assert result.shape == batch.shape

@@ -2,8 +2,13 @@
 
 from __future__ import annotations
 
+import sys
+from unittest.mock import patch
+
 import numpy as np
 import pytest
+
+from spectrakit.exceptions import DependencyError
 
 matplotlib = pytest.importorskip("matplotlib", reason="matplotlib not installed")
 
@@ -129,3 +134,16 @@ class TestPlotBaseline:
         bl = np.ones(100) * 0.5
         ax = plot_baseline(y, bl, title="Baseline Fit")
         assert ax.get_title() == "Baseline Fit"
+
+
+class TestGetMatplotlibMissing:
+    """Test that _get_matplotlib raises DependencyError when mocked."""
+
+    def test_raises_when_missing(self) -> None:
+        from spectrakit.plot import _get_matplotlib
+
+        with (
+            patch.dict(sys.modules, {"matplotlib": None, "matplotlib.pyplot": None}),
+            pytest.raises(DependencyError, match="matplotlib"),
+        ):
+            _get_matplotlib()
