@@ -410,14 +410,25 @@ class TestSpectralAlign:
         with pytest.raises(ValueError, match="max_shift must be >= 0"):
             spectral_align(np.ones(10), np.ones(10), max_shift=-1)
 
-    def test_fill_value(self) -> None:
+    def test_fill_value_right_shift(self) -> None:
+        """Fill value applied when spectrum shifts left (right edge exposed)."""
         ref = np.zeros(50)
         ref[25] = 1.0
         data = np.zeros(50)
-        data[30] = 1.0
-        aligned, _ = spectral_align(data, ref, fill_value=0.0)
-        # Edges should be filled with the specified value
-        assert aligned.shape == (50,)
+        data[30] = 1.0  # shifted right → align shifts left → right edge exposed
+        aligned, shift = spectral_align(data, ref, fill_value=-999.0)
+        assert shift < 0  # shifted left
+        assert aligned[-1] == -999.0  # right edge filled
+
+    def test_fill_value_left_shift(self) -> None:
+        """Fill value applied when spectrum shifts right (left edge exposed)."""
+        ref = np.zeros(50)
+        ref[25] = 1.0
+        data = np.zeros(50)
+        data[20] = 1.0  # shifted left → align shifts right → left edge exposed
+        aligned, shift = spectral_align(data, ref, fill_value=-999.0)
+        assert shift > 0  # shifted right
+        assert aligned[0] == -999.0  # left edge filled
 
     def test_2d_reference_raises(self) -> None:
         with pytest.raises(ValueError, match="reference must be 1-D"):
