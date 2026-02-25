@@ -1,0 +1,99 @@
+"""Extended Multiplicative Signal Correction (EMSC).
+
+Reference:
+    Martens, H.; Stark, E. (1991). Extended multiplicative signal
+    correction and spectral interference subtraction: new preprocessing
+    methods for near infrared spectroscopy. Journal of Pharmaceutical
+    and Biomedical Analysis, 9(8), 625-635.
+"""
+
+from __future__ import annotations
+
+import logging
+
+import numpy as np
+
+from spectrakit._validate import ensure_float64, validate_1d_or_2d
+
+logger = logging.getLogger(__name__)
+
+DEFAULT_POLY_ORDER = 2
+
+
+def scatter_emsc(
+    intensities: np.ndarray,
+    reference: np.ndarray | None = None,
+    poly_order: int = DEFAULT_POLY_ORDER,
+) -> np.ndarray:
+    """Apply Extended Multiplicative Signal Correction.
+
+    Extends MSC by also modeling polynomial baseline variations.
+    Fits each spectrum as a linear combination of the reference
+    spectrum plus polynomial terms, then corrects by removing the
+    polynomial and scatter contributions.
+
+    Args:
+        intensities: Spectral intensities, shape ``(N, W)`` for a batch
+            or ``(W,)`` for a single spectrum (requires ``reference``).
+        reference: Reference spectrum, shape ``(W,)``. If ``None``,
+            uses the mean of the batch.
+        poly_order: Maximum polynomial order for baseline modeling.
+            Set to 0 to disable polynomial correction (equivalent to MSC).
+
+    Returns:
+        EMSC-corrected intensities, same shape as input.
+
+    Raises:
+        SpectrumShapeError: If input is not 1-D or 2-D.
+        ValueError: If a single spectrum is provided without a reference.
+    """
+    intensities = ensure_float64(intensities)
+    validate_1d_or_2d(intensities)
+
+    if intensities.ndim == 1:
+        if reference is None:
+            raise ValueError(
+                "reference is required for single-spectrum EMSC. "
+                "Pass a batch (N, W) array or provide a reference spectrum."
+            )
+        reference = ensure_float64(reference)
+        return _emsc_single(intensities, reference, poly_order)
+
+    if reference is None:
+        reference = np.mean(intensities, axis=0)
+    else:
+        reference = ensure_float64(reference)
+
+    return np.array([_emsc_single(row, reference, poly_order) for row in intensities])
+
+
+def _emsc_single(
+    spectrum: np.ndarray,
+    reference: np.ndarray,
+    poly_order: int,
+) -> np.ndarray:
+    """EMSC correction for a single spectrum."""
+    n = len(spectrum)
+    x = np.linspace(-1, 1, n)
+
+    # Build design matrix: [reference, 1, x, x^2, ..., x^poly_order]
+    design = [reference]
+    for p in range(poly_order + 1):
+        design.append(x**p)
+
+    design_matrix = np.column_stack(design)
+
+    # Least squares fit
+    coeffs, _, _, _ = np.linalg.lstsq(design_matrix, spectrum, rcond=None)
+
+    # Extract multiplicative factor (coefficient of reference)
+    b = coeffs[0]
+
+    if abs(b) < 1e-10:
+        # Can't correct, return spectrum minus polynomial baseline
+        baseline = design_matrix[:, 1:] @ coeffs[1:]
+        return spectrum - baseline
+
+    # Corrected = (spectrum - intercept - polynomial) / b
+    polynomial_and_intercept = design_matrix[:, 1:] @ coeffs[1:]
+    return (spectrum - polynomial_and_intercept) / b

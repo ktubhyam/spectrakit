@@ -36,6 +36,9 @@ from spectrakit.normalize import normalize_area, normalize_minmax, normalize_snv
 # Pipeline
 from spectrakit.pipeline import Pipeline
 
+# Scatter correction
+from spectrakit.scatter import scatter_emsc, scatter_msc
+
 # Similarity
 from spectrakit.similarity import (
     similarity_cosine,
@@ -80,5 +83,7 @@ __all__ = [
     "smooth_whittaker",
     "derivative_savgol",
     "derivative_gap_segment",
+    "scatter_msc",
+    "scatter_emsc",
     "Pipeline",
 ]
