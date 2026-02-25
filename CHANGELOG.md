@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.9.1] - 2026-02-26
+
+### Fixed
+- Fix `np.trapezoid` compatibility for NumPy <2.0 (use `getattr` fallback to `np.trapz`)
+- Bump spectraview widget frontend dep from `^0.1.0` to `^1.8.0`
+
+
 ## [1.9.0] - 2026-02-26
 
 ### Added
