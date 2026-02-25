@@ -46,6 +46,12 @@ class TestSpectralTransformer:
         transformer.set_params(window_length=11)
         assert transformer.kwargs["window_length"] == 11
 
+    def test_set_params_func_replacement(self) -> None:
+        """set_params can replace the wrapped function."""
+        transformer = SpectralTransformer(smooth_savgol, window_length=5)
+        transformer.set_params(func=normalize_snv)
+        assert transformer.func is normalize_snv
+
     def test_repr(self) -> None:
         transformer = SpectralTransformer(normalize_snv)
         assert "normalize_snv" in repr(transformer)
@@ -75,3 +81,13 @@ class TestSpectralTransformer:
         # Manual application should match
         expected = normalize_snv(smooth_savgol(X, window_length=11))
         np.testing.assert_array_equal(result, expected)
+
+    def test_check_sklearn_function(self) -> None:
+        """_check_sklearn returns base classes when sklearn is available."""
+        from spectrakit.sklearn.transformers import _check_sklearn
+
+        base_est, transformer_mixin = _check_sklearn()
+        from sklearn.base import BaseEstimator, TransformerMixin
+
+        assert base_est is BaseEstimator
+        assert transformer_mixin is TransformerMixin
