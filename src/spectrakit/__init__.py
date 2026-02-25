@@ -15,6 +15,9 @@ from spectrakit.baseline import (
     baseline_snip,
 )
 
+# Derivative
+from spectrakit.derivative import derivative_gap_segment, derivative_savgol
+
 # Exceptions
 from spectrakit.exceptions import (
     DependencyError,
@@ -75,5 +78,7 @@ __all__ = [
     "similarity_euclidean",
     "smooth_savgol",
     "smooth_whittaker",
+    "derivative_savgol",
+    "derivative_gap_segment",
     "Pipeline",
 ]
