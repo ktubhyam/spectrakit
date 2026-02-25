@@ -67,6 +67,13 @@ class TestPeaksFind:
         with pytest.raises(ValueError, match="1-D"):
             peaks_find(np.ones((5, 100)))
 
+    def test_default_height_percentile(self) -> None:
+        """When height is not specified, uses 10th percentile."""
+        x = np.linspace(0, 100, 500)
+        y = np.exp(-((x - 50) ** 2) / 10) + 0.01  # slight offset
+        result = peaks_find(y)  # no explicit height
+        assert len(result.indices) >= 1
+
 
 class TestPeaksIntegrate:
     """Verify peak area integration."""
@@ -75,7 +82,7 @@ class TestPeaksIntegrate:
         """Integrate a uniform spectrum."""
         y = np.ones(100)
         area = peaks_integrate(y)
-        # Unit spacing, 100 points → area ≈ 99 (trapezoidal rule)
+        # Unit spacing, 100 points -> area ~= 99 (trapezoidal rule)
         assert isinstance(area, float)
         assert abs(area - 99.0) < 0.01
 

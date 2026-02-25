@@ -5,13 +5,57 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from spectrakit.contrib._lmfit import SUPPORTED_MODELS, fit_peaks
+from spectrakit.contrib._lmfit import SUPPORTED_MODELS, FitResult, _get_lmfit, fit_peaks
+from spectrakit.exceptions import DependencyError
 
-lmfit = pytest.importorskip("lmfit", reason="lmfit not installed")
+
+def _has_lmfit() -> bool:
+    try:
+        import lmfit  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
+class TestFitPeaksDependencyError:
+    """Tests that run when lmfit is NOT installed."""
+
+    @pytest.mark.skipif(_has_lmfit(), reason="lmfit IS installed")
+    def test_fit_peaks_without_lmfit(self) -> None:
+        with pytest.raises(DependencyError, match="lmfit"):
+            fit_peaks(np.ones(100), np.arange(100), [50.0])
+
+    @pytest.mark.skipif(_has_lmfit(), reason="lmfit IS installed")
+    def test_get_lmfit_raises(self) -> None:
+        with pytest.raises(DependencyError, match="lmfit"):
+            _get_lmfit()
+
+
+class TestFitPeaksMetadata:
+    """Tests that run regardless of lmfit availability."""
+
+    def test_supported_models_dict(self) -> None:
+        assert "gaussian" in SUPPORTED_MODELS
+        assert "lorentzian" in SUPPORTED_MODELS
+        assert "voigt" in SUPPORTED_MODELS
+
+    def test_fit_result_dataclass(self) -> None:
+        result = FitResult(
+            best_fit=np.array([1.0]),
+            components=[np.array([1.0])],
+            parameters=[{"center": 50.0}],
+            residual=np.array([0.0]),
+            success=True,
+        )
+        assert result.success
+        assert result.info == {}
 
 
 class TestFitPeaks:
-    """Verify lmfit peak fitting backend."""
+    """Verify lmfit peak fitting backend (skipped if lmfit not installed)."""
+
+    lmfit = pytest.importorskip("lmfit", reason="lmfit not installed")  # type: ignore[assignment]
 
     def _make_gaussian(self, x: np.ndarray, center: float, amp: float, sigma: float) -> np.ndarray:
         return amp * np.exp(-((x - center) ** 2) / (2 * sigma**2))
@@ -64,8 +108,3 @@ class TestFitPeaks:
     def test_unknown_model_raises(self) -> None:
         with pytest.raises(ValueError, match="Unknown model"):
             fit_peaks(np.ones(100), np.arange(100), [50.0], model="invalid")
-
-    def test_supported_models_dict(self) -> None:
-        assert "gaussian" in SUPPORTED_MODELS
-        assert "lorentzian" in SUPPORTED_MODELS
-        assert "voigt" in SUPPORTED_MODELS

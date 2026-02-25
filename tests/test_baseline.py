@@ -43,11 +43,31 @@ class TestBaselineSNIP:
         bl = baseline_snip(synthetic_spectrum)
         assert np.all(bl >= -1e-6)
 
+    def test_batch_2d(self) -> None:
+        """2D batch path for SNIP."""
+        rng = np.random.default_rng(42)
+        batch = rng.random((3, 100)) + 0.5
+        bl = baseline_snip(batch)
+        assert bl.shape == batch.shape
+
+    def test_increasing_window(self, synthetic_spectrum: np.ndarray) -> None:
+        """decreasing=False uses increasing window range."""
+        bl = baseline_snip(synthetic_spectrum, decreasing=False)
+        assert bl.shape == synthetic_spectrum.shape
+
 
 class TestBaselinePolynomial:
     def test_output_shape(self, synthetic_spectrum: np.ndarray) -> None:
         bl = baseline_polynomial(synthetic_spectrum)
         assert bl.shape == synthetic_spectrum.shape
+
+    def test_low_degree_converges(self) -> None:
+        """Low-degree polynomial on smooth data should converge quickly."""
+        x = np.linspace(0, 1, 200)
+        y = 0.5 * x**2 + 0.1 * x  # quadratic baseline only
+        bl = baseline_polynomial(y, degree=2, tol=0.01)
+        # Baseline should approximate the signal itself
+        np.testing.assert_allclose(bl, y, atol=0.1)
 
 
 class TestBaselineRubberband:
@@ -59,3 +79,10 @@ class TestBaselineRubberband:
         bl = baseline_rubberband(synthetic_spectrum)
         residual = synthetic_spectrum - bl
         assert np.mean(residual) >= -0.1
+
+    def test_flat_spectrum(self) -> None:
+        """Flat spectrum should have a flat baseline."""
+        y = np.ones(100) * 5.0
+        bl = baseline_rubberband(y)
+        assert bl.shape == (100,)
+        np.testing.assert_allclose(bl, 5.0, atol=0.1)

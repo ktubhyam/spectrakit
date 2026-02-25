@@ -30,6 +30,12 @@ class TestSimilarityCosine:
         assert abs(result[0] - 1.0) < 1e-10
         assert abs(result[1]) < 1e-10
 
+    def test_zero_vectors(self) -> None:
+        """Zero vectors should return 0.0 similarity."""
+        a = np.zeros(5)
+        b = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+        assert similarity_cosine(a, b) == 0.0
+
 
 class TestSimilarityPearson:
     def test_perfect_correlation(self) -> None:

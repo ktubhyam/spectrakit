@@ -105,6 +105,33 @@ class TestReadCSV:
         spec = read_csv(csv_path, orientation="rows", x_column=-1)
         assert spec.wavenumbers is None
 
+    def test_read_csv_no_xaxis_specific_y_column(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
+        """x_column=-1 with specific y_column reads that column."""
+        rng = np.random.default_rng(42)
+        data = np.column_stack([rng.random(40), rng.random(40), rng.random(40)])
+        csv_path = tmp_path / "no_x.csv"
+        np.savetxt(csv_path, data, delimiter=",")
+
+        from spectrakit.io.csv import read_csv
+
+        spec = read_csv(csv_path, x_column=-1, y_column=1)
+        assert spec.wavenumbers is None
+        assert spec.intensities.ndim == 1
+        assert spec.n_points == 40
+
+    def test_read_csv_no_xaxis_no_ycolumn(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
+        """x_column=-1 with y_column=-1 returns entire data matrix."""
+        rng = np.random.default_rng(42)
+        data = rng.random((20, 5))
+        csv_path = tmp_path / "matrix.csv"
+        np.savetxt(csv_path, data, delimiter=",")
+
+        from spectrakit.io.csv import read_csv
+
+        spec = read_csv(csv_path, x_column=-1, y_column=-1)
+        assert spec.wavenumbers is None
+        assert spec.intensities.shape == (20, 5)
+
 
 # ── JCAMP ────────────────────────────────────────────────────────────
 

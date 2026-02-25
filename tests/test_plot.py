@@ -87,6 +87,12 @@ class TestPlotComparison:
         assert "Raw" in texts
         assert "Smoothed" in texts
 
+    def test_with_title(self) -> None:
+        original = np.random.default_rng(42).random(100)
+        processed = original * 0.8
+        ax = plot_comparison(original, processed, title="Before/After")
+        assert ax.get_title() == "Before/After"
+
 
 class TestPlotBaseline:
     """Verify plot_baseline function."""
@@ -117,3 +123,9 @@ class TestPlotBaseline:
         bl = np.ones(100) * 0.5
         ax = plot_baseline(y, bl, x)
         assert ax is not None
+
+    def test_with_title(self) -> None:
+        y = np.random.default_rng(42).random(100)
+        bl = np.ones(100) * 0.5
+        ax = plot_baseline(y, bl, title="Baseline Fit")
+        assert ax.get_title() == "Baseline Fit"

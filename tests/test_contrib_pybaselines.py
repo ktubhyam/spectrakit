@@ -5,13 +5,51 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from spectrakit.contrib._pybaselines import list_pybaselines_methods, pybaselines_method
+from spectrakit.contrib._pybaselines import (
+    _get_pybaselines,
+    list_pybaselines_methods,
+    pybaselines_method,
+)
+from spectrakit.exceptions import DependencyError
 
-pybaselines = pytest.importorskip("pybaselines", reason="pybaselines not installed")
+
+def _has_pybaselines() -> bool:
+    try:
+        import pybaselines  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
+class TestPybaselinesDependencyError:
+    """Tests that run when pybaselines is NOT installed."""
+
+    @pytest.mark.skipif(_has_pybaselines(), reason="pybaselines IS installed")
+    def test_pybaselines_method_without_pybaselines(self) -> None:
+        with pytest.raises(DependencyError, match="pybaselines"):
+            pybaselines_method(np.ones(100), method="asls")
+
+    @pytest.mark.skipif(_has_pybaselines(), reason="pybaselines IS installed")
+    def test_get_pybaselines_raises(self) -> None:
+        with pytest.raises(DependencyError, match="pybaselines"):
+            _get_pybaselines()
+
+
+class TestPybaselinesMetadata:
+    """Tests that run regardless of pybaselines availability."""
+
+    def test_list_methods(self) -> None:
+        methods = list_pybaselines_methods()
+        assert isinstance(methods, dict)
+        assert "whittaker" in methods
+        assert "asls" in methods["whittaker"]
 
 
 class TestPybaselinesBackend:
-    """Verify pybaselines contrib backend."""
+    """Verify pybaselines contrib backend (skipped if not installed)."""
+
+    pybaselines = pytest.importorskip("pybaselines", reason="pybaselines not installed")  # type: ignore[assignment]
 
     def test_asls_1d(self) -> None:
         rng = np.random.default_rng(42)
@@ -40,9 +78,3 @@ class TestPybaselinesBackend:
     def test_unknown_method_raises(self) -> None:
         with pytest.raises(ValueError, match="Unknown pybaselines method"):
             pybaselines_method(np.ones(100), method="nonexistent_method")
-
-    def test_list_methods(self) -> None:
-        methods = list_pybaselines_methods()
-        assert isinstance(methods, dict)
-        assert "whittaker" in methods
-        assert "asls" in methods["whittaker"]

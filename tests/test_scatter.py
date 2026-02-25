@@ -120,3 +120,11 @@ class TestScatterEMSC:
     def test_3d_raises(self) -> None:
         with pytest.raises(SpectrumShapeError):
             scatter_emsc(np.ones((2, 3, 4)))
+
+    def test_batch_with_explicit_reference(self) -> None:
+        """Batch EMSC with an explicit reference spectrum."""
+        rng = np.random.default_rng(42)
+        batch = rng.random((5, 80))
+        ref = rng.random(80)
+        result = scatter_emsc(batch, reference=ref, poly_order=1)
+        assert result.shape == (5, 80)

@@ -49,3 +49,12 @@ class TestSpectrum:
             metadata={"instrument": "Bruker", "resolution": 4},
         )
         assert s.metadata["instrument"] == "Bruker"
+
+    def test_wavenumbers_auto_convert_list(self) -> None:
+        """Wavenumbers passed as a list are auto-converted to ndarray."""
+        s = Spectrum(
+            intensities=np.array([1.0, 2.0, 3.0]),
+            wavenumbers=[100.0, 200.0, 300.0],
+        )
+        assert isinstance(s.wavenumbers, np.ndarray)
+        np.testing.assert_array_equal(s.wavenumbers, [100.0, 200.0, 300.0])
