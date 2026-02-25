@@ -180,7 +180,9 @@ def apply_along_spectra(
     """Apply a 1-D processing function row-by-row over a 2-D array.
 
     If *intensities* is 1-D, ``fn`` is called directly.  If 2-D (N, W),
-    ``fn`` is called once per row and results are stacked.
+    ``fn`` is called once per row with a pre-allocated output array for
+    efficiency (avoids the overhead of building a Python list and
+    converting via ``np.array``).
 
     This eliminates the duplicated ``if ndim == 2: for row in …`` pattern
     found in baseline and other modules.
@@ -195,4 +197,11 @@ def apply_along_spectra(
     """
     if intensities.ndim == 1:
         return fn(intensities, **kwargs)
-    return np.array([fn(row, **kwargs) for row in intensities])
+
+    n_spectra = intensities.shape[0]
+    first = fn(intensities[0], **kwargs)
+    out = np.empty((n_spectra, *first.shape), dtype=first.dtype)
+    out[0] = first
+    for i in range(1, n_spectra):
+        out[i] = fn(intensities[i], **kwargs)
+    return out

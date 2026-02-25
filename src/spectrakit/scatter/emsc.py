@@ -29,8 +29,11 @@ def scatter_emsc(
 
     Extends MSC by also modeling polynomial baseline variations.
     Fits each spectrum as a linear combination of the reference
-    spectrum plus polynomial terms, then corrects by removing the
-    polynomial and scatter contributions.
+    spectrum plus orthogonal polynomial (Legendre) terms, then
+    corrects by removing the polynomial and scatter contributions.
+
+    Uses Legendre polynomials instead of monomials for improved
+    numerical conditioning of the design matrix.
 
     Args:
         intensities: Spectral intensities, shape ``(N, W)`` for a batch
@@ -46,8 +49,12 @@ def scatter_emsc(
     Raises:
         SpectrumShapeError: If input is not 1-D or 2-D.
         EmptySpectrumError: If input has zero elements.
-        ValueError: If a single spectrum is provided without a reference.
+        ValueError: If a single spectrum is provided without a reference,
+            or if ``poly_order`` is negative.
     """
+    if poly_order < 0:
+        raise ValueError(f"poly_order must be non-negative, got {poly_order}")
+
     intensities = ensure_float64(intensities)
     validate_1d_or_2d(intensities)
     warn_if_not_finite(intensities)
@@ -74,16 +81,19 @@ def _emsc_single(
     reference: np.ndarray,
     poly_order: int,
 ) -> np.ndarray:
-    """EMSC correction for a single spectrum."""
+    """EMSC correction for a single spectrum.
+
+    Uses Legendre polynomials for the baseline basis, which are
+    orthogonal on [-1, 1] and provide much better numerical
+    conditioning than monomial powers (1, x, x^2, ...).
+    """
     n = len(spectrum)
     x = np.linspace(-1, 1, n)
 
-    # Build design matrix: [reference, 1, x, x^2, ..., x^poly_order]
-    design = [reference]
-    for p in range(poly_order + 1):
-        design.append(x**p)
-
-    design_matrix = np.column_stack(design)
+    # Build design matrix: [reference, P0(x), P1(x), ..., P_poly_order(x)]
+    # where P_k are Legendre polynomials (orthogonal on [-1, 1]).
+    poly_basis = np.polynomial.legendre.legvander(x, poly_order)
+    design_matrix = np.column_stack([reference, poly_basis])
 
     # Least squares fit
     coeffs, _, _, _ = np.linalg.lstsq(design_matrix, spectrum, rcond=None)
@@ -96,6 +106,6 @@ def _emsc_single(
         baseline = design_matrix[:, 1:] @ coeffs[1:]
         return spectrum - baseline  # type: ignore[no-any-return]
 
-    # Corrected = (spectrum - intercept - polynomial) / b
+    # Corrected = (spectrum - polynomial_baseline) / b
     polynomial_and_intercept = design_matrix[:, 1:] @ coeffs[1:]
     return (spectrum - polynomial_and_intercept) / b  # type: ignore[no-any-return]

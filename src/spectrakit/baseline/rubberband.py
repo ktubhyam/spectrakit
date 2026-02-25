@@ -42,7 +42,11 @@ def baseline_rubberband(intensities: np.ndarray) -> np.ndarray:
 
 
 def _baseline_rubberband_1d(intensities: np.ndarray) -> np.ndarray:
-    """Rubberband baseline for a single 1-D spectrum."""
+    """Rubberband baseline for a single 1-D spectrum.
+
+    Uses convex hull facet normals to identify lower hull vertices
+    rather than a median heuristic, which can fail for skewed spectra.
+    """
     n = len(intensities)
     x = np.arange(n)
 
@@ -58,23 +62,25 @@ def _baseline_rubberband_1d(intensities: np.ndarray) -> np.ndarray:
 
     hull = ConvexHull(points_ext)
 
-    hull_vertices = set(hull.vertices)
-    lower_vertices = sorted(
-        i
-        for i in hull_vertices
-        if i < n and (i == 0 or i == n - 1 or intensities[i] <= np.median(intensities))
-    )
+    # Identify lower hull vertices via facet normals.
+    # A facet whose outward normal has a negative y-component belongs
+    # to the lower envelope of the convex hull.
+    lower_vertices: set[int] = set()
+    for i, eq in enumerate(hull.equations):
+        if eq[1] < 0:  # y-component of outward normal is negative
+            for vi in hull.simplices[i]:
+                if vi < n:  # belongs to the original spectrum
+                    lower_vertices.add(vi)
 
-    if 0 not in lower_vertices:  # pragma: no cover — endpoints always in hull
-        lower_vertices = [0, *lower_vertices]
-    if n - 1 not in lower_vertices:  # pragma: no cover — endpoints always in hull
-        lower_vertices = [*lower_vertices, n - 1]
+    # Always include endpoints
+    lower_vertices.add(0)
+    lower_vertices.add(n - 1)
 
-    lower_vertices = sorted(set(lower_vertices))
+    lower_vertices_sorted = sorted(lower_vertices)
 
     f = interp1d(
-        x[lower_vertices],
-        intensities[lower_vertices],
+        x[lower_vertices_sorted],
+        intensities[lower_vertices_sorted],
         kind="linear",
         fill_value="extrapolate",
     )

@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-02-25
+
+### Added
+- **Wavenumber-aware Whittaker smoothing**: optional `wavenumbers` parameter builds non-uniform finite-difference penalty matrices that account for actual point spacing on non-uniform grids
+- **Legendre polynomial basis for EMSC**: replaced monomial powers with orthogonal Legendre polynomials for improved numerical conditioning of the design matrix
+- **Convex hull normal-based rubberband**: replaced median heuristic with hull facet normal analysis for mathematically correct lower hull vertex identification (fixes skewed spectra)
+- ATR correction wavenumber-length validation
+- `baseline_polynomial` tolerance validation (must be positive)
+- `scatter_emsc` poly_order validation (must be non-negative)
+- 51 new tests: mathematical invariant properties (normalization idempotence, similarity axioms, smoothing preservation), pipeline integration, and wavenumber-aware smoothing
+
+### Changed
+- `apply_along_spectra` uses pre-allocated output array instead of Python list comprehension (reduced memory overhead for batch processing)
+- `plot.py` uses `TYPE_CHECKING` for proper matplotlib type annotations (`Axes`) instead of `Any`
+- Test suite: 505 tests, 99% coverage, 0 mypy errors, 0 ruff errors
+
 ## [1.4.0] - 2026-02-25
 
 ### Added

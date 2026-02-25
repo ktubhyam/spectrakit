@@ -48,6 +48,8 @@ def baseline_polynomial(
         raise ValueError(f"degree must be non-negative, got {degree}")
     if max_iter < 1:
         raise ValueError(f"max_iter must be >= 1, got {max_iter}")
+    if tol <= 0:
+        raise ValueError(f"tol must be positive, got {tol}")
 
     intensities = ensure_float64(intensities)
     validate_1d_or_2d(intensities)

@@ -58,6 +58,13 @@ def transform_atr_correction(
     validate_1d_or_2d(intensities)
     warn_if_not_finite(intensities)
 
+    expected_w = intensities.shape[-1]
+    if wavenumbers.shape[0] != expected_w:
+        raise ValueError(
+            f"wavenumbers length {wavenumbers.shape[0]} does not match "
+            f"intensities spectral width {expected_w}"
+        )
+
     # Validate physics parameters
     if n_crystal <= 0:
         raise ValueError(f"n_crystal must be positive, got {n_crystal}")

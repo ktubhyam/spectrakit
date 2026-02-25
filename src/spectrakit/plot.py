@@ -13,17 +13,21 @@ Provides convenience functions for common spectral visualizations:
 from __future__ import annotations
 
 import logging
-from typing import Any
+import types
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
 from spectrakit._validate import ensure_float64, validate_1d_or_2d
 from spectrakit.exceptions import DependencyError
 
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+
 logger = logging.getLogger(__name__)
 
 
-def _get_matplotlib() -> Any:
+def _get_matplotlib() -> types.ModuleType:
     """Import matplotlib, raising DependencyError if missing."""
     try:
         import matplotlib.pyplot as plt
@@ -39,14 +43,14 @@ def plot_spectrum(
     intensities: np.ndarray,
     wavenumbers: np.ndarray | None = None,
     *,
-    ax: Any = None,
+    ax: Axes | None = None,
     title: str | None = None,
     xlabel: str = "Wavenumber",
     ylabel: str = "Intensity",
     invert_x: bool = True,
     labels: list[str] | None = None,
     **kwargs: Any,
-) -> Any:
+) -> Axes:
     """Plot one or more spectra.
 
     Args:
@@ -100,14 +104,14 @@ def plot_comparison(
     processed: np.ndarray,
     wavenumbers: np.ndarray | None = None,
     *,
-    ax: Any = None,
+    ax: Axes | None = None,
     labels: tuple[str, str] = ("Original", "Processed"),
     title: str | None = None,
     xlabel: str = "Wavenumber",
     ylabel: str = "Intensity",
     invert_x: bool = True,
     **kwargs: Any,
-) -> Any:
+) -> Axes:
     """Plot before/after comparison of spectral processing.
 
     Args:
@@ -156,14 +160,14 @@ def plot_baseline(
     baseline: np.ndarray,
     wavenumbers: np.ndarray | None = None,
     *,
-    ax: Any = None,
+    ax: Axes | None = None,
     show_corrected: bool = True,
     title: str | None = None,
     xlabel: str = "Wavenumber",
     ylabel: str = "Intensity",
     invert_x: bool = True,
     **kwargs: Any,
-) -> Any:
+) -> Axes:
     """Plot a spectrum with its estimated baseline.
 
     Args:
