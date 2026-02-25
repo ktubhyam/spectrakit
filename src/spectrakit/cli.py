@@ -30,28 +30,14 @@ app = _get_app()
 @app.command()  # type: ignore[untyped-decorator]
 def info(path: str) -> None:
     """Print metadata and summary statistics for a spectral file."""
+    from spectrakit.io.auto import read_spectrum
+
     file_path = Path(path)
-    suffix = file_path.suffix.lower()
 
-    if suffix in (".dx", ".jdx", ".jcamp"):
-        from spectrakit.io.jcamp import read_jcamp
-
-        spec = read_jcamp(file_path)
-    elif suffix == ".spc":
-        from spectrakit.io.spc import read_spc
-
-        spec = read_spc(file_path)
-    elif suffix in (".csv", ".tsv", ".txt"):
-        from spectrakit.io.csv import read_csv
-
-        delimiter = "\t" if suffix == ".tsv" else ","
-        spec = read_csv(file_path, delimiter=delimiter)
-    elif suffix in (".h5", ".hdf5"):
-        from spectrakit.io.hdf5 import read_hdf5
-
-        spec = read_hdf5(file_path)
-    else:
-        print(f"Unknown format: {suffix}", file=sys.stderr)
+    try:
+        spec = read_spectrum(file_path)
+    except (FileNotFoundError, ValueError) as exc:
+        print(str(exc), file=sys.stderr)
         sys.exit(1)
 
     print(f"File:       {file_path.name}")
@@ -73,31 +59,14 @@ def info(path: str) -> None:
 @app.command()  # type: ignore[untyped-decorator]
 def convert(input_path: str, output_path: str) -> None:
     """Convert a spectral file to HDF5 format."""
+    from spectrakit.io.auto import read_spectrum
+
     file_path = Path(input_path)
-    suffix = file_path.suffix.lower()
 
-    if suffix in (".dx", ".jdx", ".jcamp"):
-        from spectrakit.io.jcamp import read_jcamp
-
-        spec = read_jcamp(file_path)
-    elif suffix == ".spc":
-        from spectrakit.io.spc import read_spc
-
-        spec = read_spc(file_path)
-    elif suffix in (".csv", ".tsv", ".txt"):
-        from spectrakit.io.csv import read_csv
-
-        spec = read_csv(file_path)
-    elif suffix in (".h5", ".hdf5"):
-        from spectrakit.io.hdf5 import read_hdf5
-
-        spec = read_hdf5(file_path)
-    elif suffix in (".0", ".1", ".2"):
-        from spectrakit.io.opus import read_opus
-
-        spec = read_opus(file_path)
-    else:
-        print(f"Unsupported input format: {suffix}", file=sys.stderr)
+    try:
+        spec = read_spectrum(file_path)
+    except (FileNotFoundError, ValueError) as exc:
+        print(str(exc), file=sys.stderr)
         sys.exit(1)
 
     from spectrakit.io.hdf5 import write_hdf5

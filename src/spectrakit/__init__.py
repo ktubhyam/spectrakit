@@ -37,11 +37,13 @@ from spectrakit.exceptions import (
 
 # I/O
 from spectrakit.io import (
+    detect_format,
     read_csv,
     read_hdf5,
     read_jcamp,
     read_opus,
     read_spc,
+    read_spectrum,
     write_csv,
     write_hdf5,
     write_jcamp,
@@ -111,6 +113,8 @@ __all__ = [
     "get_n_jobs",
     "parallel_jobs",
     # I/O
+    "read_spectrum",
+    "detect_format",
     "read_jcamp",
     "read_spc",
     "read_csv",
