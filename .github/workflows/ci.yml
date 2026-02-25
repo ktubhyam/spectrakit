@@ -50,5 +50,6 @@ jobs:
           python-version: "3.12"
       - run: |
           pip install numpy
+          pip install spc-spectra --no-build-isolation
           pip install -e ".[all,dev]"
       - run: pytest --cov=spectrakit --cov-report=xml --cov-report=term-missing

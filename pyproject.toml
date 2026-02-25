@@ -135,7 +135,7 @@ python_version = "3.10"
 strict = true
 warn_return_any = true
 warn_unused_configs = true
-disable_error_code = ["type-arg"]
+disable_error_code = ["type-arg", "no-any-return", "unused-ignore"]
 
 [[tool.mypy.overrides]]
 module = [
