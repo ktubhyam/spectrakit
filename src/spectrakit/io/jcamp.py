@@ -7,6 +7,7 @@ from pathlib import Path
 
 import numpy as np
 
+from spectrakit.exceptions import FileFormatError
 from spectrakit.spectrum import Spectrum
 
 logger = logging.getLogger(__name__)
@@ -70,7 +71,7 @@ def read_jcamp(path: str | Path) -> Spectrum:
                         y_values.append(float(y_str))
 
     if not y_values:
-        raise ValueError(f"No XYDATA found in {path}")
+        raise FileFormatError(f"No XYDATA found in {path}")
 
     first_x = float(metadata.get("FIRSTX", str(x_values[0])))
     last_x = float(metadata.get("LASTX", str(x_values[-1])))

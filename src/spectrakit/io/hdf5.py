@@ -7,6 +7,7 @@ from typing import Any
 
 import numpy as np
 
+from spectrakit.exceptions import DependencyError
 from spectrakit.spectrum import Spectrum
 
 logger = logging.getLogger(__name__)
@@ -34,7 +35,7 @@ def read_hdf5(
     try:
         import h5py
     except ImportError as e:
-        raise ImportError(
+        raise DependencyError(
             "h5py is required for HDF5 files. "
             "Install with: pip install spectrakit[io]"
         ) from e
@@ -81,7 +82,7 @@ def write_hdf5(
     try:
         import h5py
     except ImportError as e:
-        raise ImportError(
+        raise DependencyError(
             "h5py is required for HDF5 files. "
             "Install with: pip install spectrakit[io]"
         ) from e

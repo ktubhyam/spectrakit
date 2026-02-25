@@ -6,6 +6,7 @@ from pathlib import Path
 
 import numpy as np
 
+from spectrakit.exceptions import DependencyError
 from spectrakit.spectrum import Spectrum
 
 logger = logging.getLogger(__name__)
@@ -30,7 +31,7 @@ def read_spc(path: str | Path) -> Spectrum:
     try:
         import spc
     except ImportError as e:
-        raise ImportError(
+        raise DependencyError(
             "spc-spectra is required for SPC files. "
             "Install with: pip install spectrakit[io]"
         ) from e
