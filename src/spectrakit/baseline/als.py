@@ -4,6 +4,7 @@ Reference:
     Eilers, P.H.C. (2003). A perfect smoother.
     Analytical Chemistry, 75(14), 3631-3636.
 """
+
 from __future__ import annotations
 
 import logging

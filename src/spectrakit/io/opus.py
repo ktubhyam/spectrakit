@@ -1,4 +1,5 @@
 """Bruker OPUS binary file format parser (.0, .1, etc.)."""
+
 from __future__ import annotations
 
 from pathlib import Path

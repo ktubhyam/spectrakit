@@ -1,4 +1,5 @@
 """Rubberband (convex hull) baseline correction."""
+
 from __future__ import annotations
 
 import logging
@@ -37,17 +38,20 @@ def _baseline_rubberband_1d(intensities: np.ndarray) -> np.ndarray:
 
     points = np.column_stack([x, intensities])
     low_val = intensities.min() - 1.0
-    points_ext = np.vstack([
-        points,
-        [0, low_val],
-        [n - 1, low_val],
-    ])
+    points_ext = np.vstack(
+        [
+            points,
+            [0, low_val],
+            [n - 1, low_val],
+        ]
+    )
 
     hull = ConvexHull(points_ext)
 
     hull_vertices = set(hull.vertices)
     lower_vertices = sorted(
-        i for i in hull_vertices
+        i
+        for i in hull_vertices
         if i < n and (i == 0 or i == n - 1 or intensities[i] <= np.median(intensities))
     )
 

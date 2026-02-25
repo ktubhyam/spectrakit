@@ -4,6 +4,7 @@ All exceptions inherit from both SpectraKitError and a built-in
 exception type, so existing except clauses (e.g., ``except ValueError``)
 continue to work without modification.
 """
+
 from __future__ import annotations
 
 

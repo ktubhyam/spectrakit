@@ -1,4 +1,5 @@
 """Vector (L2) normalization."""
+
 from __future__ import annotations
 
 import logging

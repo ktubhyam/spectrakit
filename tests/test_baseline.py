@@ -1,4 +1,5 @@
 """Tests for baseline correction methods."""
+
 from __future__ import annotations
 
 import numpy as np

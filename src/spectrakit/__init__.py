@@ -4,7 +4,16 @@ SpectraKit: Python toolkit for spectral data processing.
 Provides format parsers, baseline correction, normalization,
 and spectral similarity matching for vibrational spectroscopy data.
 """
+
 from spectrakit._version import __version__
+
+# Baseline correction
+from spectrakit.baseline import (
+    baseline_als,
+    baseline_polynomial,
+    baseline_rubberband,
+    baseline_snip,
+)
 
 # Exceptions
 from spectrakit.exceptions import (
@@ -13,14 +22,6 @@ from spectrakit.exceptions import (
     FileFormatError,
     SpectraKitError,
     SpectrumShapeError,
-)
-
-# Baseline correction
-from spectrakit.baseline import (
-    baseline_als,
-    baseline_polynomial,
-    baseline_rubberband,
-    baseline_snip,
 )
 
 # I/O

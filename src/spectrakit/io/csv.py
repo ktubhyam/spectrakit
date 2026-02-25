@@ -1,4 +1,5 @@
 """CSV/TSV spectral data loader."""
+
 from __future__ import annotations
 
 import logging

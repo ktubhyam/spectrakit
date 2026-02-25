@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+title: "SpectraKit: Python toolkit for spectral data processing"
+message: "If you use this software, please cite it using the metadata from this file."
+type: software
+authors:
+  - given-names: Tubhyam
+    family-names: Karthikeyan
+    email: takarthikeyan25@gmail.com
+    affiliation: "Indian Institute of Technology Bombay (ICT Mumbai)"
+repository-code: "https://github.com/ktubhyam/spectrakit"
+license: MIT
+keywords:
+  - spectroscopy
+  - chemometrics
+  - infrared
+  - Raman
+  - baseline-correction
+  - normalization
+  - Python

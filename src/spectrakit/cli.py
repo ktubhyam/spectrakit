@@ -1,4 +1,5 @@
 """SpectraKit command-line interface."""
+
 from __future__ import annotations
 
 import sys
@@ -33,16 +34,20 @@ def info(path: str) -> None:
 
     if suffix in (".dx", ".jdx", ".jcamp"):
         from spectrakit.io.jcamp import read_jcamp
+
         spec = read_jcamp(file_path)
     elif suffix == ".spc":
         from spectrakit.io.spc import read_spc
+
         spec = read_spc(file_path)
     elif suffix in (".csv", ".tsv", ".txt"):
         from spectrakit.io.csv import read_csv
+
         delimiter = "\t" if suffix == ".tsv" else ","
         spec = read_csv(file_path, delimiter=delimiter)
     elif suffix in (".h5", ".hdf5"):
         from spectrakit.io.hdf5 import read_hdf5
+
         spec = read_hdf5(file_path)
     else:
         print(f"Unknown format: {suffix}", file=sys.stderr)
@@ -72,15 +77,18 @@ def convert(input_path: str, output_path: str) -> None:
 
     if suffix in (".dx", ".jdx", ".jcamp"):
         from spectrakit.io.jcamp import read_jcamp
+
         spec = read_jcamp(file_path)
     elif suffix in (".csv", ".tsv", ".txt"):
         from spectrakit.io.csv import read_csv
+
         spec = read_csv(file_path)
     else:
         print(f"Unsupported input format: {suffix}", file=sys.stderr)
         sys.exit(1)
 
     from spectrakit.io.hdf5 import write_hdf5
+
     write_hdf5(spec, output_path)
     print(f"Converted {file_path.name} -> {output_path}")
 

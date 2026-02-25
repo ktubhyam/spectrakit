@@ -1,4 +1,5 @@
 """Galactic SPC file format parser (.spc)."""
+
 from __future__ import annotations
 
 import logging
@@ -32,8 +33,7 @@ def read_spc(path: str | Path) -> Spectrum:
         import spc
     except ImportError as e:
         raise DependencyError(
-            "spc-spectra is required for SPC files. "
-            "Install with: pip install spectrakit[io]"
+            "spc-spectra is required for SPC files. Install with: pip install spectrakit[io]"
         ) from e
 
     path = Path(path)

@@ -1,4 +1,5 @@
 """Baseline correction methods for spectral data."""
+
 from spectrakit.baseline.als import baseline_als
 from spectrakit.baseline.polynomial import baseline_polynomial
 from spectrakit.baseline.rubberband import baseline_rubberband

@@ -1,4 +1,5 @@
 """Min-max normalization to [0, 1]."""
+
 from __future__ import annotations
 
 import logging

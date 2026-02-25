@@ -1,4 +1,5 @@
 """Area normalization (integral = 1)."""
+
 from __future__ import annotations
 
 import logging
@@ -36,9 +37,9 @@ def normalize_area(
             return intensities
         return intensities / area
 
-    areas = np.array([
-        np.trapezoid(np.abs(row), x=wavenumbers) for row in intensities
-    ]).reshape(-1, 1)
+    areas = np.array([np.trapezoid(np.abs(row), x=wavenumbers) for row in intensities]).reshape(
+        -1, 1
+    )
     areas = np.where(areas < EPSILON, 1.0, areas)
 
     return intensities / areas

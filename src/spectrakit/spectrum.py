@@ -1,4 +1,5 @@
 """Spectrum container: the core data type for SpectraKit."""
+
 from __future__ import annotations
 
 import logging

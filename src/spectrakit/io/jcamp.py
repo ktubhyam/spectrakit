@@ -1,4 +1,5 @@
 """JCAMP-DX file format parser (.dx, .jdx, .jcamp)."""
+
 from __future__ import annotations
 
 import logging

@@ -29,7 +29,9 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Chemistry",
+    "Typing :: Typed",
 ]
 dependencies = [
     "numpy>=1.24",
@@ -62,6 +64,7 @@ spectrakit = "spectrakit.cli:app"
 Homepage = "https://github.com/ktubhyam/spectrakit"
 Repository = "https://github.com/ktubhyam/spectrakit"
 Issues = "https://github.com/ktubhyam/spectrakit/issues"
+Changelog = "https://github.com/ktubhyam/spectrakit/blob/main/CHANGELOG.md"
 
 [tool.hatch.version]
 path = "src/spectrakit/_version.py"

@@ -1,4 +1,5 @@
 """Shared pytest fixtures for SpectraKit tests."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -26,7 +27,7 @@ def synthetic_spectrum_with_baseline() -> tuple[np.ndarray, np.ndarray]:
     rng = np.random.default_rng(42)
 
     peak = np.exp(-0.5 * ((x - 5) / 0.3) ** 2)
-    baseline = 0.1 * x + 0.005 * x ** 2
+    baseline = 0.1 * x + 0.005 * x**2
     noise = rng.normal(0, 0.005, size=1000)
 
     return peak + baseline + noise, baseline

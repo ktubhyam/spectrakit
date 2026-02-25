@@ -1,4 +1,5 @@
 """Polynomial baseline fitting."""
+
 from __future__ import annotations
 
 import logging

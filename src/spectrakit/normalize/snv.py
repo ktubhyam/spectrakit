@@ -1,4 +1,5 @@
 """Standard Normal Variate (SNV) normalization."""
+
 from __future__ import annotations
 
 import logging

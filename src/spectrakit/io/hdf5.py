@@ -1,4 +1,5 @@
 """HDF5 spectral data reader and writer."""
+
 from __future__ import annotations
 
 import logging
@@ -36,8 +37,7 @@ def read_hdf5(
         import h5py
     except ImportError as e:
         raise DependencyError(
-            "h5py is required for HDF5 files. "
-            "Install with: pip install spectrakit[io]"
+            "h5py is required for HDF5 files. Install with: pip install spectrakit[io]"
         ) from e
 
     path = Path(path)
@@ -83,8 +83,7 @@ def write_hdf5(
         import h5py
     except ImportError as e:
         raise DependencyError(
-            "h5py is required for HDF5 files. "
-            "Install with: pip install spectrakit[io]"
+            "h5py is required for HDF5 files. Install with: pip install spectrakit[io]"
         ) from e
 
     path = Path(path)

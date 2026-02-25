@@ -4,6 +4,7 @@ Centralizes common checks (shape, dtype, emptiness) and the 2-D dispatch
 pattern used by every processing function.  All helpers are private to
 the package — they are not re-exported from ``spectrakit.__init__``.
 """
+
 from __future__ import annotations
 
 import logging
@@ -35,9 +36,7 @@ def ensure_float64(data: Any) -> np.ndarray:
     try:
         arr = np.asarray(data, dtype=np.float64)
     except (ValueError, TypeError) as exc:
-        raise TypeError(
-            f"Cannot convert {type(data).__name__} to a numeric array"
-        ) from exc
+        raise TypeError(f"Cannot convert {type(data).__name__} to a numeric array") from exc
     return np.ascontiguousarray(arr)
 
 

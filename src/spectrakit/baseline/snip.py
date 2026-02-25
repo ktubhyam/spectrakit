@@ -5,6 +5,7 @@ Reference:
     treatment for the quantitative analysis of PIXE spectra.
     Nuclear Instruments and Methods B, 34(3), 396-402.
 """
+
 from __future__ import annotations
 
 import logging

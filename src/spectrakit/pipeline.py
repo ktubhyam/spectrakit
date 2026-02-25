@@ -1,4 +1,5 @@
 """Pipeline for chaining spectral processing operations."""
+
 from __future__ import annotations
 
 import logging

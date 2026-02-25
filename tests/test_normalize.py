@@ -1,4 +1,5 @@
 """Tests for normalization methods."""
+
 from __future__ import annotations
 
 import numpy as np

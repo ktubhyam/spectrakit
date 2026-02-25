@@ -1,4 +1,5 @@
 """Spectral similarity metrics."""
+
 from spectrakit.similarity.cosine import similarity_cosine
 from spectrakit.similarity.euclidean import similarity_euclidean
 from spectrakit.similarity.pearson import similarity_pearson
