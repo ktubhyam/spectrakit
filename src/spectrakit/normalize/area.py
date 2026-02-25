@@ -5,9 +5,9 @@ import logging
 
 import numpy as np
 
-logger = logging.getLogger(__name__)
+from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d
 
-EPSILON = 1e-10
+logger = logging.getLogger(__name__)
 
 
 def normalize_area(
@@ -27,6 +27,9 @@ def normalize_area(
     Returns:
         Area-normalized intensities, same shape.
     """
+    intensities = ensure_float64(intensities)
+    validate_1d_or_2d(intensities)
+
     if intensities.ndim == 1:
         area = np.trapezoid(np.abs(intensities), x=wavenumbers)
         if area < EPSILON:

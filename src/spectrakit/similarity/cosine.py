@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import numpy as np
 
-EPSILON = 1e-10
+from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d
 
 
 def similarity_cosine(a: np.ndarray, b: np.ndarray) -> float | np.ndarray:
@@ -20,6 +20,10 @@ def similarity_cosine(a: np.ndarray, b: np.ndarray) -> float | np.ndarray:
         Cosine similarity in [-1, 1]. Scalar if b is 1-D, array of
         shape (N,) if b is 2-D.
     """
+    a = ensure_float64(a)
+    b = ensure_float64(b)
+    validate_1d_or_2d(b, name="b")
+
     if b.ndim == 1:
         dot = np.dot(a, b)
         denom = np.linalg.norm(a) * np.linalg.norm(b)

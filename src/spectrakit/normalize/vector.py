@@ -5,9 +5,9 @@ import logging
 
 import numpy as np
 
-logger = logging.getLogger(__name__)
+from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d
 
-EPSILON = 1e-10
+logger = logging.getLogger(__name__)
 
 
 def normalize_vector(intensities: np.ndarray) -> np.ndarray:
@@ -19,6 +19,9 @@ def normalize_vector(intensities: np.ndarray) -> np.ndarray:
     Returns:
         L2-normalized intensities, same shape.
     """
+    intensities = ensure_float64(intensities)
+    validate_1d_or_2d(intensities)
+
     if intensities.ndim == 1:
         norm = np.linalg.norm(intensities)
         if norm < EPSILON:

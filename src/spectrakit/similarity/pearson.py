@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import numpy as np
 
-EPSILON = 1e-10
+from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d
 
 
 def similarity_pearson(a: np.ndarray, b: np.ndarray) -> float | np.ndarray:
@@ -16,6 +16,10 @@ def similarity_pearson(a: np.ndarray, b: np.ndarray) -> float | np.ndarray:
     Returns:
         Pearson r in [-1, 1]. Scalar or array of shape (N,).
     """
+    a = ensure_float64(a)
+    b = ensure_float64(b)
+    validate_1d_or_2d(b, name="b")
+
     if b.ndim == 1:
         return float(np.corrcoef(a, b)[0, 1])
 
