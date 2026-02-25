@@ -58,3 +58,17 @@ class TestSpectrum:
         )
         assert isinstance(s.wavenumbers, np.ndarray)
         np.testing.assert_array_equal(s.wavenumbers, [100.0, 200.0, 300.0])
+
+    def test_copy_deep_copies_metadata(self) -> None:
+        """copy() should deep-copy metadata so mutations don't propagate."""
+        nested = {"inner": {"key": "value"}, "list": [1, 2, 3]}
+        original = Spectrum(intensities=np.ones(5), metadata=nested)
+        copied = original.copy()
+
+        # Mutate the copy's nested metadata
+        copied.metadata["inner"]["key"] = "changed"
+        copied.metadata["list"].append(4)
+
+        # Original should be unaffected
+        assert original.metadata["inner"]["key"] == "value"
+        assert original.metadata["list"] == [1, 2, 3]

@@ -8,7 +8,12 @@ import numpy as np
 from scipy.interpolate import interp1d
 from scipy.spatial import ConvexHull
 
-from spectrakit._validate import apply_along_spectra, ensure_float64, validate_1d_or_2d
+from spectrakit._validate import (
+    apply_along_spectra,
+    ensure_float64,
+    validate_1d_or_2d,
+    warn_if_not_finite,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +29,14 @@ def baseline_rubberband(intensities: np.ndarray) -> np.ndarray:
 
     Returns:
         Estimated baseline, same shape as intensities.
+
+    Raises:
+        SpectrumShapeError: If input is not 1-D or 2-D.
+        EmptySpectrumError: If input has zero elements.
     """
     intensities = ensure_float64(intensities)
     validate_1d_or_2d(intensities)
+    warn_if_not_finite(intensities)
 
     return apply_along_spectra(_baseline_rubberband_1d, intensities)
 

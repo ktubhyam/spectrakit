@@ -11,7 +11,7 @@ import logging
 
 import numpy as np
 
-from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d
+from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d, warn_if_not_finite
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +38,7 @@ def transform_kubelka_munk(reflectance: np.ndarray) -> np.ndarray:
     """
     reflectance = ensure_float64(reflectance)
     validate_1d_or_2d(reflectance)
+    warn_if_not_finite(reflectance)
 
     # Clamp reflectance to avoid division by zero
     r = np.clip(reflectance, EPSILON, 1.0 - EPSILON)

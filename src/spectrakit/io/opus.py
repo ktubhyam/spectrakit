@@ -23,6 +23,7 @@ from typing import Any
 
 import numpy as np
 
+from spectrakit._validate import validate_file_size
 from spectrakit.exceptions import FileFormatError
 from spectrakit.spectrum import Spectrum
 
@@ -318,6 +319,8 @@ def read_opus(path: str | Path) -> Spectrum:
     except OSError as exc:
         raise FileFormatError(f"Cannot read OPUS file: {exc}") from exc
 
+    validate_file_size(len(raw), path_name=str(path))
+
     if len(raw) < _MIN_FILE_SIZE:
         raise FileFormatError(f"File too small to be OPUS format ({len(raw)} bytes).")
 
@@ -426,8 +429,8 @@ def read_opus(path: str | Path) -> Spectrum:
             try:
                 block_params = _parse_parameter_block(raw, moff, mlen)
                 metadata.update(block_params)
-            except Exception:  # noqa: BLE001
-                logger.debug("Could not parse metadata block at offset %d", moff)
+            except (struct.error, ValueError, IndexError) as exc:
+                logger.debug("Could not parse metadata block at offset %d: %s", moff, exc)
 
     # Also include the data parameters in metadata
     metadata.update(params)

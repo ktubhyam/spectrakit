@@ -40,6 +40,29 @@ class TestSpectralSubtract:
         with pytest.raises(EmptySpectrumError):
             spectral_subtract(np.array([]), np.array([]))
 
+    def test_incompatible_shapes_raises(self) -> None:
+        """Subtracting spectra with different point counts should raise."""
+        spectrum = np.array([1.0, 2.0, 3.0])
+        background = np.array([1.0, 2.0])
+        with pytest.raises(SpectrumShapeError, match="3 points.*2 points"):
+            spectral_subtract(spectrum, background)
+
+    def test_incompatible_shapes_2d_raises(self) -> None:
+        """2D spectrum with wrong background size should raise."""
+        spectrum = np.ones((5, 100))
+        background = np.ones(50)
+        with pytest.raises(SpectrumShapeError, match="100 points.*50 points"):
+            spectral_subtract(spectrum, background)
+
+    def test_keyword_arg_names(self) -> None:
+        """New parameter names (spectrum, background) work as kwargs."""
+        result = spectral_subtract(
+            spectrum=np.array([5.0, 10.0]),
+            background=np.array([1.0, 2.0]),
+            factor=1.0,
+        )
+        np.testing.assert_array_equal(result, [4.0, 8.0])
+
 
 class TestSpectralAverage:
     """Verify spectral averaging."""

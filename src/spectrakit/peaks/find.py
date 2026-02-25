@@ -9,6 +9,7 @@ import numpy as np
 from scipy.signal import find_peaks as scipy_find_peaks
 
 from spectrakit._validate import ensure_float64, validate_1d_or_2d
+from spectrakit.exceptions import SpectrumShapeError
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +66,7 @@ def peaks_find(
     validate_1d_or_2d(intensities)
 
     if intensities.ndim != 1:
-        raise ValueError("peaks_find requires a 1-D spectrum. For batches, call per-row.")
+        raise SpectrumShapeError("peaks_find requires a 1-D spectrum. For batches, call per-row.")
 
     if height is None:
         height = float(np.percentile(intensities, DEFAULT_HEIGHT_PERCENTILE))

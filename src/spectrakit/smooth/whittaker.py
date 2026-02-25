@@ -13,7 +13,12 @@ import numpy as np
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
 
-from spectrakit._validate import apply_along_spectra, ensure_float64, validate_1d_or_2d
+from spectrakit._validate import (
+    apply_along_spectra,
+    ensure_float64,
+    validate_1d_or_2d,
+    warn_if_not_finite,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +52,7 @@ def smooth_whittaker(
     """
     intensities = ensure_float64(intensities)
     validate_1d_or_2d(intensities)
+    warn_if_not_finite(intensities)
 
     return apply_along_spectra(
         _smooth_whittaker_1d,

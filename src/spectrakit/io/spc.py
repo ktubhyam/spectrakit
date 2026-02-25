@@ -7,6 +7,7 @@ from pathlib import Path
 
 import numpy as np
 
+from spectrakit._validate import validate_file_size
 from spectrakit.exceptions import DependencyError
 from spectrakit.spectrum import Spectrum
 
@@ -39,6 +40,8 @@ def read_spc(path: str | Path) -> Spectrum:
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"SPC file not found: {path}")
+
+    validate_file_size(path.stat().st_size, path_name=str(path))
 
     f = spc.File(str(path))
 

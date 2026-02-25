@@ -13,7 +13,7 @@ import logging
 
 import numpy as np
 
-from spectrakit._validate import ensure_float64, validate_1d_or_2d
+from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d, warn_if_not_finite
 
 logger = logging.getLogger(__name__)
 
@@ -45,10 +45,12 @@ def scatter_emsc(
 
     Raises:
         SpectrumShapeError: If input is not 1-D or 2-D.
+        EmptySpectrumError: If input has zero elements.
         ValueError: If a single spectrum is provided without a reference.
     """
     intensities = ensure_float64(intensities)
     validate_1d_or_2d(intensities)
+    warn_if_not_finite(intensities)
 
     if intensities.ndim == 1:
         if reference is None:
@@ -89,7 +91,7 @@ def _emsc_single(
     # Extract multiplicative factor (coefficient of reference)
     b = coeffs[0]
 
-    if abs(b) < 1e-10:
+    if abs(b) < EPSILON:
         # Can't correct, return spectrum minus polynomial baseline
         baseline = design_matrix[:, 1:] @ coeffs[1:]
         return spectrum - baseline  # type: ignore[no-any-return]

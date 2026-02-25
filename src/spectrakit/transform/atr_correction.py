@@ -11,7 +11,7 @@ import logging
 
 import numpy as np
 
-from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d
+from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d, warn_if_not_finite
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +53,7 @@ def transform_atr_correction(
     intensities = ensure_float64(intensities)
     wavenumbers = ensure_float64(wavenumbers)
     validate_1d_or_2d(intensities)
+    warn_if_not_finite(intensities)
 
     # Compute penetration depth factor: dp ∝ 1 / (ν * sqrt(sin²θ - (n2/n1)²))
     theta = np.radians(angle)

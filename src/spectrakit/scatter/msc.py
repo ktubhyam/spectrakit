@@ -12,7 +12,7 @@ import logging
 
 import numpy as np
 
-from spectrakit._validate import ensure_float64, validate_1d_or_2d
+from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d, warn_if_not_finite
 
 logger = logging.getLogger(__name__)
 
@@ -38,10 +38,12 @@ def scatter_msc(
 
     Raises:
         SpectrumShapeError: If input is not 1-D or 2-D.
+        EmptySpectrumError: If input has zero elements.
         ValueError: If a single spectrum is provided without a reference.
     """
     intensities = ensure_float64(intensities)
     validate_1d_or_2d(intensities)
+    warn_if_not_finite(intensities)
 
     if intensities.ndim == 1:
         if reference is None:
@@ -66,7 +68,7 @@ def _msc_single(spectrum: np.ndarray, reference: np.ndarray) -> np.ndarray:
     coeffs = np.polyfit(reference, spectrum, deg=1)
     slope, intercept = coeffs[0], coeffs[1]
 
-    if abs(slope) < 1e-10:
+    if abs(slope) < EPSILON:
         return spectrum - intercept  # type: ignore[no-any-return]
 
     return (spectrum - intercept) / slope  # type: ignore[no-any-return]

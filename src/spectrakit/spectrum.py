@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import logging
 from dataclasses import dataclass, field
 from typing import Any
@@ -89,7 +90,7 @@ class Spectrum:
         return Spectrum(
             intensities=self.intensities.copy(),
             wavenumbers=self.wavenumbers.copy() if self.wavenumbers is not None else None,
-            metadata=dict(self.metadata),
+            metadata=copy.deepcopy(self.metadata),
             source_format=self.source_format,
             label=self.label,
         )

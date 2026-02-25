@@ -6,7 +6,7 @@ import logging
 
 import numpy as np
 
-from spectrakit._validate import ensure_float64
+from spectrakit._validate import ensure_float64, warn_if_not_finite
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +33,12 @@ def peaks_integrate(
         If ``ranges`` is ``None``, a scalar (total area). If ``ranges``
         is provided, an array of shape ``(len(ranges),)`` with the area
         for each range.
+
+    Raises:
+        ValueError: If *ranges* is specified but *wavenumbers* is ``None``.
     """
     intensities = ensure_float64(intensities)
+    warn_if_not_finite(intensities)
 
     if ranges is None:
         return float(np.trapezoid(intensities, x=wavenumbers))

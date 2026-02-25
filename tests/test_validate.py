@@ -7,9 +7,12 @@ import pytest
 
 from spectrakit._validate import (
     EPSILON,
+    MAX_FILE_SIZE,
     apply_along_spectra,
     ensure_float64,
     validate_1d_or_2d,
+    validate_file_size,
+    warn_if_not_finite,
 )
 from spectrakit.exceptions import EmptySpectrumError, SpectrumShapeError
 
@@ -145,3 +148,55 @@ class TestApplyAlongSpectra:
         arr = np.ones((5, 100))
         result = apply_along_spectra(self._double, arr)
         assert result.shape == (5, 100)
+
+
+class TestWarnIfNotFinite:
+    """Verify NaN/Inf warning helper."""
+
+    def test_finite_array_no_warning(self) -> None:
+        import warnings
+
+        arr = np.array([1.0, 2.0, 3.0])
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            # Should not raise any warning
+            warn_if_not_finite(arr)
+
+    def test_nan_triggers_warning(self) -> None:
+        arr = np.array([1.0, np.nan, 3.0])
+        with pytest.warns(UserWarning, match="1 NaN"):
+            warn_if_not_finite(arr)
+
+    def test_inf_triggers_warning(self) -> None:
+        arr = np.array([1.0, np.inf, -np.inf])
+        with pytest.warns(UserWarning, match="2 Inf"):
+            warn_if_not_finite(arr)
+
+    def test_nan_and_inf_together(self) -> None:
+        arr = np.array([np.nan, np.inf, 1.0])
+        with pytest.warns(UserWarning, match="NaN.*Inf"):
+            warn_if_not_finite(arr)
+
+    def test_custom_name_in_warning(self) -> None:
+        arr = np.array([np.nan])
+        with pytest.warns(UserWarning, match="wavenumbers"):
+            warn_if_not_finite(arr, name="wavenumbers")
+
+
+class TestValidateFileSize:
+    """Verify file size validation."""
+
+    def test_small_file_passes(self) -> None:
+        # Should not raise
+        validate_file_size(1024, path_name="test.csv")
+
+    def test_exactly_at_limit_passes(self) -> None:
+        validate_file_size(MAX_FILE_SIZE, path_name="test.csv")
+
+    def test_over_limit_raises(self) -> None:
+        with pytest.raises(ValueError, match="exceeding the.*limit"):
+            validate_file_size(MAX_FILE_SIZE + 1, path_name="huge.opus")
+
+    def test_error_message_contains_filename(self) -> None:
+        with pytest.raises(ValueError, match="huge.opus"):
+            validate_file_size(MAX_FILE_SIZE + 1, path_name="huge.opus")

@@ -8,6 +8,7 @@ the package — they are not re-exported from ``spectrakit.__init__``.
 from __future__ import annotations
 
 import logging
+import warnings
 from collections.abc import Callable
 from typing import Any
 
@@ -19,6 +20,9 @@ logger = logging.getLogger(__name__)
 
 EPSILON: float = 1e-10
 """Shared near-zero threshold for division guards."""
+
+MAX_FILE_SIZE: int = 500 * 1024 * 1024  # 500 MB
+"""Maximum file size (in bytes) accepted by I/O readers."""
 
 
 def ensure_float64(data: Any) -> np.ndarray:
@@ -69,6 +73,51 @@ def validate_1d_or_2d(
     if not allow_empty and data.size == 0:
         raise EmptySpectrumError(f"{name} array is empty")
     return data
+
+
+def warn_if_not_finite(data: np.ndarray, *, name: str = "intensities") -> None:
+    """Emit a warning if *data* contains NaN or Inf values.
+
+    This does **not** raise an exception — processing continues so that
+    callers can decide how to handle non-finite values.  The check is
+    O(N) and inexpensive for typical spectral arrays.
+
+    Args:
+        data: Array to check.
+        name: Human-readable name for the warning message.
+    """
+    if not np.all(np.isfinite(data)):
+        n_nan = int(np.sum(np.isnan(data)))
+        n_inf = int(np.sum(np.isinf(data)))
+        parts: list[str] = []
+        if n_nan:
+            parts.append(f"{n_nan} NaN")
+        if n_inf:
+            parts.append(f"{n_inf} Inf")
+        warnings.warn(
+            f"{name} contains non-finite values ({', '.join(parts)}). Results may be unreliable.",
+            stacklevel=3,
+        )
+
+
+def validate_file_size(path_size: int, *, path_name: str = "") -> None:
+    """Raise if a file exceeds :data:`MAX_FILE_SIZE`.
+
+    Args:
+        path_size: File size in bytes.
+        path_name: File name/path for the error message.
+
+    Raises:
+        ValueError: If file exceeds the size limit.
+    """
+    if path_size > MAX_FILE_SIZE:
+        limit_mb = MAX_FILE_SIZE / (1024 * 1024)
+        size_mb = path_size / (1024 * 1024)
+        raise ValueError(
+            f"File {path_name!r} is {size_mb:.1f} MB, exceeding the "
+            f"{limit_mb:.0f} MB safety limit. If this file is legitimate, "
+            f"read it manually with the appropriate library."
+        )
 
 
 def apply_along_spectra(

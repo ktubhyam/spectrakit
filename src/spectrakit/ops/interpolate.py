@@ -7,7 +7,12 @@ import logging
 import numpy as np
 from scipy.interpolate import interp1d
 
-from spectrakit._validate import apply_along_spectra, ensure_float64, validate_1d_or_2d
+from spectrakit._validate import (
+    apply_along_spectra,
+    ensure_float64,
+    validate_1d_or_2d,
+    warn_if_not_finite,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -32,11 +37,16 @@ def spectral_interpolate(
 
     Returns:
         Interpolated intensities, shape ``(M,)`` or ``(N, M)``.
+
+    Raises:
+        SpectrumShapeError: If *intensities* is not 1-D or 2-D.
+        EmptySpectrumError: If *intensities* has zero elements.
     """
     intensities = ensure_float64(intensities)
     wavenumbers = ensure_float64(wavenumbers)
     new_wavenumbers = ensure_float64(new_wavenumbers)
     validate_1d_or_2d(intensities)
+    warn_if_not_finite(intensities)
 
     return apply_along_spectra(
         _interpolate_1d,

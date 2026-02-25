@@ -13,7 +13,12 @@ import numpy as np
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
 
-from spectrakit._validate import apply_along_spectra, ensure_float64, validate_1d_or_2d
+from spectrakit._validate import (
+    apply_along_spectra,
+    ensure_float64,
+    validate_1d_or_2d,
+    warn_if_not_finite,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -48,11 +53,16 @@ def baseline_als(
     Returns:
         Estimated baseline, same shape as intensities.
 
+    Raises:
+        SpectrumShapeError: If input is not 1-D or 2-D.
+        EmptySpectrumError: If input has zero elements.
+
     Examples:
         >>> corrected = intensities - baseline_als(intensities)
     """
     intensities = ensure_float64(intensities)
     validate_1d_or_2d(intensities)
+    warn_if_not_finite(intensities)
 
     return apply_along_spectra(
         _baseline_als_1d, intensities, lam=lam, p=p, max_iter=max_iter, tol=tol

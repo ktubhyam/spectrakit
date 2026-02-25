@@ -8,6 +8,7 @@ from typing import Literal
 
 import numpy as np
 
+from spectrakit._validate import validate_file_size
 from spectrakit.spectrum import Spectrum
 
 logger = logging.getLogger(__name__)
@@ -40,6 +41,8 @@ def read_csv(
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"CSV file not found: {path}")
+
+    validate_file_size(path.stat().st_size, path_name=str(path))
 
     data = np.genfromtxt(
         path,

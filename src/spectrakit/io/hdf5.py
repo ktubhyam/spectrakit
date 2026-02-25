@@ -8,6 +8,7 @@ from typing import Any
 
 import numpy as np
 
+from spectrakit._validate import validate_file_size
 from spectrakit.exceptions import DependencyError
 from spectrakit.spectrum import Spectrum
 
@@ -43,6 +44,8 @@ def read_hdf5(
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"HDF5 file not found: {path}")
+
+    validate_file_size(path.stat().st_size, path_name=str(path))
 
     with h5py.File(path, "r") as f:
         intensities = np.array(f[intensities_key], dtype=np.float64)

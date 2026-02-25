@@ -8,6 +8,7 @@ from pathlib import Path
 
 import numpy as np
 
+from spectrakit._validate import validate_file_size
 from spectrakit.exceptions import FileFormatError
 from spectrakit.spectrum import Spectrum
 
@@ -36,6 +37,8 @@ def read_jcamp(path: str | Path) -> Spectrum:
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"JCAMP file not found: {path}")
+
+    validate_file_size(path.stat().st_size, path_name=str(path))
 
     metadata: dict[str, str] = {}
     x_values: list[float] = []
