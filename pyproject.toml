@@ -50,8 +50,11 @@ cli = [
 baselines = [
     "pybaselines>=1.0",
 ]
+fitting = [
+    "lmfit>=1.2",
+]
 all = [
-    "spectrakit[io,cli,baselines]",
+    "spectrakit[io,cli,baselines,fitting]",
 ]
 dev = [
     "pytest>=7.0",
