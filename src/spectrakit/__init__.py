@@ -23,6 +23,9 @@ from spectrakit.convergence import ConvergenceInfo
 # Derivative
 from spectrakit.derivative import derivative_gap_segment, derivative_savgol
 
+# Despiking
+from spectrakit.despike import despike_whitaker_hayes, despike_zscore
+
 # Exceptions
 from spectrakit.exceptions import (
     DependencyError,
@@ -48,7 +51,14 @@ from spectrakit.io import (
 from spectrakit.normalize import normalize_area, normalize_minmax, normalize_snv, normalize_vector
 
 # Operations
-from spectrakit.ops import spectral_average, spectral_crop, spectral_interpolate, spectral_subtract
+from spectrakit.ops import (
+    spectral_align,
+    spectral_average,
+    spectral_correlate,
+    spectral_crop,
+    spectral_interpolate,
+    spectral_subtract,
+)
 
 # Peaks
 from spectrakit.peaks import PeakResult, peaks_find, peaks_integrate
@@ -58,6 +68,9 @@ from spectrakit.pipeline import Pipeline
 
 # Plotting (requires matplotlib)
 from spectrakit.plot import plot_baseline, plot_comparison, plot_spectrum
+
+# Signal quality
+from spectrakit.quality import quality_roughness, quality_snr
 
 # Scatter correction
 from spectrakit.scatter import scatter_emsc, scatter_msc
@@ -128,6 +141,9 @@ __all__ = [
     # Derivatives
     "derivative_savgol",
     "derivative_gap_segment",
+    # Despiking
+    "despike_whitaker_hayes",
+    "despike_zscore",
     # Scatter correction
     "scatter_msc",
     "scatter_emsc",
@@ -137,14 +153,19 @@ __all__ = [
     "transform_absorbance_to_transmittance",
     "transform_transmittance_to_absorbance",
     # Spectral operations
-    "spectral_subtract",
+    "spectral_align",
     "spectral_average",
-    "spectral_interpolate",
+    "spectral_correlate",
     "spectral_crop",
+    "spectral_interpolate",
+    "spectral_subtract",
     # Peak analysis
     "peaks_find",
     "peaks_integrate",
     "PeakResult",
+    # Signal quality
+    "quality_roughness",
+    "quality_snr",
     # Plotting
     "plot_spectrum",
     "plot_comparison",

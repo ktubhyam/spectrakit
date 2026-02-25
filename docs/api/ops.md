@@ -5,3 +5,7 @@
 ::: spectrakit.ops.spectral_average
 
 ::: spectrakit.ops.spectral_interpolate
+
+::: spectrakit.ops.spectral_correlate
+
+::: spectrakit.ops.spectral_align

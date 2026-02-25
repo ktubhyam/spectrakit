@@ -81,6 +81,8 @@ nav:
       - Derivative: api/derivative.md
       - Scatter: api/scatter.md
       - Transform: api/transform.md
+      - Despike: api/despike.md
+      - Quality: api/quality.md
       - Operations: api/ops.md
       - Peaks: api/peaks.md
       - Similarity: api/similarity.md

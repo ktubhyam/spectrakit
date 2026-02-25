@@ -7,7 +7,9 @@ import pytest
 
 from spectrakit.exceptions import EmptySpectrumError, SpectrumShapeError
 from spectrakit.ops import (
+    spectral_align,
     spectral_average,
+    spectral_correlate,
     spectral_crop,
     spectral_interpolate,
     spectral_subtract,
@@ -266,3 +268,165 @@ class TestWavenumberLengthValidation:
         new_wn = np.linspace(500, 3500, 80)
         with pytest.raises(ValueError, match="wavenumbers length.*does not match"):
             spectral_interpolate(y, wn, new_wn)
+
+
+# ---------------------------------------------------------------------------
+# spectral_correlate
+# ---------------------------------------------------------------------------
+
+
+class TestSpectralCorrelate:
+    """Tests for spectral_correlate."""
+
+    def test_output_shape_full(self) -> None:
+        a = np.array([0.0, 1.0, 0.0, 0.0, 0.0])
+        b = np.array([0.0, 0.0, 1.0, 0.0, 0.0])
+        result = spectral_correlate(a, b, mode="full")
+        assert result.shape == (2 * 5 - 1,)
+
+    def test_output_shape_same(self) -> None:
+        a = np.ones(10)
+        b = np.ones(10)
+        result = spectral_correlate(a, b, mode="same")
+        assert result.shape == (10,)
+
+    def test_output_shape_valid(self) -> None:
+        a = np.ones(10)
+        b = np.ones(10)
+        result = spectral_correlate(a, b, mode="valid")
+        assert result.shape == (1,)
+
+    def test_auto_correlation_peak_at_center(self) -> None:
+        """Auto-correlation of a symmetric signal peaks at zero-lag (center)."""
+        x = np.linspace(0, 2 * np.pi, 50)
+        signal = np.sin(x)
+        corr = spectral_correlate(signal, signal, mode="full", normalize=False)
+        center = len(corr) // 2
+        assert np.argmax(corr) == center
+
+    def test_normalized_peak_is_one(self) -> None:
+        """Auto-correlation with normalization should peak at 1.0."""
+        rng = np.random.default_rng(42)
+        signal = rng.random(50)
+        corr = spectral_correlate(signal, signal, mode="full", normalize=True)
+        np.testing.assert_allclose(np.max(corr), 1.0, atol=1e-10)
+
+    def test_2d_query_1d_reference(self) -> None:
+        batch = np.eye(3, 5)
+        ref = np.array([0.0, 0.0, 1.0, 0.0, 0.0])
+        result = spectral_correlate(batch, ref, mode="same")
+        assert result.shape == (3, 5)
+
+    def test_unnormalized(self) -> None:
+        a = np.array([2.0, 0.0, 0.0])
+        b = np.array([3.0, 0.0, 0.0])
+        corr_norm = spectral_correlate(a, b, mode="valid", normalize=True)
+        corr_raw = spectral_correlate(a, b, mode="valid", normalize=False)
+        # Unnormalized should give dot product = 6.0
+        np.testing.assert_allclose(corr_raw, [6.0], atol=1e-10)
+        # Normalized should give 1.0
+        np.testing.assert_allclose(corr_norm, [1.0], atol=1e-10)
+
+    def test_invalid_mode_raises(self) -> None:
+        with pytest.raises(ValueError, match="mode must be one of"):
+            spectral_correlate(np.ones(5), np.ones(5), mode="invalid")
+
+    def test_2d_reference_raises(self) -> None:
+        with pytest.raises(ValueError, match="reference must be 1-D"):
+            spectral_correlate(np.ones(5), np.ones((3, 5)))
+
+    def test_mismatched_width_raises(self) -> None:
+        with pytest.raises(SpectrumShapeError):
+            spectral_correlate(np.ones(5), np.ones(3))
+
+    def test_empty_raises(self) -> None:
+        with pytest.raises(EmptySpectrumError):
+            spectral_correlate(np.array([]), np.array([]))
+
+
+# ---------------------------------------------------------------------------
+# spectral_align
+# ---------------------------------------------------------------------------
+
+
+class TestSpectralAlign:
+    """Tests for spectral_align."""
+
+    def test_recovers_known_shift(
+        self,
+        shifted_spectrum: tuple[np.ndarray, int],
+        clean_reference_500: np.ndarray,
+    ) -> None:
+        shifted, true_shift = shifted_spectrum
+        aligned, detected_shift = spectral_align(shifted, clean_reference_500)
+        assert aligned.shape == shifted.shape
+        # Should detect a shift close to the true shift
+        assert abs(detected_shift - (-true_shift)) <= 2
+
+    def test_no_shift_needed(self, clean_reference_500: np.ndarray) -> None:
+        aligned, shift = spectral_align(clean_reference_500, clean_reference_500)
+        assert shift == 0
+        np.testing.assert_array_equal(aligned, clean_reference_500)
+
+    def test_output_shape_1d(self) -> None:
+        ref = np.zeros(50)
+        ref[25] = 1.0
+        data = np.zeros(50)
+        data[30] = 1.0
+        aligned, shift = spectral_align(data, ref)
+        assert aligned.shape == (50,)
+        assert isinstance(shift, int)
+
+    def test_output_shape_2d(self) -> None:
+        ref = np.zeros(50)
+        ref[25] = 1.0
+        batch = np.zeros((3, 50))
+        batch[0, 28] = 1.0
+        batch[1, 30] = 1.0
+        batch[2, 22] = 1.0
+        aligned, shifts = spectral_align(batch, ref)
+        assert aligned.shape == (3, 50)
+        assert isinstance(shifts, np.ndarray)
+        assert shifts.shape == (3,)
+
+    def test_max_shift_respected(self) -> None:
+        ref = np.zeros(50)
+        ref[25] = 1.0
+        data = np.zeros(50)
+        data[40] = 1.0  # shift of 15
+        _, shift = spectral_align(data, ref, max_shift=5)
+        assert abs(shift) <= 5
+
+    def test_max_shift_zero(self) -> None:
+        ref = np.zeros(50)
+        ref[25] = 1.0
+        data = np.zeros(50)
+        data[30] = 1.0
+        aligned, shift = spectral_align(data, ref, max_shift=0)
+        assert shift == 0
+        np.testing.assert_array_equal(aligned, data)
+
+    def test_negative_max_shift_raises(self) -> None:
+        with pytest.raises(ValueError, match="max_shift must be >= 0"):
+            spectral_align(np.ones(10), np.ones(10), max_shift=-1)
+
+    def test_fill_value(self) -> None:
+        ref = np.zeros(50)
+        ref[25] = 1.0
+        data = np.zeros(50)
+        data[30] = 1.0
+        aligned, _ = spectral_align(data, ref, fill_value=0.0)
+        # Edges should be filled with the specified value
+        assert aligned.shape == (50,)
+
+    def test_2d_reference_raises(self) -> None:
+        with pytest.raises(ValueError, match="reference must be 1-D"):
+            spectral_align(np.ones(10), np.ones((3, 10)))
+
+    def test_mismatched_width_raises(self) -> None:
+        with pytest.raises(SpectrumShapeError):
+            spectral_align(np.ones(10), np.ones(5))
+
+    def test_empty_raises(self) -> None:
+        with pytest.raises(EmptySpectrumError):
+            spectral_align(np.array([]), np.array([]))

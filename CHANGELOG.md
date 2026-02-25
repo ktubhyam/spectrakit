@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-02-25
+
+### Added
+- **Despiking subpackage** (`spectrakit.despike`):
+  - `despike_whitaker_hayes` — modified Z-score of 2nd derivative with linear interpolation (Whitaker & Hayes 2018)
+  - `despike_zscore` — rolling Z-score detection with median replacement
+- **Signal quality subpackage** (`spectrakit.quality`):
+  - `quality_snr` — signal-to-noise ratio (automatic via 2nd derivative or explicit region-based)
+  - `quality_roughness` — RMS of finite differences for noise assessment
+- **New spectral operations**:
+  - `spectral_correlate` — cross-correlation wrapper with optional L2 normalization
+  - `spectral_align` — shift alignment via cross-correlation peak detection
+- 67 new tests (692 total, up from 625)
+- API documentation pages for despike and quality subpackages
+
 ## [1.7.2] - 2026-02-25
 
 ### Fixed

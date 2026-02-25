@@ -53,3 +53,40 @@ def synthetic_batch() -> np.ndarray:
 def wavenumbers_1000() -> np.ndarray:
     """Wavenumber axis for 1000-point spectra, shape (1000,)."""
     return np.linspace(400, 4000, 1000)
+
+
+@pytest.fixture
+def spiked_spectrum() -> np.ndarray:
+    """Synthetic spectrum with 3 known spikes, shape (500,)."""
+    rng = np.random.default_rng(42)
+    x = np.linspace(0, 10, 500)
+    clean = np.exp(-0.5 * ((x - 5) / 0.8) ** 2)
+    noise = rng.normal(0, 0.005, size=500)
+    spiked = clean + noise
+    # Insert 3 large spikes at known positions
+    spiked[100] += 5.0
+    spiked[250] += 8.0
+    spiked[400] += 6.0
+    return spiked
+
+
+@pytest.fixture
+def clean_reference_500() -> np.ndarray:
+    """Clean reference spectrum, shape (500,)."""
+    x = np.linspace(0, 10, 500)
+    return np.exp(-0.5 * ((x - 5) / 0.8) ** 2)
+
+
+@pytest.fixture
+def shifted_spectrum() -> tuple[np.ndarray, int]:
+    """Spectrum shifted by a known amount from clean_reference_500.
+
+    Returns:
+        Tuple of (shifted_spectrum, true_shift).
+    """
+    x = np.linspace(0, 10, 500)
+    clean = np.exp(-0.5 * ((x - 5) / 0.8) ** 2)
+    shift = 15
+    shifted = np.roll(clean, shift)
+    shifted[:shift] = clean[0]
+    return shifted, shift
