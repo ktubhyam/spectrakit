@@ -98,11 +98,16 @@ exclude = [
     "tests/",
     "docs/",
     "notebooks/",
+    "examples/",
     "*.md",
     "!README.md",
     "Makefile",
     ".github/",
     ".pre-commit-config.yaml",
+    ".hypothesis/",
+    ".python-version",
+    ".gitignore",
+    "CITATION.cff",
     "mkdocs.yml",
 ]
 
