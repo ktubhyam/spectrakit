@@ -17,6 +17,7 @@ dependencies.
 
 **[Documentation](https://ktubhyam.github.io/spectrakit/)** |
 **[API Reference](https://ktubhyam.github.io/spectrakit/api/)** |
+**[Project Page](https://tubhyam.dev/projects/spectrakit)** |
 **[Examples](examples/)**
 
 ## Installation

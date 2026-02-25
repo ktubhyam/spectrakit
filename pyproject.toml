@@ -84,7 +84,7 @@ dev = [
 spectrakit = "spectrakit.cli:app"
 
 [project.urls]
-Homepage = "https://github.com/ktubhyam/spectrakit"
+Homepage = "https://tubhyam.dev/projects/spectrakit"
 Documentation = "https://ktubhyam.github.io/spectrakit/"
 Repository = "https://github.com/ktubhyam/spectrakit"
 Issues = "https://github.com/ktubhyam/spectrakit/issues"
