@@ -10,6 +10,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+# numpy 2.0 renamed trapz -> trapezoid; support both
+_trapezoid = getattr(np, "trapezoid", np.trapz)
+
 from spectrakit import (
     Pipeline,
     baseline_als,
@@ -89,7 +92,7 @@ class TestNormalizationInvariants:
         """Area-normalized (all-positive) output integrates to 1."""
         y = np.abs(RNG.standard_normal(100)) + 0.1
         result = normalize_area(y)
-        integral = np.trapezoid(np.abs(result))
+        integral = _trapezoid(np.abs(result))
         np.testing.assert_allclose(integral, 1.0, atol=1e-12)
 
     def test_area_with_wavenumbers(self) -> None:
@@ -97,7 +100,7 @@ class TestNormalizationInvariants:
         wn = np.sort(RNG.uniform(400, 4000, 100))
         y = np.abs(RNG.standard_normal(100)) + 0.1
         result = normalize_area(y, wavenumbers=wn)
-        integral = np.trapezoid(np.abs(result), x=wn)
+        integral = _trapezoid(np.abs(result), x=wn)
         np.testing.assert_allclose(integral, 1.0, atol=1e-12)
 
     def test_snv_scaling_invariance(self) -> None:

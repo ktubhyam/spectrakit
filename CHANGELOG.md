@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-02-26
+
+### Added
+- **Jupyter widget** (`spectrakit.widgets`):
+  - `SpectrumViewer` anywidget-based interactive viewer for Jupyter notebooks using spectraview frontend
+  - Binary data serialization via traitlets for performant Python-to-JS spectrum transfer
+  - New `[widgets]` optional dependency group (`pip install pyspectrakit[widgets]`)
+- **Auto-detect reader** (`spectrakit.io.auto`):
+  - `read_spectrum(path, format=None, **kwargs)` — unified entry point that auto-detects file format from extension or magic bytes
+  - `detect_format(path)` — returns format string without reading data
+  - Supports JCAMP-DX, SPC, CSV/TSV, Bruker OPUS, and HDF5
+  - Magic bytes fallback: `##=JCAMP`, `\x89HDF=HDF5`, `\x0a\x0a=OPUS`
+- Refactored CLI `info` and `convert` commands to use `read_spectrum`
+- 50 new tests (743 total)
+
+### Fixed
+- mypy type-ignore for anywidget optional dependency
+- Widget frontend API alignment with spectraview component props
+- CI failures: widget dist build, lint errors, similarity epsilon guard
+
 ## [1.8.1] - 2026-02-25
 
 ### Changed

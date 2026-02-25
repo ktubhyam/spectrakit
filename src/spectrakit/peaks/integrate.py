@@ -9,6 +9,9 @@ import numpy as np
 from spectrakit._validate import ensure_float64, validate_1d_or_2d, warn_if_not_finite
 from spectrakit.exceptions import SpectrumShapeError
 
+# numpy 2.0 renamed trapz -> trapezoid; support both
+_trapezoid = getattr(np, "trapezoid", np.trapz)
+
 logger = logging.getLogger(__name__)
 
 
@@ -48,7 +51,7 @@ def peaks_integrate(
     warn_if_not_finite(intensities)
 
     if ranges is None:
-        return float(np.trapezoid(intensities, x=wavenumbers))
+        return float(_trapezoid(intensities, x=wavenumbers))
 
     if wavenumbers is None:
         raise ValueError("wavenumbers are required when ranges is specified")
@@ -66,6 +69,6 @@ def peaks_integrate(
 
         region_wn = wavenumbers[mask]
         region_y = intensities[mask]
-        areas.append(float(np.trapezoid(region_y, x=region_wn)))
+        areas.append(float(_trapezoid(region_y, x=region_wn)))
 
     return np.array(areas, dtype=np.float64)

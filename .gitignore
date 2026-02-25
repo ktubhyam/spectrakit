@@ -31,3 +31,4 @@ uv.lock
 *.mat
 *.spc
 *.dx
+.claude/

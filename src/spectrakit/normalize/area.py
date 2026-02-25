@@ -9,6 +9,9 @@ import numpy as np
 
 from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d, warn_if_not_finite
 
+# numpy 2.0 renamed trapz -> trapezoid; support both
+_trapezoid = getattr(np, "trapezoid", np.trapz)
+
 logger = logging.getLogger(__name__)
 
 
@@ -38,7 +41,7 @@ def normalize_area(
     warn_if_not_finite(intensities)
 
     if intensities.ndim == 1:
-        area = np.trapezoid(np.abs(intensities), x=wavenumbers)
+        area = _trapezoid(np.abs(intensities), x=wavenumbers)
         if area < EPSILON:
             warnings.warn(
                 "Area normalization: near-zero area, returning spectrum unchanged.",
@@ -47,7 +50,7 @@ def normalize_area(
             return intensities
         return intensities / area  # type: ignore[no-any-return]
 
-    areas = np.trapezoid(np.abs(intensities), x=wavenumbers, axis=1).reshape(-1, 1)
+    areas = _trapezoid(np.abs(intensities), x=wavenumbers, axis=1).reshape(-1, 1)
     degenerate = areas < EPSILON
     areas = np.where(degenerate, 1.0, areas)
     n_zero = int(np.sum(degenerate))

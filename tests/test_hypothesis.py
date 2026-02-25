@@ -11,6 +11,9 @@ from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays
 
+# numpy 2.0 renamed trapz -> trapezoid; support both
+_trapezoid = getattr(np, "trapezoid", np.trapz)
+
 from spectrakit import (
     normalize_area,
     normalize_minmax,
@@ -129,7 +132,7 @@ class TestHypothesisNormalization:
     def test_area_integral_is_one(self, data: np.ndarray) -> None:
         """Area-normalized positive spectrum integrates to 1."""
         result = normalize_area(data)
-        integral = np.trapezoid(np.abs(result))
+        integral = _trapezoid(np.abs(result))
         np.testing.assert_allclose(integral, 1.0, atol=1e-10)
 
 

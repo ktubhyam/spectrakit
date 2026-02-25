@@ -10,6 +10,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+# numpy 2.0 renamed trapz -> trapezoid; support both
+_trapezoid = getattr(np, "trapezoid", np.trapz)
+
 from spectrakit import (
     baseline_als,
     baseline_arpls,
@@ -162,7 +165,7 @@ class TestNormalizationCorrectness:
         # Use all-positive values so abs() doesn't change them
         intensities = np.abs(RNG.standard_normal(100)) + 0.1
         result = normalize_area(intensities)
-        integral = np.trapezoid(np.abs(result))
+        integral = _trapezoid(np.abs(result))
         np.testing.assert_allclose(integral, 1.0, atol=1e-12)
 
 

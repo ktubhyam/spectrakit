@@ -5,6 +5,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+# numpy 2.0 renamed trapz -> trapezoid; support both
+_trapezoid = getattr(np, "trapezoid", np.trapz)
+
 from spectrakit.normalize import normalize_area, normalize_minmax, normalize_snv, normalize_vector
 
 
@@ -51,7 +54,7 @@ class TestNormalizeMinMax:
 class TestNormalizeArea:
     def test_unit_area(self, synthetic_spectrum: np.ndarray) -> None:
         result = normalize_area(synthetic_spectrum)
-        area = np.trapezoid(np.abs(result))
+        area = _trapezoid(np.abs(result))
         assert abs(area - 1.0) < 0.01
 
     def test_batch_2d(self) -> None:
@@ -61,7 +64,7 @@ class TestNormalizeArea:
         result = normalize_area(batch)
         assert result.shape == batch.shape
         for row in result:
-            area = np.trapezoid(np.abs(row))
+            area = _trapezoid(np.abs(row))
             assert abs(area - 1.0) < 0.01
 
     def test_near_zero_area_1d(self) -> None:
@@ -75,7 +78,7 @@ class TestNormalizeArea:
         wn = np.linspace(400, 4000, 100)
         intensities = np.random.default_rng(42).random(100) + 0.1
         result = normalize_area(intensities, wavenumbers=wn)
-        area = np.trapezoid(np.abs(result), x=wn)
+        area = _trapezoid(np.abs(result), x=wn)
         assert abs(area - 1.0) < 0.01
 
 
