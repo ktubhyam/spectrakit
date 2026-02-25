@@ -1,0 +1,25 @@
+{
+  "name": "@spectrakit/widget-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "React frontend for the SpectraKit Jupyter widget",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anywidget/react": "^0.0.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "spectraview": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.0"
+  }
+}

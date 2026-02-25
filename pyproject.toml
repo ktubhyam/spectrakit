@@ -69,8 +69,12 @@ sklearn = [
 plot = [
     "matplotlib>=3.7",
 ]
+widgets = [
+    "anywidget>=0.9",
+    "traitlets>=5.0",
+]
 all = [
-    "pyspectrakit[io,cli,baselines,fitting,sklearn,plot]",
+    "pyspectrakit[io,cli,baselines,fitting,sklearn,plot,widgets]",
 ]
 docs = [
     "mkdocs>=1.5",
@@ -153,5 +157,7 @@ module = [
     "pybaselines",
     "sklearn.*",
     "matplotlib.*",
+    "anywidget",
+    "traitlets",
 ]
 ignore_missing_imports = true
