@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-02-25
+
+### Added
+- Documentation site with mkdocs-material and auto-generated API reference
+- Processing workflow, pipeline, and sklearn integration guides
+- Five example Jupyter notebooks (quickstart, baselines, derivatives, scatter, sklearn)
+- `[docs]` optional extra for documentation tools
+- Comprehensive README with full feature overview
+
+### Changed
+- README rewritten with complete API tables and usage examples
+
 ## [0.4.0] - 2026-02-25
 
 ### Added

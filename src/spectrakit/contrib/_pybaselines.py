@@ -107,7 +107,7 @@ def pybaselines_method(
         DependencyError: If pybaselines is not installed.
         ValueError: If the method name is not recognized.
     """
-    Baseline = _get_pybaselines()
+    baseline_cls = _get_pybaselines()
     intensities = ensure_float64(intensities)
     validate_1d_or_2d(intensities)
 
@@ -115,7 +115,7 @@ def pybaselines_method(
         _pybaselines_1d,
         intensities,
         method=method,
-        Baseline=Baseline,
+        baseline_cls=baseline_cls,
         **kwargs,
     )
 
@@ -123,11 +123,11 @@ def pybaselines_method(
 def _pybaselines_1d(
     intensities: np.ndarray,
     method: str,
-    Baseline: Any,
+    baseline_cls: Any,
     **kwargs: Any,
 ) -> np.ndarray:
     """Apply a single pybaselines method to a 1-D spectrum."""
-    baseline_fitter = Baseline(x_data=np.arange(len(intensities)))
+    baseline_fitter = baseline_cls(x_data=np.arange(len(intensities)))
 
     # Find the method on the fitter
     fn = getattr(baseline_fitter, method, None)

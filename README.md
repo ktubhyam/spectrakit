@@ -1,10 +1,20 @@
 # SpectraKit
 
-> Python toolkit for spectral data processing: format parsers, baseline correction,
-> normalization, and spectral similarity matching.
+> Python toolkit for spectral data processing: smoothing, baseline correction,
+> normalization, scatter correction, derivatives, peak analysis, and more.
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Typed](https://img.shields.io/badge/typing-strict-blue.svg)](https://peps.python.org/pep-0561/)
+
+SpectraKit is a lightweight, pip-installable library for preprocessing and analyzing
+spectral data from IR, Raman, and NIR spectroscopy. It follows a functional design
+with NumPy arrays as the primary data type and requires only NumPy + SciPy as core
+dependencies.
+
+**[Documentation](https://ktubhyam.github.io/spectrakit/)** |
+**[API Reference](https://ktubhyam.github.io/spectrakit/api/)** |
+**[Examples](examples/)**
 
 ## Installation
 
@@ -12,81 +22,136 @@
 pip install spectrakit
 ```
 
-With optional dependencies:
+Optional extras for additional functionality:
 
 ```bash
-# HDF5 + SPC file support
-pip install spectrakit[io]
-
-# CLI
-pip install spectrakit[cli]
-
-# Everything
-pip install spectrakit[all]
+pip install spectrakit[io]         # HDF5 file support
+pip install spectrakit[cli]        # Command-line interface
+pip install spectrakit[baselines]  # pybaselines backend (200+ methods)
+pip install spectrakit[fitting]    # lmfit peak fitting
+pip install spectrakit[sklearn]    # scikit-learn integration
+pip install spectrakit[plot]       # Plotting utilities
+pip install spectrakit[all]        # Everything above
 ```
 
 ## Quick Start
 
 ```python
 import numpy as np
-from spectrakit import (
-    Spectrum,
-    read_jcamp,
-    baseline_als,
-    normalize_snv,
-    similarity_cosine,
-    Pipeline,
-)
+from spectrakit import smooth_savgol, baseline_als, normalize_snv
 
-# Read a JCAMP-DX file
-spec = read_jcamp("ethanol.dx")
-print(spec.n_points, spec.wavenumbers[:5])
+# Load your spectral data (N spectra, W wavelengths)
+spectra = np.loadtxt("data.csv", delimiter=",")
 
-# Baseline correction + normalization
-corrected = spec.intensities - baseline_als(spec.intensities)
+# Process with individual functions
+smoothed = smooth_savgol(spectra, window_length=11)
+corrected = baseline_als(smoothed, lam=1e6, p=0.01)
 normalized = normalize_snv(corrected)
+```
 
-# Or use a pipeline
+All functions accept both single spectra `(W,)` and batches `(N, W)`.
+
+### Pipeline
+
+Chain steps for reproducibility:
+
+```python
+from spectrakit.pipeline import Pipeline
+
 pipe = Pipeline()
+pipe.add("smooth", smooth_savgol, window_length=11)
 pipe.add("baseline", baseline_als, lam=1e6)
 pipe.add("normalize", normalize_snv)
-result = pipe.transform(spec.intensities)
 
-# Compare two spectra
-score = similarity_cosine(spectrum_a, spectrum_b)
+processed = pipe.transform(spectra)
+```
+
+### scikit-learn Integration
+
+Use any SpectraKit function in an sklearn pipeline:
+
+```python
+from sklearn.pipeline import Pipeline as SkPipeline
+from sklearn.decomposition import PCA
+from sklearn.svm import SVC
+from spectrakit.sklearn import SpectralTransformer
+
+pipe = SkPipeline([
+    ("smooth", SpectralTransformer(smooth_savgol, window_length=11)),
+    ("baseline", SpectralTransformer(baseline_als, lam=1e6)),
+    ("normalize", SpectralTransformer(normalize_snv)),
+    ("pca", PCA(n_components=10)),
+    ("svm", SVC()),
+])
+
+pipe.fit(X_train, y_train)
+predictions = pipe.predict(X_test)
 ```
 
 ## Features
 
-### Format Parsers
+### Smoothing
 
-| Format | Function | Dependencies |
+| Method | Function | Description |
 |--------|----------|-------------|
-| JCAMP-DX (.dx, .jdx) | `read_jcamp(path)` | None |
-| SPC (.spc) | `read_spc(path)` | `spc-spectra` |
-| CSV/TSV | `read_csv(path)` | None |
-| Bruker OPUS | `read_opus(path)` | Planned |
-| HDF5 (.h5) | `read_hdf5(path)` / `write_hdf5(spec, path)` | `h5py` |
+| Savitzky-Golay | `smooth_savgol(y)` | Polynomial least-squares smoothing |
+| Whittaker | `smooth_whittaker(y)` | Penalized least-squares smoother |
 
 ### Baseline Correction
 
-| Method | Function | Key Parameters |
-|--------|----------|---------------|
-| Asymmetric Least Squares | `baseline_als(y, lam, p)` | `lam`: smoothness, `p`: asymmetry |
-| SNIP | `baseline_snip(y, max_half_window)` | `max_half_window`: clipping range |
-| Polynomial | `baseline_polynomial(y, degree)` | `degree`: polynomial order |
-| Rubberband | `baseline_rubberband(y)` | Convex hull, no parameters |
+| Method | Function | Description |
+|--------|----------|-------------|
+| ALS | `baseline_als(y)` | Asymmetric least squares |
+| SNIP | `baseline_snip(y)` | Statistics-sensitive peak clipping |
+| Polynomial | `baseline_polynomial(y)` | Iterative polynomial fit |
+| Rubberband | `baseline_rubberband(y)` | Convex hull envelope |
 
 ### Normalization
 
 | Method | Function | Description |
-|--------|----------|------------|
+|--------|----------|-------------|
 | SNV | `normalize_snv(y)` | Zero mean, unit variance |
 | Min-Max | `normalize_minmax(y)` | Scale to [0, 1] |
-| Area | `normalize_area(y)` | Integral = 1 |
+| Area | `normalize_area(y)` | Unit area under curve |
 | Vector | `normalize_vector(y)` | L2 norm = 1 |
 
-### Similarity Matching
+### Derivatives
+
+| Method | Function | Description |
+|--------|----------|-------------|
+| Savitzky-Golay | `derivative_savgol(y)` | SG polynomial derivative |
+| Gap-Segment | `derivative_gap_segment(y)` | Norris-Williams derivative |
+
+### Scatter Correction
+
+| Method | Function | Description |
+|--------|----------|-------------|
+| MSC | `scatter_msc(y)` | Multiplicative scatter correction |
+| EMSC | `scatter_emsc(y)` | Extended MSC with polynomial terms |
+
+### Spectral Transforms
+
+| Method | Function | Description |
+|--------|----------|-------------|
+| Kubelka-Munk | `transform_kubelka_munk(y)` | Reflectance to K-M units |
+| ATR Correction | `transform_atr_correction(y, wn)` | ATR depth-of-penetration |
+
+### Operations
+
+| Function | Description |
+|----------|-------------|
+| `spectral_subtract(a, b)` | Spectral subtraction |
+| `spectral_average(y)` | Mean spectrum from batch |
+| `spectral_interpolate(y, wn, new_wn)` | Resample to new axis |
+
+### Peak Analysis
+
+| Function | Description |
+|----------|-------------|
+| `peaks_find(y)` | Find peaks with scipy.signal |
+| `peaks_integrate(y)` | Integrate peak regions |
+
+### Similarity Metrics
 
 | Metric | Function | Range |
 |--------|----------|-------|
@@ -95,9 +160,32 @@ score = similarity_cosine(spectrum_a, spectrum_b)
 | Spectral Angle | `similarity_spectral_angle(a, b)` | [0, pi] |
 | Euclidean | `similarity_euclidean(a, b)` | [0, inf) |
 
-All functions accept single spectra `(W,)` or batches `(N, W)`.
+### I/O Formats
 
-## The Spectrum Container
+| Format | Function | Dependencies |
+|--------|----------|-------------|
+| JCAMP-DX | `read_jcamp(path)` | None |
+| SPC | `read_spc(path)` | spc-spectra |
+| CSV/TSV | `read_csv(path)` | None |
+| HDF5 | `read_hdf5(path)` / `write_hdf5(spec, path)` | h5py |
+| Bruker OPUS | `read_opus(path)` | Planned |
+
+### Optional Backends
+
+| Backend | Extra | Description |
+|---------|-------|-------------|
+| pybaselines | `[baselines]` | 200+ baseline methods via `pybaselines_method()` |
+| lmfit | `[fitting]` | Peak fitting with Gaussian, Lorentzian, Voigt models |
+
+### Visualization
+
+```python
+from spectrakit.plot import plot_spectrum, plot_comparison, plot_baseline
+```
+
+Requires `pip install spectrakit[plot]`.
+
+## Spectrum Container
 
 ```python
 from spectrakit import Spectrum
@@ -114,20 +202,44 @@ spec = Spectrum(
 ## CLI
 
 ```bash
-# Show file info
-spectrakit info ethanol.dx
+pip install spectrakit[cli]
 
-# Convert to HDF5
+spectrakit info ethanol.dx
 spectrakit convert ethanol.dx ethanol.h5
 ```
+
+## Examples
+
+See the [examples/](examples/) directory for Jupyter notebooks:
+
+1. **Quick Start** — basic preprocessing workflow
+2. **Baseline Methods** — comparing correction algorithms
+3. **Derivatives & Peaks** — derivative analysis and peak finding
+4. **Scatter Correction** — MSC vs EMSC vs SNV
+5. **sklearn Pipeline** — classification with preprocessing
 
 ## Development
 
 ```bash
 git clone https://github.com/ktubhyam/spectrakit.git
 cd spectrakit
-uv pip install -e ".[all,dev]"
+pip install -e ".[all,dev]"
 pytest
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## Citation
+
+If you use SpectraKit in your research, please cite:
+
+```bibtex
+@software{spectrakit,
+  author = {Karthikeyan, Tubhyam},
+  title = {SpectraKit: Python toolkit for spectral data processing},
+  url = {https://github.com/ktubhyam/spectrakit},
+  license = {MIT}
+}
 ```
 
 ## License
