@@ -47,8 +47,11 @@ cli = [
     "typer>=0.9",
     "rich>=13.0",
 ]
+baselines = [
+    "pybaselines>=1.0",
+]
 all = [
-    "spectrakit[io,cli]",
+    "spectrakit[io,cli,baselines]",
 ]
 dev = [
     "pytest>=7.0",
