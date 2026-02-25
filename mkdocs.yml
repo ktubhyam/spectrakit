@@ -47,6 +47,9 @@ markdown_extensions:
 
 plugins:
   - search
+  - mkdocs-jupyter:
+      include_source: true
+      execute: false
   - mkdocstrings:
       handlers:
         python:
@@ -86,4 +89,10 @@ nav:
       - Contrib: api/contrib.md
       - sklearn: api/sklearn.md
       - Exceptions: api/exceptions.md
+  - Examples:
+      - Quick Start: examples/01_quickstart.ipynb
+      - Baselines: examples/02_baseline_methods.ipynb
+      - Derivatives & Peaks: examples/03_derivatives_and_peaks.ipynb
+      - Scatter Correction: examples/04_scatter_correction.ipynb
+      - sklearn Pipeline: examples/05_sklearn_pipeline.ipynb
   - Changelog: changelog.md

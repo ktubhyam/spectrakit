@@ -13,6 +13,7 @@ htmlcov/
 .mypy_cache/
 .ruff_cache/
 site/
+docs/examples/
 .vscode/
 .idea/
 *.swp

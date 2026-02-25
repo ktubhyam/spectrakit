@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-02-25
+
+### Added
+- Bruker OPUS binary file reader (`read_opus`) — native parser, no external dependencies
+- Notebook gallery in documentation site via mkdocs-jupyter
+- CI: Codecov coverage upload, optional dependency test matrix, automated PyPI publishing workflow
+- Dependabot configuration for GitHub Actions and pip dependency updates
+- Pre-commit configuration with ruff and mypy hooks
+- Community standards: CODE_OF_CONDUCT.md, SECURITY.md, PR template
+- Makefile with common development commands
+- README badges: CI status, Codecov coverage, PyPI version
+
+### Changed
+- Test coverage improved from 76% to 97% (242 tests, 6 skipped)
+- All mypy strict mode errors resolved (0 errors across 53 source files)
+- Fixed ruff formatting and lint issues in notebooks (import sorting, zip strict)
+- OPUS entry in README I/O table updated from "Planned" to supported
+
 ## [1.0.0] - 2026-02-25
 
 ### Added

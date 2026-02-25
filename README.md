@@ -3,6 +3,9 @@
 > Python toolkit for spectral data processing: smoothing, baseline correction,
 > normalization, scatter correction, derivatives, peak analysis, and more.
 
+[![CI](https://github.com/ktubhyam/spectrakit/actions/workflows/ci.yml/badge.svg)](https://github.com/ktubhyam/spectrakit/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/ktubhyam/spectrakit/branch/main/graph/badge.svg)](https://codecov.io/gh/ktubhyam/spectrakit)
+[![PyPI](https://img.shields.io/pypi/v/spectrakit.svg)](https://pypi.org/project/spectrakit/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Typed](https://img.shields.io/badge/typing-strict-blue.svg)](https://peps.python.org/pep-0561/)
@@ -168,7 +171,7 @@ predictions = pipe.predict(X_test)
 | SPC | `read_spc(path)` | spc-spectra |
 | CSV/TSV | `read_csv(path)` | None |
 | HDF5 | `read_hdf5(path)` / `write_hdf5(spec, path)` | h5py |
-| Bruker OPUS | `read_opus(path)` | Planned |
+| Bruker OPUS | `read_opus(path)` | None |
 
 ### Optional Backends
 
