@@ -36,6 +36,9 @@ from spectrakit.normalize import normalize_area, normalize_minmax, normalize_snv
 # Operations
 from spectrakit.ops import spectral_average, spectral_interpolate, spectral_subtract
 
+# Peaks
+from spectrakit.peaks import PeakResult, peaks_find, peaks_integrate
+
 # Pipeline
 from spectrakit.pipeline import Pipeline
 
@@ -96,5 +99,8 @@ __all__ = [
     "spectral_subtract",
     "spectral_average",
     "spectral_interpolate",
+    "peaks_find",
+    "peaks_integrate",
+    "PeakResult",
     "Pipeline",
 ]
