@@ -35,7 +35,7 @@ DEFAULT_WIDTH = "100%"
 DEFAULT_HEIGHT = "500px"
 
 
-class SpectrumViewer(anywidget.AnyWidget):
+class SpectrumViewer(anywidget.AnyWidget):  # type: ignore[misc]
     """Interactive spectrum viewer widget for Jupyter notebooks.
 
     Renders one or more spectra using a React-based SpectraView component
