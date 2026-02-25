@@ -32,6 +32,7 @@ def derivative_savgol(
     window_length: int = DEFAULT_WINDOW_LENGTH,
     polyorder: int = DEFAULT_POLYORDER,
     deriv: int = DEFAULT_DERIV,
+    delta: float = 1.0,
 ) -> np.ndarray:
     """Compute spectral derivative using Savitzky-Golay filter.
 
@@ -45,6 +46,8 @@ def derivative_savgol(
         polyorder: Order of the polynomial used to fit the samples.
         deriv: Order of the derivative to compute. Common values:
             1 (first derivative) or 2 (second derivative).
+        delta: Spacing of the samples to which the filter is applied.
+            Used to scale the derivative by ``1 / delta**deriv``.
 
     Returns:
         Derivative spectrum, same shape as input.
@@ -52,7 +55,24 @@ def derivative_savgol(
     Raises:
         SpectrumShapeError: If input is not 1-D or 2-D.
         EmptySpectrumError: If input has zero elements.
+        ValueError: If parameters are invalid (window_length not odd,
+            polyorder >= window_length, deriv < 0, delta <= 0).
     """
+    if window_length < 1 or window_length % 2 == 0:
+        raise ValueError(
+            f"window_length must be a positive odd integer, got {window_length}"
+        )
+    if polyorder < 0:
+        raise ValueError(f"polyorder must be non-negative, got {polyorder}")
+    if polyorder >= window_length:
+        raise ValueError(
+            f"polyorder ({polyorder}) must be less than window_length ({window_length})"
+        )
+    if deriv < 0:
+        raise ValueError(f"deriv must be non-negative, got {deriv}")
+    if delta <= 0:
+        raise ValueError(f"delta must be positive, got {delta}")
+
     intensities = ensure_float64(intensities)
     validate_1d_or_2d(intensities)
     warn_if_not_finite(intensities)
@@ -63,6 +83,7 @@ def derivative_savgol(
         window_length=window_length,
         polyorder=polyorder,
         deriv=deriv,
+        delta=delta,
     )
 
 
@@ -71,6 +92,7 @@ def _derivative_savgol_1d(
     window_length: int = DEFAULT_WINDOW_LENGTH,
     polyorder: int = DEFAULT_POLYORDER,
     deriv: int = DEFAULT_DERIV,
+    delta: float = 1.0,
 ) -> np.ndarray:
     """Savitzky-Golay derivative for a single 1-D spectrum."""
     return savgol_filter(  # type: ignore[no-any-return]
@@ -78,4 +100,5 @@ def _derivative_savgol_1d(
         window_length=window_length,
         polyorder=polyorder,
         deriv=deriv,
+        delta=delta,
     )

@@ -13,7 +13,13 @@ import logging
 
 import numpy as np
 
-from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d, warn_if_not_finite
+from spectrakit._validate import (
+    EPSILON,
+    apply_along_spectra,
+    ensure_float64,
+    validate_1d_or_2d,
+    warn_if_not_finite,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +79,9 @@ def scatter_emsc(
     else:
         reference = ensure_float64(reference)
 
-    return np.array([_emsc_single(row, reference, poly_order) for row in intensities])
+    return apply_along_spectra(
+        _emsc_single, intensities, reference=reference, poly_order=poly_order
+    )
 
 
 def _emsc_single(

@@ -80,5 +80,7 @@ def _baseline_snip_1d(
         avg = (y[: -2 * hw] + y[2 * hw :]) / 2.0
         y[hw:-hw] = np.minimum(y[hw:-hw], avg)
 
-    baseline = (np.exp(np.exp(y) - 1) - 1) ** 2 - EPSILON
+    # Inverse of y = log(log(sqrt(x+1)+1)+1):
+    #   x = (exp(exp(y)-1)-1)^2 - 1
+    baseline = (np.exp(np.exp(y) - 1) - 1) ** 2 - 1.0
     return np.maximum(baseline, 0.0)  # type: ignore[no-any-return]

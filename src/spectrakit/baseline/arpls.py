@@ -69,28 +69,31 @@ def baseline_arpls(
     validate_1d_or_2d(intensities)
     warn_if_not_finite(intensities)
 
+    # Pre-compute the penalty matrix H = lam * D'D once.
+    # Same for every spectrum in a batch (depends only on length and lam).
+    n = intensities.shape[-1]
+    D = sparse.diags([1, -2, 1], [0, 1, 2], shape=(n - 2, n))
+    H = lam * D.T @ D
+
     return apply_along_spectra(
-        _baseline_arpls_1d, intensities, lam=lam, max_iter=max_iter, tol=tol
+        _baseline_arpls_1d, intensities, penalty=H, max_iter=max_iter, tol=tol
     )
 
 
 def _baseline_arpls_1d(
     intensities: np.ndarray,
-    lam: float = DEFAULT_LAMBDA,
+    penalty: sparse.spmatrix,
     max_iter: int = DEFAULT_MAX_ITER,
     tol: float = DEFAULT_TOL,
 ) -> np.ndarray:
     """ArPLS baseline for a single 1-D spectrum."""
     n = len(intensities)
-    D = sparse.diags([1, -2, 1], [0, 1, 2], shape=(n - 2, n))
-    H = lam * D.T @ D
-
     w = np.ones(n)
     y = intensities
 
     for _ in range(max_iter):
         W = sparse.diags(w, 0)
-        Z = W + H
+        Z = W + penalty
         z = spsolve(Z, w * y)
 
         # Residuals: negative = below baseline

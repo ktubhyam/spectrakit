@@ -85,21 +85,23 @@ def _derivative_gap_segment_1d(
     kernel = np.ones(segment) / segment
     averaged = np.convolve(intensities, kernel, mode="same")
 
-    # First derivative: difference of segment averages separated by gap
-    result = np.zeros(n, dtype=np.float64)
-    half_gap = gap // 2
-    if half_gap > 0 and 2 * half_gap < n:
-        result[half_gap : n - half_gap] = (
-            averaged[2 * half_gap :] - averaged[: n - 2 * half_gap]
-        )
+    # First derivative: difference of segment averages separated
+    # by exactly `gap` points.  The result is centered in the output
+    # array; edges are zero-padded.
+    result = _gap_diff(averaged, gap, n)
 
     if deriv == 2:
-        # Apply the same operation again for second derivative
-        first = result.copy()
-        result = np.zeros(n, dtype=np.float64)
-        if half_gap > 0 and 2 * half_gap < n:
-            result[half_gap : n - half_gap] = (
-                first[2 * half_gap :] - first[: n - 2 * half_gap]
-            )
+        # Apply the same gap difference again for second derivative
+        result = _gap_diff(result, gap, n)
 
     return result
+
+
+def _gap_diff(arr: np.ndarray, gap: int, n: int) -> np.ndarray:
+    """Compute centered gap difference: out[i] ~ arr[i+gap/2] - arr[i-gap/2]."""
+    out = np.zeros(n, dtype=np.float64)
+    if gap < n:
+        diff = arr[gap:] - arr[:-gap]  # length n - gap
+        start = gap // 2
+        out[start : start + len(diff)] = diff
+    return out

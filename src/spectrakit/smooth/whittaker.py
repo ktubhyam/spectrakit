@@ -80,12 +80,25 @@ def smooth_whittaker(
                 f"intensities spectral width {expected_w}"
             )
 
+    # Pre-compute the penalty matrix once for the entire batch.
+    n = intensities.shape[-1]
+
+    if wavenumbers is not None and differences <= 2:
+        if differences == 1:
+            D = _build_nonuniform_diff1(wavenumbers)
+        else:
+            D = _build_nonuniform_diff2(wavenumbers)
+    else:
+        D = sparse.eye(n, format="csc")
+        for _ in range(differences):
+            D = D[1:] - D[:-1]
+
+    penalty_z = sparse.eye(n, format="csc") + lam * D.T @ D
+
     return apply_along_spectra(
         _smooth_whittaker_1d,
         intensities,
-        lam=lam,
-        differences=differences,
-        wavenumbers=wavenumbers,
+        penalty_z=penalty_z,
     )
 
 
@@ -131,26 +144,7 @@ def _build_nonuniform_diff2(wavenumbers: np.ndarray) -> sparse.csc_matrix:
 
 def _smooth_whittaker_1d(
     intensities: np.ndarray,
-    lam: float = DEFAULT_LAMBDA,
-    differences: int = DEFAULT_DIFFERENCES,
-    wavenumbers: np.ndarray | None = None,
+    penalty_z: sparse.spmatrix,
 ) -> np.ndarray:
     """Whittaker smoother for a single 1-D spectrum."""
-    n = len(intensities)
-
-    if wavenumbers is not None and differences <= 2:
-        # Non-uniform spacing: use spacing-aware difference matrices
-        if differences == 1:
-            D = _build_nonuniform_diff1(wavenumbers)
-        else:
-            D = _build_nonuniform_diff2(wavenumbers)
-    else:
-        # Uniform spacing: standard difference matrix
-        D = sparse.eye(n, format="csc")
-        for _ in range(differences):
-            D = D[1:] - D[:-1]
-
-    W = sparse.eye(n, format="csc")
-    Z = W + lam * D.T @ D
-
-    return spsolve(Z, intensities)  # type: ignore[no-any-return]
+    return spsolve(penalty_z, intensities)  # type: ignore[no-any-return]

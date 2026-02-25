@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-02-25
+
+### Fixed
+- **SNIP inverse transform**: corrected `- EPSILON` to `- 1.0` in inverse LLS transform, matching the mathematical inverse of `y = log(log(sqrt(x+1)+1)+1)`
+- **Gap-segment off-by-one**: rewrote derivative to use full `gap` as offset (`arr[gap:] - arr[:-gap]` centered at `gap // 2`), producing correct results for odd gap values
+
+### Added
+- `derivative_savgol` parameter validation: window_length (positive odd), polyorder (< window_length), deriv (non-negative), delta (positive)
+- `derivative_savgol` `delta` parameter for scaling derivatives by point spacing
+- PEP 561 `py.typed` marker file for downstream type checker support
+- 58 adversarial edge case tests: minimum-size spectra (n=3), extreme dynamic range, integer input conversion, SNIP roundtrip, gap-segment symmetry, batch caching correctness, degenerate spectra, empty spectrum parametrized tests
+
+### Changed
+- **Batch performance**: penalty matrix pre-computed once in `baseline_als`, `baseline_arpls`, and `smooth_whittaker` public functions, eliminating redundant per-row sparse matrix construction
+- MSC and EMSC batch dispatch unified with `apply_along_spectra` (replaces ad-hoc list comprehension)
+- Test suite: 563 tests, 0 mypy strict errors, 0 ruff errors
+
 ## [1.5.0] - 2026-02-25
 
 ### Added

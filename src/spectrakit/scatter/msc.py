@@ -12,7 +12,13 @@ import logging
 
 import numpy as np
 
-from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d, warn_if_not_finite
+from spectrakit._validate import (
+    EPSILON,
+    apply_along_spectra,
+    ensure_float64,
+    validate_1d_or_2d,
+    warn_if_not_finite,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +65,7 @@ def scatter_msc(
     else:
         reference = ensure_float64(reference)
 
-    return np.array([_msc_single(row, reference) for row in intensities])
+    return apply_along_spectra(_msc_single, intensities, reference=reference)
 
 
 def _msc_single(spectrum: np.ndarray, reference: np.ndarray) -> np.ndarray:
