@@ -5,6 +5,7 @@ Provides format parsers, baseline correction, normalization,
 and spectral similarity matching for vibrational spectroscopy data.
 """
 
+from spectrakit._validate import get_n_jobs, set_n_jobs
 from spectrakit._version import __version__
 
 # Baseline correction
@@ -15,6 +16,7 @@ from spectrakit.baseline import (
     baseline_rubberband,
     baseline_snip,
 )
+from spectrakit.convergence import ConvergenceInfo
 
 # Derivative
 from spectrakit.derivative import derivative_gap_segment, derivative_savgol
@@ -87,7 +89,10 @@ __all__ = [
     "DependencyError",
     "EmptySpectrumError",
     # Core types
+    "ConvergenceInfo",
     "Spectrum",
+    "set_n_jobs",
+    "get_n_jobs",
     "read_jcamp",
     "read_spc",
     "read_csv",

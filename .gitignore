@@ -22,6 +22,7 @@ docs/examples/
 Thumbs.db
 uv.lock
 *.npy
+!tests/fixtures/golden_*.npy
 *.h5
 *.hdf5
 *.mat

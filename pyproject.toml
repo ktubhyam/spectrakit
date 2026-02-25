@@ -75,6 +75,7 @@ docs = [
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
+    "hypothesis>=6.0",
     "ruff>=0.4",
     "mypy>=1.8",
 ]
@@ -91,6 +92,19 @@ Changelog = "https://github.com/ktubhyam/spectrakit/blob/main/CHANGELOG.md"
 
 [tool.hatch.version]
 path = "src/spectrakit/_version.py"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "tests/",
+    "docs/",
+    "notebooks/",
+    "*.md",
+    "!README.md",
+    "Makefile",
+    ".github/",
+    ".pre-commit-config.yaml",
+    "mkdocs.yml",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/spectrakit"]

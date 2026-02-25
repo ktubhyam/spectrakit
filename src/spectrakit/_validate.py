@@ -11,6 +11,7 @@ import logging
 import os
 import warnings
 from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
 import numpy as np
@@ -19,8 +20,41 @@ from spectrakit.exceptions import EmptySpectrumError, SpectrumShapeError
 
 logger = logging.getLogger(__name__)
 
+_N_JOBS: int = 1
+
 EPSILON: float = 1e-10
 """Shared near-zero threshold for division guards."""
+
+
+def set_n_jobs(n: int) -> None:
+    """Set the default number of parallel threads for batch processing.
+
+    When *n* > 1, :func:`apply_along_spectra` processes rows in parallel
+    using a thread pool.  Scipy sparse solvers release the GIL during
+    LAPACK calls, so threading can speed up batch baseline and smoothing
+    operations substantially.
+
+    Args:
+        n: Number of parallel workers.  1 = sequential (default).
+            Use -1 for ``os.cpu_count()``.
+
+    Examples:
+        >>> import spectrakit
+        >>> spectrakit.set_n_jobs(4)   # use 4 threads
+        >>> spectrakit.set_n_jobs(1)   # back to sequential
+    """
+    global _N_JOBS  # noqa: PLW0603
+    if n == -1:
+        _N_JOBS = os.cpu_count() or 1
+    elif n < 1:
+        raise ValueError(f"n_jobs must be >= 1 or -1, got {n}")
+    else:
+        _N_JOBS = n
+
+
+def get_n_jobs() -> int:
+    """Return the current default number of parallel threads."""
+    return _N_JOBS
 
 _DEFAULT_MAX_FILE_SIZE: int = 500 * 1024 * 1024  # 500 MB
 
@@ -184,8 +218,10 @@ def apply_along_spectra(
     efficiency (avoids the overhead of building a Python list and
     converting via ``np.array``).
 
-    This eliminates the duplicated ``if ndim == 2: for row in …`` pattern
-    found in baseline and other modules.
+    When :func:`set_n_jobs` has been called with ``n > 1``, the rows
+    are processed in parallel using a :class:`~concurrent.futures.ThreadPoolExecutor`.
+    This is effective for scipy sparse solvers, which release the GIL
+    during LAPACK calls.
 
     Args:
         fn: A function with signature ``fn(intensities_1d, **kwargs) -> np.ndarray``.
@@ -202,6 +238,20 @@ def apply_along_spectra(
     first = fn(intensities[0], **kwargs)
     out = np.empty((n_spectra, *first.shape), dtype=first.dtype)
     out[0] = first
-    for i in range(1, n_spectra):
-        out[i] = fn(intensities[i], **kwargs)
+
+    if _N_JOBS > 1 and n_spectra > 2:
+        # Parallel execution using thread pool (scipy releases GIL).
+        def _process_row(i: int) -> tuple[int, np.ndarray]:
+            return i, fn(intensities[i], **kwargs)
+
+        workers = min(_N_JOBS, n_spectra - 1)
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            for idx, result in pool.map(
+                lambda i: _process_row(i), range(1, n_spectra)
+            ):
+                out[idx] = result
+    else:
+        for i in range(1, n_spectra):
+            out[i] = fn(intensities[i], **kwargs)
+
     return out

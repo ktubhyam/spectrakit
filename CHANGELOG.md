@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-02-25
+
+### Added
+- **`ConvergenceInfo` return type**: `baseline_als`, `baseline_arpls`, and `baseline_polynomial` accept `return_info=True` to return iteration count, convergence status, final residual, and baseline in a frozen dataclass
+- **Parallel batch processing**: `set_n_jobs(n)` / `get_n_jobs()` configure thread-based parallelism for `apply_along_spectra` (scipy releases GIL during LAPACK calls)
+- **Hypothesis property-based tests**: 21 tests verifying mathematical invariants — normalization idempotence/bounds, similarity metric axioms, smoothing preservation of constants
+- **Golden reference regression tests**: 6 tests comparing ALS, SNIP, rubberband, Whittaker, SNV, and MSC outputs against stored `.npy` fixtures (seed 12345)
+- **Adversarial I/O parser tests**: 27 tests covering JCAMP-DX edge cases (empty file, no XYDATA, scientific notation, blank lines), CSV edge cases (single column, TSV, rows orientation), convergence info validation, and parallel batch correctness
+- Hatch sdist exclusion configuration (tests/, docs/, notebooks/, Makefile, mkdocs.yml)
+
+### Changed
+- Test suite: 617 tests, 0 mypy strict errors, 0 ruff errors
+
 ## [1.6.0] - 2026-02-25
 
 ### Fixed
