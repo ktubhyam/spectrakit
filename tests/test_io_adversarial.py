@@ -30,25 +30,14 @@ class TestJCAMPAdversarial:
     def test_no_xydata_block(self, tmp_path: Path) -> None:
         """File with headers but no XYDATA raises FileFormatError."""
         p = tmp_path / "no_data.dx"
-        p.write_text(
-            "##TITLE=Test\n"
-            "##JCAMP-DX=5.00\n"
-            "##XUNITS=1/CM\n"
-            "##YUNITS=ABSORBANCE\n"
-            "##END=\n"
-        )
+        p.write_text("##TITLE=Test\n##JCAMP-DX=5.00\n##XUNITS=1/CM\n##YUNITS=ABSORBANCE\n##END=\n")
         with pytest.raises(FileFormatError, match="No XYDATA"):
             read_jcamp(p)
 
     def test_single_point(self, tmp_path: Path) -> None:
         """JCAMP with a single data point."""
         p = tmp_path / "single.dx"
-        p.write_text(
-            "##TITLE=Single\n"
-            "##XYDATA=(X++(Y..Y))\n"
-            "400.0 1.5\n"
-            "##END=\n"
-        )
+        p.write_text("##TITLE=Single\n##XYDATA=(X++(Y..Y))\n400.0 1.5\n##END=\n")
         spec = read_jcamp(p)
         assert spec.n_points == 1
         assert spec.intensities[0] == pytest.approx(1.5)
@@ -81,9 +70,7 @@ class TestJCAMPAdversarial:
         )
         spec = read_jcamp(p)
         assert spec.n_points == 3
-        np.testing.assert_allclose(
-            spec.intensities, [1.5e-3, 2.7e2, -3.14e1], atol=1e-10
-        )
+        np.testing.assert_allclose(spec.intensities, [1.5e-3, 2.7e2, -3.14e1], atol=1e-10)
 
     def test_extra_blank_lines(self, tmp_path: Path) -> None:
         """JCAMP with extra blank lines between data rows."""
@@ -261,7 +248,9 @@ class TestConvergenceInfo:
         from spectrakit import ConvergenceInfo
 
         info = ConvergenceInfo(
-            iterations=5, converged=True, final_residual=1e-8,
+            iterations=5,
+            converged=True,
+            final_residual=1e-8,
             baseline=np.zeros(10),
         )
         r = repr(info)
@@ -307,40 +296,51 @@ class TestParallelBatch:
 
     def test_parallel_als_matches_sequential(self) -> None:
         """Parallel ALS produces same result as sequential."""
-        import spectrakit
-        from spectrakit import baseline_als
+        from spectrakit import baseline_als, parallel_jobs
 
         rng = np.random.default_rng(42)
         batch = rng.random((6, 100)) + 1.0
 
-        # Sequential
-        spectrakit.set_n_jobs(1)
         seq = baseline_als(batch, lam=1e5)
 
-        # Parallel
-        spectrakit.set_n_jobs(2)
-        try:
+        with parallel_jobs(2):
             par = baseline_als(batch, lam=1e5)
-        finally:
-            spectrakit.set_n_jobs(1)
 
         np.testing.assert_allclose(par, seq, atol=1e-10)
 
     def test_parallel_whittaker_matches_sequential(self) -> None:
         """Parallel Whittaker produces same result as sequential."""
-        import spectrakit
-        from spectrakit import smooth_whittaker
+        from spectrakit import parallel_jobs, smooth_whittaker
 
         rng = np.random.default_rng(42)
         batch = rng.random((6, 100)) + 1.0
 
-        spectrakit.set_n_jobs(1)
         seq = smooth_whittaker(batch, lam=1e4)
 
-        spectrakit.set_n_jobs(2)
-        try:
+        with parallel_jobs(2):
             par = smooth_whittaker(batch, lam=1e4)
-        finally:
-            spectrakit.set_n_jobs(1)
 
         np.testing.assert_allclose(par, seq, atol=1e-10)
+
+    def test_parallel_jobs_context_manager_restores(self) -> None:
+        """parallel_jobs restores previous n_jobs on exit."""
+        import spectrakit
+
+        spectrakit.set_n_jobs(1)
+        assert spectrakit.get_n_jobs() == 1
+
+        with spectrakit.parallel_jobs(4):
+            assert spectrakit.get_n_jobs() == 4
+
+        assert spectrakit.get_n_jobs() == 1
+
+    def test_parallel_jobs_context_manager_restores_on_error(self) -> None:
+        """parallel_jobs restores n_jobs even if body raises."""
+        import spectrakit
+
+        spectrakit.set_n_jobs(1)
+        with pytest.raises(RuntimeError), spectrakit.parallel_jobs(4):
+            assert spectrakit.get_n_jobs() == 4
+            raise RuntimeError("test")
+
+        assert spectrakit.get_n_jobs() == 1

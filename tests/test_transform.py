@@ -241,9 +241,7 @@ class TestAbsorbanceTransmittance:
         absorbance_2d = np.array([[0.0, 1.0], [2.0, 0.5]])
         transmittance_2d = transform_absorbance_to_transmittance(absorbance_2d)
         assert transmittance_2d.shape == (2, 2)
-        np.testing.assert_allclose(
-            transmittance_2d[0], [100.0, 10.0], atol=1e-10
-        )
+        np.testing.assert_allclose(transmittance_2d[0], [100.0, 10.0], atol=1e-10)
 
         recovered = transform_transmittance_to_absorbance(transmittance_2d)
         assert recovered.shape == (2, 2)

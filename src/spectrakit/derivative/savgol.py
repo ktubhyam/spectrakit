@@ -59,9 +59,7 @@ def derivative_savgol(
             polyorder >= window_length, deriv < 0, delta <= 0).
     """
     if window_length < 1 or window_length % 2 == 0:
-        raise ValueError(
-            f"window_length must be a positive odd integer, got {window_length}"
-        )
+        raise ValueError(f"window_length must be a positive odd integer, got {window_length}")
     if polyorder < 0:
         raise ValueError(f"polyorder must be non-negative, got {polyorder}")
     if polyorder >= window_length:

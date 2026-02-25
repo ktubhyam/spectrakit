@@ -7,7 +7,6 @@ must hold for ANY valid input, not just hand-picked examples.
 from __future__ import annotations
 
 import numpy as np
-import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays
@@ -161,9 +160,7 @@ class TestHypothesisSimilarity:
         """cos(a, b) == cos(b, a)."""
         if len(a) != len(b):
             return  # skip mismatched lengths
-        np.testing.assert_allclose(
-            similarity_cosine(a, b), similarity_cosine(b, a), atol=1e-14
-        )
+        np.testing.assert_allclose(similarity_cosine(a, b), similarity_cosine(b, a), atol=1e-14)
 
     @given(v=nonzero_vector)
     @FAST
@@ -173,16 +170,17 @@ class TestHypothesisSimilarity:
             return
         np.testing.assert_allclose(similarity_pearson(v, v), 1.0, atol=1e-12)
 
-    @given(v=nonzero_vector, scale=st.floats(min_value=0.01, max_value=100.0),
-           offset=st.floats(min_value=-100.0, max_value=100.0))
+    @given(
+        v=nonzero_vector,
+        scale=st.floats(min_value=0.01, max_value=100.0),
+        offset=st.floats(min_value=-100.0, max_value=100.0),
+    )
     @FAST
     def test_pearson_affine_invariant(self, v: np.ndarray, scale: float, offset: float) -> None:
         """r(v, a*v + b) == 1 for a > 0."""
         if np.std(v) < 1e-10:
             return
-        np.testing.assert_allclose(
-            similarity_pearson(v, v * scale + offset), 1.0, atol=1e-8
-        )
+        np.testing.assert_allclose(similarity_pearson(v, v * scale + offset), 1.0, atol=1e-8)
 
     @given(v=nonzero_vector)
     @FAST

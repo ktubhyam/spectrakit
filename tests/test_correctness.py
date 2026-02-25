@@ -293,7 +293,7 @@ class TestTransformCorrectness:
         for i in range(len(corrected) - 1):
             assert corrected[i] < corrected[i + 1], (
                 f"ATR correction at {wavenumbers[i]} cm-1 ({corrected[i]:.4f}) "
-                f">= correction at {wavenumbers[i+1]} cm-1 ({corrected[i+1]:.4f})"
+                f">= correction at {wavenumbers[i + 1]} cm-1 ({corrected[i + 1]:.4f})"
             )
 
     def test_atr_different_discriminants(self) -> None:
@@ -306,12 +306,8 @@ class TestTransformCorrectness:
         wavenumbers = np.array([1000.0, 2000.0, 3000.0, 4000.0])
         intensities = np.ones(4)
 
-        transform_atr_correction(
-            intensities, wavenumbers, n_crystal=2.4, n_sample=1.5, angle=45.0
-        )
-        transform_atr_correction(
-            intensities, wavenumbers, n_crystal=4.0, n_sample=1.5, angle=45.0
-        )
+        transform_atr_correction(intensities, wavenumbers, n_crystal=2.4, n_sample=1.5, angle=45.0)
+        transform_atr_correction(intensities, wavenumbers, n_crystal=4.0, n_sample=1.5, angle=45.0)
 
         # Both are normalized to max=1, so max values are identical.
         # But the ratios between low and high wavenumber corrections should differ
@@ -396,9 +392,7 @@ class TestDerivativeCorrectness:
 
         # Check interior (skip edges)
         interior_slice = slice(15, -15)
-        np.testing.assert_allclose(
-            dy_dx[interior_slice], expected[interior_slice], atol=1e-6
-        )
+        np.testing.assert_allclose(dy_dx[interior_slice], expected[interior_slice], atol=1e-6)
 
 
 # ---------------------------------------------------------------------------
@@ -475,16 +469,12 @@ class TestCropCorrectness:
         intensities = RNG.standard_normal(361)
 
         start, end = 800.0, 1800.0
-        _, cropped_wn = spectral_crop(
-            intensities, wavenumbers, start=start, end=end
-        )
+        _, cropped_wn = spectral_crop(intensities, wavenumbers, start=start, end=end)
 
         assert np.all(cropped_wn >= start), (
             f"Wavenumber below start: min={cropped_wn.min()}, start={start}"
         )
-        assert np.all(cropped_wn <= end), (
-            f"Wavenumber above end: max={cropped_wn.max()}, end={end}"
-        )
+        assert np.all(cropped_wn <= end), f"Wavenumber above end: max={cropped_wn.max()}, end={end}"
 
 
 # ---------------------------------------------------------------------------

@@ -7,10 +7,11 @@ the package — they are not re-exported from ``spectrakit.__init__``.
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import os
 import warnings
-from collections.abc import Callable
+from collections.abc import Callable, Generator
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
@@ -55,6 +56,33 @@ def set_n_jobs(n: int) -> None:
 def get_n_jobs() -> int:
     """Return the current default number of parallel threads."""
     return _N_JOBS
+
+
+@contextlib.contextmanager
+def parallel_jobs(n: int) -> Generator[None, None, None]:
+    """Context manager for temporarily setting parallel thread count.
+
+    Automatically restores the previous ``n_jobs`` value on exit,
+    even if an exception occurs.  This is the recommended way to
+    enable parallelism for a specific block of code.
+
+    Args:
+        n: Number of parallel workers.  1 = sequential.
+            Use -1 for ``os.cpu_count()``.
+
+    Examples:
+        >>> from spectrakit import parallel_jobs, baseline_als
+        >>> with parallel_jobs(4):
+        ...     result = baseline_als(batch_spectra)  # uses 4 threads
+        >>> # automatically back to previous setting
+    """
+    prev = get_n_jobs()
+    set_n_jobs(n)
+    try:
+        yield
+    finally:
+        set_n_jobs(prev)
+
 
 _DEFAULT_MAX_FILE_SIZE: int = 500 * 1024 * 1024  # 500 MB
 
@@ -201,8 +229,7 @@ def validate_matching_width(
     r_w = reference.shape[-1]
     if q_w != r_w:
         raise SpectrumShapeError(
-            f"{query_name} has {q_w} spectral points but "
-            f"{reference_name} has {r_w}"
+            f"{query_name} has {q_w} spectral points but {reference_name} has {r_w}"
         )
 
 
@@ -246,9 +273,7 @@ def apply_along_spectra(
 
         workers = min(_N_JOBS, n_spectra - 1)
         with ThreadPoolExecutor(max_workers=workers) as pool:
-            for idx, result in pool.map(
-                lambda i: _process_row(i), range(1, n_spectra)
-            ):
+            for idx, result in pool.map(lambda i: _process_row(i), range(1, n_spectra)):
                 out[idx] = result
     else:
         for i in range(1, n_spectra):

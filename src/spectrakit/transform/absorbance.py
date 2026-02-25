@@ -70,8 +70,7 @@ def transform_transmittance_to_absorbance(transmittance: np.ndarray) -> np.ndarr
 
     if np.any(transmittance <= 0):
         warnings.warn(
-            "Zero or negative transmittance values detected. "
-            "Results will contain Inf or NaN.",
+            "Zero or negative transmittance values detected. Results will contain Inf or NaN.",
             stacklevel=2,
         )
 

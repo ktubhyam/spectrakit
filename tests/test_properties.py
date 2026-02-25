@@ -171,17 +171,13 @@ class TestSimilarityAxioms:
         """cos(a, b) == cos(b, a) (symmetry)."""
         a = RNG.standard_normal(50)
         b = RNG.standard_normal(50)
-        np.testing.assert_allclose(
-            similarity_cosine(a, b), similarity_cosine(b, a), atol=1e-14
-        )
+        np.testing.assert_allclose(similarity_cosine(a, b), similarity_cosine(b, a), atol=1e-14)
 
     def test_pearson_symmetry(self) -> None:
         """r(a, b) == r(b, a) (symmetry)."""
         a = RNG.standard_normal(50)
         b = RNG.standard_normal(50)
-        np.testing.assert_allclose(
-            similarity_pearson(a, b), similarity_pearson(b, a), atol=1e-14
-        )
+        np.testing.assert_allclose(similarity_pearson(a, b), similarity_pearson(b, a), atol=1e-14)
 
 
 # ---------------------------------------------------------------------------
@@ -241,9 +237,7 @@ class TestBaselineProperties:
         signal, _, _ = signal_with_peak
         bl = baseline_rubberband(signal)
         residual = signal - bl
-        assert np.all(residual >= -0.01), (
-            f"Rubberband exceeded signal by {-np.min(residual):.4f}"
-        )
+        assert np.all(residual >= -0.01), f"Rubberband exceeded signal by {-np.min(residual):.4f}"
 
     def test_rubberband_skewed_spectrum(self) -> None:
         """Rubberband handles highly skewed spectra (most values below median)."""

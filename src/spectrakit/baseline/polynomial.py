@@ -63,9 +63,7 @@ def baseline_polynomial(
     if return_info:
         if intensities.ndim != 1:
             raise ValueError("return_info=True is only supported for 1-D input")
-        return _baseline_polynomial_1d_info(
-            intensities, degree=degree, max_iter=max_iter, tol=tol
-        )
+        return _baseline_polynomial_1d_info(intensities, degree=degree, max_iter=max_iter, tol=tol)
 
     return apply_along_spectra(
         _baseline_polynomial_1d, intensities, degree=degree, max_iter=max_iter, tol=tol

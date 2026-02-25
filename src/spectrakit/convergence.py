@@ -21,6 +21,12 @@ class ConvergenceInfo:
         final_residual: Sum of absolute weight changes (ALS/ArPLS) or
             fraction of points changed (polynomial) at the last iteration.
         baseline: The estimated baseline array, same shape as input.
+
+    Examples:
+        >>> info = baseline_als(spectrum, return_info=True)
+        >>> print(info.converged, info.iterations)
+        True 3
+        >>> corrected = spectrum - info.baseline
     """
 
     iterations: int

@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.7.1] - 2026-02-25
+
+### Added
+- `parallel_jobs(n)` context manager for thread-safe, scoped parallelism (auto-restores previous `n_jobs` on exit)
+- ConvergenceInfo docstring usage examples
+- Git tags for all releases (v0.1.0 through v1.7.0)
+
+### Changed
+- CI actions pinned to SHA hashes for supply-chain hardening
+- SECURITY.md supported versions updated to cover all 1.x releases
+- `__all__` organized with category section comments for every subpackage
+- Unused test imports cleaned up (ruff F401)
+- Test suite: 619 tests, 0 mypy strict errors, 0 ruff errors
+
 ## [1.7.0] - 2026-02-25
 
 ### Added

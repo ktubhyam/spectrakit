@@ -6,7 +6,6 @@ parameter validation, and batch caching correctness.
 
 from __future__ import annotations
 
-import importlib.resources
 from pathlib import Path
 
 import numpy as np
@@ -29,7 +28,6 @@ from spectrakit import (
     similarity_cosine,
     similarity_euclidean,
     similarity_pearson,
-    similarity_spectral_angle,
     smooth_savgol,
     smooth_whittaker,
 )
@@ -144,10 +142,12 @@ class TestExtremeDynamicRange:
 
     def test_minmax_wide_range(self) -> None:
         """Min-max on values spanning 1e-10 to 1e10."""
-        y = np.concatenate([
-            RNG.uniform(1e-10, 1e-5, 50),
-            RNG.uniform(1e5, 1e10, 50),
-        ])
+        y = np.concatenate(
+            [
+                RNG.uniform(1e-10, 1e-5, 50),
+                RNG.uniform(1e5, 1e10, 50),
+            ]
+        )
         result = normalize_minmax(y)
         assert np.min(result) >= -1e-14
         assert np.max(result) <= 1.0 + 1e-14
@@ -229,7 +229,7 @@ class TestGapSegmentEdgeCases:
         # Symmetric signal around center
         n = 101
         x = np.linspace(-5, 5, n)
-        y = np.exp(-x**2)  # symmetric Gaussian
+        y = np.exp(-(x**2))  # symmetric Gaussian
 
         deriv = derivative_gap_segment(y, gap=5, segment=1, deriv=1)
         center = n // 2
@@ -336,7 +336,9 @@ class TestBatchCachingCorrectness:
         for i in range(5):
             individual = baseline_als(batch[i], lam=1e5)
             np.testing.assert_allclose(
-                batch_result[i], individual, atol=1e-10,
+                batch_result[i],
+                individual,
+                atol=1e-10,
                 err_msg=f"ALS batch/individual mismatch at row {i}",
             )
 
@@ -347,7 +349,9 @@ class TestBatchCachingCorrectness:
         for i in range(4):
             individual = baseline_arpls(batch[i], lam=1e5)
             np.testing.assert_allclose(
-                batch_result[i], individual, atol=1e-10,
+                batch_result[i],
+                individual,
+                atol=1e-10,
                 err_msg=f"ArPLS batch/individual mismatch at row {i}",
             )
 
@@ -358,7 +362,9 @@ class TestBatchCachingCorrectness:
         for i in range(4):
             individual = smooth_whittaker(batch[i], lam=1e4)
             np.testing.assert_allclose(
-                batch_result[i], individual, atol=1e-10,
+                batch_result[i],
+                individual,
+                atol=1e-10,
                 err_msg=f"Whittaker batch/individual mismatch at row {i}",
             )
 
@@ -370,7 +376,9 @@ class TestBatchCachingCorrectness:
         for i in range(3):
             individual = smooth_whittaker(batch[i], lam=1e4, wavenumbers=wn)
             np.testing.assert_allclose(
-                batch_result[i], individual, atol=1e-10,
+                batch_result[i],
+                individual,
+                atol=1e-10,
                 err_msg=f"Whittaker (wn-aware) batch/individual mismatch at row {i}",
             )
 
@@ -386,14 +394,16 @@ class TestScatterDispatch:
     def test_msc_batch_matches_individual(self) -> None:
         """MSC batch result matches per-row with same reference."""
         ref = RNG.standard_normal(80) + 5.0
-        batch = np.array([s * ref + o for s, o in zip(
-            [0.8, 1.0, 1.2, 1.5], [0.1, -0.1, 0.3, -0.2], strict=True
-        )])
+        batch = np.array(
+            [s * ref + o for s, o in zip([0.8, 1.0, 1.2, 1.5], [0.1, -0.1, 0.3, -0.2], strict=True)]
+        )
         batch_result = scatter_msc(batch, reference=ref)
         for i in range(4):
             individual = scatter_msc(batch[i], reference=ref)
             np.testing.assert_allclose(
-                batch_result[i], individual, atol=1e-10,
+                batch_result[i],
+                individual,
+                atol=1e-10,
                 err_msg=f"MSC batch/individual mismatch at row {i}",
             )
 
@@ -401,15 +411,16 @@ class TestScatterDispatch:
         """EMSC batch result matches per-row with same reference."""
         ref = RNG.standard_normal(80) + 5.0
         x = np.linspace(-1, 1, 80)
-        batch = np.array([
-            s * ref + o + 0.1 * x
-            for s, o in zip([0.8, 1.0, 1.3], [0.1, -0.1, 0.2], strict=True)
-        ])
+        batch = np.array(
+            [s * ref + o + 0.1 * x for s, o in zip([0.8, 1.0, 1.3], [0.1, -0.1, 0.2], strict=True)]
+        )
         batch_result = scatter_emsc(batch, reference=ref, poly_order=2)
         for i in range(3):
             individual = scatter_emsc(batch[i], reference=ref, poly_order=2)
             np.testing.assert_allclose(
-                batch_result[i], individual, atol=1e-10,
+                batch_result[i],
+                individual,
+                atol=1e-10,
                 err_msg=f"EMSC batch/individual mismatch at row {i}",
             )
 
@@ -482,19 +493,22 @@ class TestDegenerateSpectra:
 class TestEmptySpectrumErrors:
     """Verify all methods raise EmptySpectrumError for empty inputs."""
 
-    @pytest.mark.parametrize("fn", [
-        baseline_als,
-        baseline_arpls,
-        baseline_snip,
-        baseline_polynomial,
-        baseline_rubberband,
-        smooth_savgol,
-        smooth_whittaker,
-        normalize_snv,
-        normalize_minmax,
-        normalize_vector,
-        normalize_area,
-    ])
+    @pytest.mark.parametrize(
+        "fn",
+        [
+            baseline_als,
+            baseline_arpls,
+            baseline_snip,
+            baseline_polynomial,
+            baseline_rubberband,
+            smooth_savgol,
+            smooth_whittaker,
+            normalize_snv,
+            normalize_minmax,
+            normalize_vector,
+            normalize_area,
+        ],
+    )
     def test_empty_raises(self, fn) -> None:  # type: ignore[no-untyped-def]
         with pytest.raises(EmptySpectrumError):
             fn(np.array([]))
