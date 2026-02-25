@@ -33,6 +33,9 @@ from spectrakit.io import read_csv, read_hdf5, read_jcamp, read_opus, read_spc, 
 # Normalization
 from spectrakit.normalize import normalize_area, normalize_minmax, normalize_snv, normalize_vector
 
+# Operations
+from spectrakit.ops import spectral_average, spectral_interpolate, spectral_subtract
+
 # Pipeline
 from spectrakit.pipeline import Pipeline
 
@@ -90,5 +93,8 @@ __all__ = [
     "scatter_emsc",
     "transform_kubelka_munk",
     "transform_atr_correction",
+    "spectral_subtract",
+    "spectral_average",
+    "spectral_interpolate",
     "Pipeline",
 ]
