@@ -1,5 +1,7 @@
 """Spectral derivative methods."""
 
+from __future__ import annotations
+
 from spectrakit.derivative.gap_segment import derivative_gap_segment
 from spectrakit.derivative.savgol import derivative_savgol
 

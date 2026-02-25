@@ -1,5 +1,7 @@
 """Spectral transformation methods."""
 
+from __future__ import annotations
+
 from spectrakit.transform.absorbance import (
     transform_absorbance_to_transmittance,
     transform_transmittance_to_absorbance,

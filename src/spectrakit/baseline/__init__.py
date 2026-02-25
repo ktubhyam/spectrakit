@@ -1,5 +1,7 @@
 """Baseline correction methods for spectral data."""
 
+from __future__ import annotations
+
 from spectrakit.baseline.als import baseline_als
 from spectrakit.baseline.arpls import baseline_arpls
 from spectrakit.baseline.polynomial import baseline_polynomial

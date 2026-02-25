@@ -35,12 +35,14 @@ spectrum_1d = arrays(
     elements=st.floats(min_value=-1e6, max_value=1e6, allow_nan=False, allow_infinity=False),
 ).filter(lambda a: float(np.ptp(a)) > 1e-6)  # non-constant (ptp = max - min)
 
-# Non-zero vector (for similarity metrics)
+# Non-zero vector (for similarity metrics).
+# Norm threshold must exceed the EPSILON guard (1e-10) used in similarity
+# functions by a comfortable margin to avoid false failures on near-zero vectors.
 nonzero_vector = arrays(
     dtype=np.float64,
     shape=st.integers(min_value=3, max_value=100),
     elements=st.floats(min_value=-1e4, max_value=1e4, allow_nan=False, allow_infinity=False),
-).filter(lambda a: np.linalg.norm(a) > 1e-10)
+).filter(lambda a: np.linalg.norm(a) > 1e-6)
 
 # Positive spectrum (for area normalization)
 positive_spectrum = arrays(

@@ -5,6 +5,8 @@ Requires scikit-learn to be installed::
     pip install spectrakit[sklearn]
 """
 
+from __future__ import annotations
+
 from spectrakit.sklearn.transformers import SpectralTransformer
 
 __all__ = ["SpectralTransformer"]

@@ -1,5 +1,7 @@
 """Spectral similarity metrics."""
 
+from __future__ import annotations
+
 from spectrakit.similarity.cosine import similarity_cosine
 from spectrakit.similarity.euclidean import similarity_euclidean
 from spectrakit.similarity.pearson import similarity_pearson

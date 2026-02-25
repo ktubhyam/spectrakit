@@ -1,5 +1,7 @@
 """Spectral smoothing methods."""
 
+from __future__ import annotations
+
 from spectrakit.smooth.savgol import smooth_savgol
 from spectrakit.smooth.whittaker import smooth_whittaker
 

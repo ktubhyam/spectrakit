@@ -5,6 +5,8 @@ Provides format parsers, baseline correction, normalization,
 and spectral similarity matching for vibrational spectroscopy data.
 """
 
+from __future__ import annotations
+
 from spectrakit._validate import get_n_jobs, parallel_jobs, set_n_jobs
 from spectrakit._version import __version__
 
