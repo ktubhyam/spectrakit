@@ -56,8 +56,11 @@ fitting = [
 sklearn = [
     "scikit-learn>=1.3",
 ]
+plot = [
+    "matplotlib>=3.7",
+]
 all = [
-    "spectrakit[io,cli,baselines,fitting,sklearn]",
+    "spectrakit[io,cli,baselines,fitting,sklearn,plot]",
 ]
 dev = [
     "pytest>=7.0",
