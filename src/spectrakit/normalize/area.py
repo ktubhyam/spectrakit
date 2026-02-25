@@ -47,11 +47,9 @@ def normalize_area(
             return intensities
         return intensities / area  # type: ignore[no-any-return]
 
-    areas = np.array([np.trapezoid(np.abs(row), x=wavenumbers) for row in intensities]).reshape(
-        -1, 1
-    )
+    areas = np.trapezoid(np.abs(intensities), x=wavenumbers, axis=1).reshape(-1, 1)
     degenerate = areas < EPSILON
-    areas = np.where(degenerate, 1.0, areas)  # type: ignore[assignment]
+    areas = np.where(degenerate, 1.0, areas)
     n_zero = int(np.sum(degenerate))
     if n_zero > 0:
         warnings.warn(

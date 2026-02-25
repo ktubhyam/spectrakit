@@ -7,6 +7,7 @@ import pytest
 
 from spectrakit.baseline import (
     baseline_als,
+    baseline_arpls,
     baseline_polynomial,
     baseline_rubberband,
     baseline_snip,
@@ -181,3 +182,46 @@ class TestBaselineParameterValidation:
         y = np.ones(100)
         with pytest.raises(ValueError, match="max_half_window.*must be >= 1"):
             baseline_snip(y, max_half_window=0)
+
+    def test_arpls_invalid_lam_zero(self) -> None:
+        y = np.ones(100)
+        with pytest.raises(ValueError, match="lam.*must be positive"):
+            baseline_arpls(y, lam=0.0)
+
+    def test_arpls_invalid_max_iter(self) -> None:
+        y = np.ones(100)
+        with pytest.raises(ValueError, match="max_iter.*must be >= 1"):
+            baseline_arpls(y, max_iter=0)
+
+
+class TestBaselineArPLS:
+    """Verify ArPLS baseline correction."""
+
+    def test_output_shape_1d(self, synthetic_spectrum: np.ndarray) -> None:
+        bl = baseline_arpls(synthetic_spectrum)
+        assert bl.shape == synthetic_spectrum.shape
+
+    def test_output_shape_2d(self, synthetic_batch: np.ndarray) -> None:
+        bl = baseline_arpls(synthetic_batch)
+        assert bl.shape == synthetic_batch.shape
+
+    def test_baseline_below_peaks(self) -> None:
+        """ArPLS baseline at peak centers should be below the signal."""
+        n = 300
+        x = np.linspace(0, 1, n)
+        baseline_true = np.ones(n) * 2.0
+        peak = 5.0 * np.exp(-((x - 0.5) ** 2) / (2 * 0.02**2))
+        signal = baseline_true + peak
+
+        bl = baseline_arpls(signal, lam=1e7, max_iter=100)
+
+        peak_idx = np.argmax(peak)
+        assert bl[peak_idx] < signal[peak_idx]
+
+    def test_smooth_output(self) -> None:
+        """ArPLS output should be smooth (low second derivative)."""
+        rng = np.random.default_rng(42)
+        y = rng.random(200) + 1.0
+        bl = baseline_arpls(y, lam=1e8)
+        d2 = np.diff(bl, n=2)
+        assert np.std(d2) < 0.01

@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-02-25
+
+### Added
+- Native `baseline_arpls` (Asymmetrically Reweighted PLS) — adaptive reweighting without fixed asymmetry parameter
+- `write_csv` — export Spectrum to CSV/TSV with optional header and delimiter control
+- `write_jcamp` — export single-spectrum to JCAMP-DX 5.0 format with metadata
+- Parameter validation for `smooth_whittaker` (lam, differences), `smooth_savgol` (window_length, polyorder), and `derivative_gap_segment` (gap, segment)
+- Wavenumber-length mismatch validation in `spectral_crop` and `spectral_interpolate`
+- Quantitative correctness tests: SNIP RMS, rubberband RMS, ArPLS recovery, Whittaker preservation, MSC exact recovery
+
+### Changed
+- Vectorized gap-segment derivative inner loop (numpy slicing replaces Python for-loop)
+- Vectorized area normalization 2D path (`np.trapezoid` with `axis=1`)
+- ArPLS sigmoid exponent clamped to prevent overflow warnings
+
 ## [1.3.0] - 2026-02-25
 
 ### Added

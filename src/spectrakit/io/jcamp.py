@@ -1,4 +1,4 @@
-"""JCAMP-DX file format parser (.dx, .jdx, .jcamp)."""
+"""JCAMP-DX file format reader and writer (.dx, .jdx, .jcamp)."""
 
 from __future__ import annotations
 
@@ -93,3 +93,73 @@ def read_jcamp(path: str | Path) -> Spectrum:
         source_format="jcamp",
         label=path.stem,
     )
+
+
+_VALUES_PER_LINE = 10
+
+
+def write_jcamp(
+    spectrum: Spectrum,
+    path: str | Path,
+    title: str = "",
+    data_type: str = "INFRARED SPECTRUM",
+    x_units: str = "1/CM",
+    y_units: str = "ABSORBANCE",
+) -> None:
+    """Write a single-spectrum Spectrum to a JCAMP-DX file.
+
+    Produces a standard JCAMP-DX 5.0 file with ``##XYDATA=(X++(Y..Y))``
+    format (AFFN encoding). Only 1-D spectra are supported; for batch
+    data, iterate and write each spectrum individually.
+
+    Args:
+        spectrum: Spectrum to save (must be 1-D).
+        path: Output file path (.dx or .jdx).
+        title: Title label for ``##TITLE=``.
+        data_type: Value for ``##DATA TYPE=``.
+        x_units: Value for ``##XUNITS=``.
+        y_units: Value for ``##YUNITS=``.
+
+    Raises:
+        ValueError: If *spectrum* intensities are not 1-D or
+            wavenumbers are missing.
+    """
+    if spectrum.intensities.ndim != 1:
+        raise ValueError(
+            f"write_jcamp requires 1-D intensities, got shape {spectrum.intensities.shape}"
+        )
+    if spectrum.wavenumbers is None:
+        raise ValueError("write_jcamp requires wavenumbers to be set on the Spectrum")
+
+    path = Path(path)
+    wn = spectrum.wavenumbers
+    y = spectrum.intensities
+    n = len(y)
+
+    title = title or spectrum.label or "Spectrum"
+
+    lines: list[str] = [
+        f"##TITLE={title}",
+        "##JCAMP-DX=5.00",
+        f"##DATA TYPE={data_type}",
+        f"##XUNITS={x_units}",
+        f"##YUNITS={y_units}",
+        f"##FIRSTX={wn[0]:.6f}",
+        f"##LASTX={wn[-1]:.6f}",
+        f"##NPOINTS={n}",
+        "##XYDATA=(X++(Y..Y))",
+    ]
+
+    # Write data in blocks of _VALUES_PER_LINE Y values per X line
+    for i in range(0, n, _VALUES_PER_LINE):
+        block = y[i : i + _VALUES_PER_LINE]
+        x_val = wn[i]
+        y_strs = " ".join(f"{v:.6f}" for v in block)
+        lines.append(f"{x_val:.6f} {y_strs}")
+
+    lines.append("##END=")
+    lines.append("")  # trailing newline
+
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+    logger.debug("Wrote JCAMP-DX: %d points to %s", n, path)

@@ -50,6 +50,17 @@ def smooth_savgol(
         EmptySpectrumError: If input has zero elements.
         ValueError: If ``window_length`` or ``polyorder`` are invalid.
     """
+    if window_length < 1:
+        raise ValueError(f"window_length must be >= 1, got {window_length}")
+    if window_length % 2 == 0:
+        raise ValueError(f"window_length must be odd, got {window_length}")
+    if polyorder < 0:
+        raise ValueError(f"polyorder must be >= 0, got {polyorder}")
+    if polyorder >= window_length:
+        raise ValueError(
+            f"polyorder ({polyorder}) must be less than window_length ({window_length})"
+        )
+
     intensities = ensure_float64(intensities)
     validate_1d_or_2d(intensities)
     warn_if_not_finite(intensities)

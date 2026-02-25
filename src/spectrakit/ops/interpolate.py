@@ -49,6 +49,13 @@ def spectral_interpolate(
     validate_1d_or_2d(intensities)
     warn_if_not_finite(intensities)
 
+    expected_w = intensities.shape[-1]
+    if wavenumbers.shape[0] != expected_w:
+        raise ValueError(
+            f"wavenumbers length {wavenumbers.shape[0]} does not match "
+            f"intensities spectral width {expected_w}"
+        )
+
     if new_wavenumbers.min() < wavenumbers.min() or new_wavenumbers.max() > wavenumbers.max():
         warnings.warn(
             "new_wavenumbers extends beyond the original range "

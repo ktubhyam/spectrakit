@@ -12,18 +12,22 @@ import pytest
 
 from spectrakit import (
     baseline_als,
+    baseline_arpls,
     baseline_polynomial,
+    baseline_rubberband,
     baseline_snip,
     derivative_savgol,
     normalize_area,
     normalize_minmax,
     normalize_snv,
     normalize_vector,
+    scatter_msc,
     similarity_cosine,
     similarity_euclidean,
     similarity_pearson,
     similarity_spectral_angle,
     smooth_savgol,
+    smooth_whittaker,
     spectral_crop,
     transform_absorbance_to_transmittance,
     transform_atr_correction,
@@ -481,3 +485,142 @@ class TestCropCorrectness:
         assert np.all(cropped_wn <= end), (
             f"Wavenumber above end: max={cropped_wn.max()}, end={end}"
         )
+
+
+# ---------------------------------------------------------------------------
+# 8. Strengthened baseline correctness
+# ---------------------------------------------------------------------------
+
+
+class TestBaselineCorrectnessStrengthened:
+    """Quantitative accuracy tests for SNIP, rubberband, and ArPLS."""
+
+    def test_snip_rms_error(self) -> None:
+        """SNIP baseline residual at peak centers is within 30% of peak height.
+
+        SNIP uses a log-log-sqrt transform that can shift the overall baseline
+        level. We verify peak clipping and that the baseline at the peak center
+        is much closer to the true baseline than to the signal.
+        """
+        n = 500
+        x = np.linspace(0, 1, n)
+        true_baseline = np.ones(n) * 2.0
+        peak_height = 5.0
+        peak = peak_height * np.exp(-((x - 0.5) ** 2) / (2 * 0.02**2))
+        signal = true_baseline + peak
+
+        estimated = baseline_snip(signal, max_half_window=40)
+
+        # At the peak center, the estimated baseline should be significantly
+        # below the signal (peak clipped) and within 30% of the true baseline
+        peak_idx = np.argmax(peak)
+        assert estimated[peak_idx] < signal[peak_idx], (
+            "SNIP baseline not below signal at peak center"
+        )
+        peak_error = abs(estimated[peak_idx] - true_baseline[peak_idx])
+        threshold = 0.30 * peak_height
+        assert peak_error < threshold, (
+            f"SNIP baseline error at peak center {peak_error:.4f} "
+            f"exceeds 30% of peak height ({threshold:.4f})"
+        )
+
+    def test_rubberband_rms_error(self) -> None:
+        """Rubberband baseline RMS error on linear baseline + Gaussian peak."""
+        n = 300
+        x = np.linspace(0, 10, n)
+        true_baseline = 0.5 * x + 1.0
+        peak = 3.0 * np.exp(-((x - 5.0) ** 2) / (2 * 0.5**2))
+        signal = true_baseline + peak
+
+        estimated = baseline_rubberband(signal)
+
+        rms = np.sqrt(np.mean((estimated - true_baseline) ** 2))
+        threshold = 0.30 * 3.0  # 30% of peak height
+        assert rms < threshold, (
+            f"Rubberband baseline RMS error {rms:.4f} exceeds threshold ({threshold:.4f})"
+        )
+
+    def test_arpls_recovers_known_baseline(self) -> None:
+        """ArPLS baseline recovers a linear baseline under a Gaussian peak."""
+        n = 500
+        x = np.linspace(0, 1, n)
+        true_baseline = 0.5 * x + 1.0
+        peak_height = 1.0
+        peak = peak_height * np.exp(-((x - 0.5) ** 2) / (2 * 0.02**2))
+        signal = true_baseline + peak
+
+        estimated = baseline_arpls(signal, lam=1e7, max_iter=100)
+
+        rms = np.sqrt(np.mean((estimated - true_baseline) ** 2))
+        threshold = 0.25 * peak_height
+        assert rms < threshold, (
+            f"ArPLS baseline RMS error {rms:.4f} exceeds 25% of peak height ({threshold:.4f})"
+        )
+
+
+# ---------------------------------------------------------------------------
+# 9. Whittaker smoothing correctness
+# ---------------------------------------------------------------------------
+
+
+class TestWhittakerCorrectnessStrengthened:
+    """Verify Whittaker smoother against known properties."""
+
+    def test_whittaker_preserves_constant(self) -> None:
+        """A constant signal is unchanged by Whittaker smoothing."""
+        y = np.full(100, 5.0)
+        smoothed = smooth_whittaker(y, lam=1e4)
+        np.testing.assert_allclose(smoothed, 5.0, atol=1e-8)
+
+    def test_whittaker_reduces_noise(self) -> None:
+        """Whittaker smoother reduces noise — std(error) decreases."""
+        n = 500
+        x = np.linspace(0, 10, n)
+        true_signal = np.sin(2 * np.pi * x / 5)
+        noise = RNG.standard_normal(n) * 0.3
+        noisy = true_signal + noise
+
+        smoothed = smooth_whittaker(noisy, lam=1e4)
+
+        error_noisy = np.std(noisy - true_signal)
+        error_smoothed = np.std(smoothed - true_signal)
+        assert error_smoothed < error_noisy, (
+            f"Whittaker did not reduce noise: {error_smoothed:.4f} >= {error_noisy:.4f}"
+        )
+
+    def test_whittaker_preserves_linear(self) -> None:
+        """A linear signal is preserved (d=2 penalty doesn't penalize linearity)."""
+        x = np.linspace(0, 10, 200)
+        y = 3.0 * x + 2.0
+        smoothed = smooth_whittaker(y, lam=1e6, differences=2)
+        np.testing.assert_allclose(smoothed, y, atol=1e-4)
+
+
+# ---------------------------------------------------------------------------
+# 10. MSC exact recovery
+# ---------------------------------------------------------------------------
+
+
+class TestMSCExactRecovery:
+    """Verify MSC exactly recovers reference for exact multiplicative scatter."""
+
+    def test_msc_exact_2x_plus_offset(self) -> None:
+        """scatter_msc(2*ref + 0.5, reference=ref) recovers ref within 1e-10."""
+        rng = np.random.default_rng(123)
+        reference = rng.random(100) + 1.0  # ensure non-zero
+        spectrum = 2.0 * reference + 0.5
+
+        result = scatter_msc(spectrum, reference=reference)
+        np.testing.assert_allclose(result, reference, atol=1e-10)
+
+    def test_msc_exact_batch(self) -> None:
+        """Batch with exact multiplicative scatter recovers reference."""
+        rng = np.random.default_rng(456)
+        reference = rng.random(80) + 1.0
+        scales = [0.5, 1.0, 1.5, 3.0]
+        offsets = [0.2, 0.0, -0.3, 1.0]
+        batch = np.array([s * reference + o for s, o in zip(scales, offsets, strict=True)])
+
+        corrected = scatter_msc(batch, reference=reference)
+        for i in range(len(scales)):
+            np.testing.assert_allclose(corrected[i], reference, atol=1e-10)

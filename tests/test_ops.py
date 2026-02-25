@@ -240,3 +240,29 @@ class TestInterpolationExtrapolationWarning:
             warnings.simplefilter("error")
             # Should not raise any warning
             spectral_interpolate(y, wn, new_wn)
+
+
+class TestWavenumberLengthValidation:
+    """Verify wavenumber-intensities length mismatch detection."""
+
+    def test_crop_wavenumber_mismatch_1d(self) -> None:
+        """crop with mismatched wavenumber length raises ValueError."""
+        y = np.ones(100)
+        wn = np.linspace(400, 4000, 50)  # wrong length
+        with pytest.raises(ValueError, match="wavenumbers length.*does not match"):
+            spectral_crop(y, wn, start=800, end=1800)
+
+    def test_crop_wavenumber_mismatch_2d(self) -> None:
+        """crop with mismatched wavenumber length on 2D raises ValueError."""
+        y = np.ones((3, 100))
+        wn = np.linspace(400, 4000, 50)  # wrong length
+        with pytest.raises(ValueError, match="wavenumbers length.*does not match"):
+            spectral_crop(y, wn, start=800, end=1800)
+
+    def test_interpolate_wavenumber_mismatch(self) -> None:
+        """interpolate with mismatched wavenumber length raises ValueError."""
+        y = np.ones(100)
+        wn = np.linspace(400, 4000, 50)  # wrong length
+        new_wn = np.linspace(500, 3500, 80)
+        with pytest.raises(ValueError, match="wavenumbers length.*does not match"):
+            spectral_interpolate(y, wn, new_wn)

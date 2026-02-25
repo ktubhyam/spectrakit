@@ -85,3 +85,11 @@ class TestDerivativeGapSegment:
     def test_3d_raises(self) -> None:
         with pytest.raises(SpectrumShapeError):
             derivative_gap_segment(np.ones((2, 3, 4)))
+
+    def test_zero_gap_raises(self) -> None:
+        with pytest.raises(ValueError, match="gap must be >= 1"):
+            derivative_gap_segment(np.ones(100), gap=0)
+
+    def test_zero_segment_raises(self) -> None:
+        with pytest.raises(ValueError, match="segment must be >= 1"):
+            derivative_gap_segment(np.ones(100), segment=0)

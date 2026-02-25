@@ -10,6 +10,7 @@ from spectrakit._version import __version__
 # Baseline correction
 from spectrakit.baseline import (
     baseline_als,
+    baseline_arpls,
     baseline_polynomial,
     baseline_rubberband,
     baseline_snip,
@@ -28,7 +29,16 @@ from spectrakit.exceptions import (
 )
 
 # I/O
-from spectrakit.io import read_csv, read_hdf5, read_jcamp, read_opus, read_spc, write_hdf5
+from spectrakit.io import (
+    read_csv,
+    read_hdf5,
+    read_jcamp,
+    read_opus,
+    read_spc,
+    write_csv,
+    write_hdf5,
+    write_jcamp,
+)
 
 # Normalization
 from spectrakit.normalize import normalize_area, normalize_minmax, normalize_snv, normalize_vector
@@ -84,7 +94,10 @@ __all__ = [
     "read_opus",
     "read_hdf5",
     "write_hdf5",
+    "write_csv",
+    "write_jcamp",
     "baseline_als",
+    "baseline_arpls",
     "baseline_snip",
     "baseline_polynomial",
     "baseline_rubberband",

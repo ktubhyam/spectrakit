@@ -1,4 +1,4 @@
-"""CSV/TSV spectral data loader."""
+"""CSV/TSV spectral data reader and writer."""
 
 from __future__ import annotations
 
@@ -88,3 +88,58 @@ def read_csv(
         source_format="csv",
         label=path.stem,
     )
+
+
+def write_csv(
+    spectrum: Spectrum,
+    path: str | Path,
+    delimiter: str = ",",
+    header: bool = True,
+) -> None:
+    """Write a Spectrum to a CSV file.
+
+    Writes wavenumbers (if available) as the first column and
+    intensities as subsequent columns. For multi-spectrum data
+    ``(N, W)``, each spectrum becomes a column.
+
+    Args:
+        spectrum: Spectrum to save.
+        path: Output file path.
+        delimiter: Column separator. Use ``"\\t"`` for TSV output.
+        header: If ``True``, write a header row with column names.
+
+    Raises:
+        ValueError: If *spectrum* has no data.
+    """
+    path = Path(path)
+
+    intensities = spectrum.intensities
+    wavenumbers = spectrum.wavenumbers
+
+    if intensities.ndim == 1:
+        if wavenumbers is not None:
+            data = np.column_stack([wavenumbers, intensities])
+            col_names = ["wavenumber", "intensity"]
+        else:
+            data = intensities.reshape(-1, 1)
+            col_names = ["intensity"]
+    else:
+        # (N, W) -> transpose to (W, N) so each row is one wavenumber
+        if wavenumbers is not None:
+            data = np.column_stack([wavenumbers, intensities.T])
+            col_names = ["wavenumber"] + [f"spectrum_{i}" for i in range(intensities.shape[0])]
+        else:
+            data = intensities.T
+            col_names = [f"spectrum_{i}" for i in range(intensities.shape[0])]
+
+    header_str = delimiter.join(col_names) if header else ""
+
+    np.savetxt(
+        path,
+        data,
+        delimiter=delimiter,
+        header=header_str,
+        comments="",
+    )
+
+    logger.debug("Wrote CSV: %s", path)

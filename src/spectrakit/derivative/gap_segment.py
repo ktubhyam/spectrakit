@@ -54,6 +54,10 @@ def derivative_gap_segment(
     """
     if deriv not in (1, 2):
         raise ValueError(f"deriv must be 1 or 2, got {deriv}")
+    if gap < 1:
+        raise ValueError(f"gap must be >= 1, got {gap}")
+    if segment < 1:
+        raise ValueError(f"segment must be >= 1, got {segment}")
 
     intensities = ensure_float64(intensities)
     validate_1d_or_2d(intensities)
@@ -84,14 +88,18 @@ def _derivative_gap_segment_1d(
     # First derivative: difference of segment averages separated by gap
     result = np.zeros(n, dtype=np.float64)
     half_gap = gap // 2
-    for i in range(half_gap, n - half_gap):
-        result[i] = averaged[min(i + half_gap, n - 1)] - averaged[max(i - half_gap, 0)]
+    if half_gap > 0 and 2 * half_gap < n:
+        result[half_gap : n - half_gap] = (
+            averaged[2 * half_gap :] - averaged[: n - 2 * half_gap]
+        )
 
     if deriv == 2:
         # Apply the same operation again for second derivative
         first = result.copy()
         result = np.zeros(n, dtype=np.float64)
-        for i in range(half_gap, n - half_gap):
-            result[i] = first[min(i + half_gap, n - 1)] - first[max(i - half_gap, 0)]
+        if half_gap > 0 and 2 * half_gap < n:
+            result[half_gap : n - half_gap] = (
+                first[2 * half_gap :] - first[: n - 2 * half_gap]
+            )
 
     return result

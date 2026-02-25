@@ -40,6 +40,13 @@ def spectral_crop(
     validate_1d_or_2d(intensities)
     warn_if_not_finite(intensities)
 
+    expected_w = intensities.shape[-1]
+    if wavenumbers.shape[0] != expected_w:
+        raise ValueError(
+            f"wavenumbers length {wavenumbers.shape[0]} does not match "
+            f"intensities spectral width {expected_w}"
+        )
+
     low, high = min(start, end), max(start, end)
     if low == high:
         raise ValueError(f"start and end must differ, both are {low}")

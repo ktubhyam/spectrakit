@@ -1276,3 +1276,163 @@ class TestReadJCAMPEdgeCases:
 
         spec = read_jcamp(jdx_path)
         assert spec.n_points == 4
+
+
+# ── CSV Writer ──────────────────────────────────────────────────────
+
+
+class TestWriteCSV:
+    def test_write_csv_1d_with_wavenumbers(self, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+        """Write 1D spectrum with wavenumbers, read back and verify."""
+        from spectrakit.io.csv import read_csv, write_csv
+        from spectrakit.spectrum import Spectrum
+
+        wn = np.linspace(400, 4000, 50)
+        y = np.random.default_rng(42).random(50)
+        spec = Spectrum(intensities=y, wavenumbers=wn, label="test")
+
+        out = tmp_path / "out.csv"
+        write_csv(spec, out)
+
+        assert out.exists()
+        loaded = read_csv(out, skip_header=1)
+        np.testing.assert_allclose(loaded.wavenumbers, wn, atol=1e-4)
+        np.testing.assert_allclose(loaded.intensities, y, atol=1e-4)
+
+    def test_write_csv_1d_no_wavenumbers(self, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+        """Write 1D spectrum without wavenumbers."""
+        from spectrakit.io.csv import write_csv
+        from spectrakit.spectrum import Spectrum
+
+        y = np.array([1.0, 2.0, 3.0])
+        spec = Spectrum(intensities=y, label="no_wn")
+
+        out = tmp_path / "nown.csv"
+        write_csv(spec, out)
+
+        assert out.exists()
+        data = np.genfromtxt(out, delimiter=",", skip_header=1)
+        np.testing.assert_allclose(data, y, atol=1e-10)
+
+    def test_write_csv_2d_batch(self, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+        """Write batch (N, W) spectra to CSV."""
+        from spectrakit.io.csv import write_csv
+        from spectrakit.spectrum import Spectrum
+
+        wn = np.linspace(400, 4000, 30)
+        batch = np.random.default_rng(42).random((3, 30))
+        spec = Spectrum(intensities=batch, wavenumbers=wn)
+
+        out = tmp_path / "batch.csv"
+        write_csv(spec, out)
+
+        assert out.exists()
+        data = np.genfromtxt(out, delimiter=",", skip_header=1)
+        # Should have 30 rows (wavenumber points) x 4 cols (wn + 3 spectra)
+        assert data.shape == (30, 4)
+
+    def test_write_csv_2d_no_wavenumbers(self, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+        """Write batch (N, W) spectra without wavenumbers."""
+        from spectrakit.io.csv import write_csv
+        from spectrakit.spectrum import Spectrum
+
+        batch = np.random.default_rng(42).random((2, 20))
+        spec = Spectrum(intensities=batch)
+
+        out = tmp_path / "batch_nowns.csv"
+        write_csv(spec, out)
+
+        assert out.exists()
+        data = np.genfromtxt(out, delimiter=",", skip_header=1)
+        assert data.shape == (20, 2)
+
+    def test_write_csv_tsv(self, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+        """Write with tab delimiter — uses wavenumbers so multiple columns exist."""
+        from spectrakit.io.csv import write_csv
+        from spectrakit.spectrum import Spectrum
+
+        wn = np.array([400.0, 800.0, 1200.0])
+        y = np.array([1.0, 2.0, 3.0])
+        spec = Spectrum(intensities=y, wavenumbers=wn)
+
+        out = tmp_path / "out.tsv"
+        write_csv(spec, out, delimiter="\t")
+
+        assert out.exists()
+        content = out.read_text()
+        assert "\t" in content
+
+    def test_write_csv_no_header(self, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+        """Write without header row."""
+        from spectrakit.io.csv import write_csv
+        from spectrakit.spectrum import Spectrum
+
+        y = np.array([1.0, 2.0, 3.0])
+        spec = Spectrum(intensities=y)
+
+        out = tmp_path / "noheader.csv"
+        write_csv(spec, out, header=False)
+
+        content = out.read_text()
+        # Should NOT start with column names
+        assert not content.startswith("intensity")
+
+
+# ── JCAMP Writer ────────────────────────────────────────────────────
+
+
+class TestWriteJCAMP:
+    def test_write_jcamp_roundtrip(self, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+        """Write JCAMP then read it back — values should roundtrip within tolerance."""
+        from spectrakit.io.jcamp import read_jcamp, write_jcamp
+        from spectrakit.spectrum import Spectrum
+
+        wn = np.linspace(400, 4000, 100)
+        y = np.random.default_rng(42).random(100)
+        spec = Spectrum(intensities=y, wavenumbers=wn, label="roundtrip")
+
+        out = tmp_path / "output.dx"
+        write_jcamp(spec, out, title="Roundtrip Test")
+
+        assert out.exists()
+        loaded = read_jcamp(out)
+        assert loaded.n_points == 100
+        np.testing.assert_allclose(loaded.wavenumbers, wn, atol=1e-4)
+        np.testing.assert_allclose(loaded.intensities, y, atol=1e-4)
+
+    def test_write_jcamp_metadata(self, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+        """Written JCAMP contains required headers."""
+        from spectrakit.io.jcamp import write_jcamp
+        from spectrakit.spectrum import Spectrum
+
+        wn = np.linspace(400, 4000, 10)
+        y = np.ones(10)
+        spec = Spectrum(intensities=y, wavenumbers=wn)
+
+        out = tmp_path / "meta.dx"
+        write_jcamp(spec, out, title="My Title", data_type="RAMAN SPECTRUM")
+
+        content = out.read_text()
+        assert "##TITLE=My Title" in content
+        assert "##JCAMP-DX=5.00" in content
+        assert "##DATA TYPE=RAMAN SPECTRUM" in content
+        assert "##NPOINTS=10" in content
+        assert "##END=" in content
+
+    def test_write_jcamp_2d_raises(self, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+        """2D intensities should raise ValueError."""
+        from spectrakit.io.jcamp import write_jcamp
+        from spectrakit.spectrum import Spectrum
+
+        spec = Spectrum(intensities=np.ones((3, 10)))
+        with pytest.raises(ValueError, match="1-D intensities"):
+            write_jcamp(spec, tmp_path / "fail.dx")
+
+    def test_write_jcamp_no_wavenumbers_raises(self, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+        """Missing wavenumbers should raise ValueError."""
+        from spectrakit.io.jcamp import write_jcamp
+        from spectrakit.spectrum import Spectrum
+
+        spec = Spectrum(intensities=np.ones(10))
+        with pytest.raises(ValueError, match="wavenumbers"):
+            write_jcamp(spec, tmp_path / "fail.dx")

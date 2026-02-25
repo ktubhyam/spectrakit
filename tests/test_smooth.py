@@ -100,3 +100,35 @@ class TestSmoothWhittaker:
     def test_3d_raises(self) -> None:
         with pytest.raises(SpectrumShapeError):
             smooth_whittaker(np.ones((2, 3, 4)))
+
+
+class TestSmoothParameterValidation:
+    """Verify parameter validation for smoothing functions."""
+
+    def test_savgol_even_window_raises(self) -> None:
+        with pytest.raises(ValueError, match="window_length must be odd"):
+            smooth_savgol(np.ones(100), window_length=10)
+
+    def test_savgol_zero_window_raises(self) -> None:
+        with pytest.raises(ValueError, match="window_length must be >= 1"):
+            smooth_savgol(np.ones(100), window_length=0)
+
+    def test_savgol_negative_polyorder_raises(self) -> None:
+        with pytest.raises(ValueError, match="polyorder must be >= 0"):
+            smooth_savgol(np.ones(100), polyorder=-1)
+
+    def test_savgol_polyorder_ge_window_raises(self) -> None:
+        with pytest.raises(ValueError, match="polyorder.*must be less than window_length"):
+            smooth_savgol(np.ones(100), window_length=5, polyorder=5)
+
+    def test_whittaker_zero_lam_raises(self) -> None:
+        with pytest.raises(ValueError, match="lam.*must be positive"):
+            smooth_whittaker(np.ones(100), lam=0.0)
+
+    def test_whittaker_negative_lam_raises(self) -> None:
+        with pytest.raises(ValueError, match="lam.*must be positive"):
+            smooth_whittaker(np.ones(100), lam=-1.0)
+
+    def test_whittaker_zero_differences_raises(self) -> None:
+        with pytest.raises(ValueError, match="differences must be >= 1"):
+            smooth_whittaker(np.ones(100), differences=0)
