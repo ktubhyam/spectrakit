@@ -64,7 +64,7 @@ plot = [
     "matplotlib>=3.7",
 ]
 all = [
-    "pyspectrakit[io,spc,cli,baselines,fitting,sklearn,plot]",
+    "pyspectrakit[io,cli,baselines,fitting,sklearn,plot]",
 ]
 docs = [
     "mkdocs>=1.5",

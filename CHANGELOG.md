@@ -10,7 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [1.7.2] - 2026-02-25
 
 ### Fixed
-- CI: install numpy before `spc-spectra` in `test-optional` job to fix broken build (`spc-spectra` imports numpy during setup.py)
+- CI: remove `spc` from `[all]` extra and install `spc-spectra` separately with graceful fallback (broken source build in CI)
+
+### Changed
+- `[all]` extra no longer includes `[spc]`; install separately with `pip install pyspectrakit[spc]` if needed
 
 ## [1.7.1] - 2026-02-25
 
