@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "pyspectrakit"
 dynamic = ["version"]
-description = "Python toolkit for spectral data processing: format parsers, baseline correction, normalization, and similarity matching."
+description = "Python toolkit for spectral data processing: baseline correction, normalization, smoothing, despiking, similarity metrics, peak analysis, and multi-format I/O."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
@@ -20,6 +20,12 @@ keywords = [
     "NIR",
     "baseline-correction",
     "normalization",
+    "smoothing",
+    "despiking",
+    "signal-quality",
+    "peak-analysis",
+    "preprocessing",
+    "data-processing",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
