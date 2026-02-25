@@ -5,6 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from spectrakit.exceptions import SpectrumShapeError
 from spectrakit.similarity import (
     similarity_cosine,
     similarity_euclidean,
@@ -282,3 +283,57 @@ class TestKeywordArgCompat:
         q = np.array([0.0, 0.0])
         r = np.array([3.0, 4.0])
         assert abs(similarity_euclidean(query=q, reference=r) - 5.0) < 1e-10
+
+
+class TestWidthMismatchRaises:
+    """All similarity functions should raise SpectrumShapeError on width mismatch."""
+
+    def test_cosine_mismatched_width(self) -> None:
+        query = np.array([1.0, 2.0, 3.0])
+        reference = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+        with pytest.raises(SpectrumShapeError, match="3 spectral points.*5"):
+            similarity_cosine(query, reference)
+
+    def test_pearson_mismatched_width(self) -> None:
+        query = np.array([1.0, 2.0, 3.0])
+        reference = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+        with pytest.raises(SpectrumShapeError, match="3 spectral points.*5"):
+            similarity_pearson(query, reference)
+
+    def test_euclidean_mismatched_width(self) -> None:
+        query = np.array([1.0, 2.0, 3.0])
+        reference = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+        with pytest.raises(SpectrumShapeError, match="3 spectral points.*5"):
+            similarity_euclidean(query, reference)
+
+    def test_spectral_angle_mismatched_width(self) -> None:
+        query = np.array([1.0, 2.0, 3.0])
+        reference = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+        with pytest.raises(SpectrumShapeError, match="3 spectral points.*5"):
+            similarity_spectral_angle(query, reference)
+
+
+class TestEuclideanChunking:
+    """Verify the memory-guard chunked path in 2D x 2D Euclidean distance."""
+
+    def test_large_2d_chunked(self) -> None:
+        """Monkeypatch threshold to force chunked path and verify correctness."""
+        import spectrakit.similarity.euclidean as euc_mod
+
+        rng = np.random.default_rng(42)
+        queries = rng.random((4, 10))
+        refs = rng.random((5, 10))
+
+        # Compute expected result with the normal (broadcast) path
+        expected = similarity_euclidean(queries, refs)
+        assert expected.shape == (4, 5)
+
+        # Force chunked path by lowering the threshold
+        original = euc_mod._MAX_BROADCAST_ELEMENTS
+        try:
+            euc_mod._MAX_BROADCAST_ELEMENTS = 1  # force chunking
+            chunked_result = similarity_euclidean(queries, refs)
+        finally:
+            euc_mod._MAX_BROADCAST_ELEMENTS = original
+
+        np.testing.assert_allclose(chunked_result, expected, atol=1e-10)

@@ -7,19 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-02-25
+
+### Added
+- Absorbance ↔ transmittance conversions: `transform_absorbance_to_transmittance`, `transform_transmittance_to_absorbance`
+- Spectral cropping: `spectral_crop(intensities, wavenumbers, start, end)`
+- Spectral width validation: all similarity functions now raise `SpectrumShapeError` on mismatched point counts
+- Memory guard: Euclidean 2D×2D falls back to chunked computation when intermediate array would exceed ~4 GB
+- Parameter validation: `baseline_als` validates p∈(0,1), lam>0, max_iter≥1; `baseline_polynomial` validates degree≥0; `baseline_snip` validates max_half_window≥1
+- ATR correction physics validation: checks refractive indices, angle range, and critical angle condition
+- Kubelka-Munk warns when reflectance values fall outside [0, 1]
+- Interpolation warns when target wavenumbers extend beyond original range
+- `peaks_integrate` rejects 2D input with a clear error message
+- CLI `convert` command now supports SPC, HDF5, and OPUS input formats
+- 29 mathematical correctness tests verifying known analytical solutions
+- 42 validation tests for new parameter checks and width validation
+- Batch query support: all 4 similarity functions accept 2-D query × 2-D reference → (M, N) matrix
+
+### Fixed
+- **ATR correction was scientifically wrong**: discriminant was computed but discarded; correction now uses `ν * √(sin²θ - (n₂/n₁)²)` as per Harrick (1967)
+- **Normalization 2D degenerate count**: replaced `== 1.0` sentinel check with explicit boolean mask to avoid false positives when a spectrum genuinely has range/std/norm = 1.0
+- **Pearson 2D×2D**: eliminated duplicate `norms_q @ norms_r.T` computation
+
+### Changed
+- SNIP inner loop vectorized with numpy (was pure Python, ~100x faster)
+- Pearson similarity rewritten to use direct dot-product (removed `np.corrcoef` dependency)
+- Test coverage: 418 tests, 100% line coverage across 55 source files
+- Standardized NaN/Inf handling across all similarity metrics using EPSILON guard pattern
+
 ## [1.2.0] - 2026-02-25
 
 ### Added
-- Batch query support: all 4 similarity functions accept 2-D query × 2-D reference → (M, N) matrix
 - Plot functions (`plot_spectrum`, `plot_comparison`, `plot_baseline`) exported from top-level package
 - Configurable file size limit via `SPECTRAKIT_MAX_FILE_SIZE` environment variable
 - Separated `[spc]` optional extra for `spc-spectra` package
 - Performance notes in Euclidean and Pearson docstrings for large 2-D × 2-D inputs
 
 ### Changed
-- Standardized NaN/Inf handling across all similarity metrics using EPSILON guard pattern
-- Pearson similarity rewritten to use direct dot-product (removed `np.corrcoef` dependency)
-- Test coverage improved from 97% to 100% (348 tests, 6 skipped)
 - Proven-unreachable defensive code annotated with `# pragma: no cover`
 - Fixed contrib `__init__.py` docstring referencing non-existent module
 

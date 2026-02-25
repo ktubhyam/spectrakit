@@ -44,8 +44,9 @@ def normalize_minmax(intensities: np.ndarray) -> np.ndarray:
     mins = intensities.min(axis=1, keepdims=True)
     maxs = intensities.max(axis=1, keepdims=True)
     rngs = maxs - mins
-    rngs = np.where(rngs < EPSILON, 1.0, rngs)
-    n_constant = int(np.sum(rngs == 1.0))
+    degenerate = rngs < EPSILON
+    rngs = np.where(degenerate, 1.0, rngs)
+    n_constant = int(np.sum(degenerate))
     if n_constant > 0:
         warnings.warn(
             f"Min-max: {n_constant} spectrum/spectra have near-zero range and "

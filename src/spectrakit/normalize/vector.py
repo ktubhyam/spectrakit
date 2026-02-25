@@ -40,8 +40,9 @@ def normalize_vector(intensities: np.ndarray) -> np.ndarray:
         return intensities / norm  # type: ignore[no-any-return]
 
     norms = np.linalg.norm(intensities, axis=1, keepdims=True)
-    norms = np.where(norms < EPSILON, 1.0, norms)
-    n_zero = int(np.sum(norms == 1.0))
+    degenerate = norms < EPSILON
+    norms = np.where(degenerate, 1.0, norms)
+    n_zero = int(np.sum(degenerate))
     if n_zero > 0:
         warnings.warn(
             f"Vector normalization: {n_zero} spectrum/spectra have near-zero norm "

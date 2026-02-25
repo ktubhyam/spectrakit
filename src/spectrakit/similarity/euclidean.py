@@ -4,7 +4,15 @@ from __future__ import annotations
 
 import numpy as np
 
-from spectrakit._validate import ensure_float64, validate_1d_or_2d, warn_if_not_finite
+from spectrakit._validate import (
+    ensure_float64,
+    validate_1d_or_2d,
+    validate_matching_width,
+    warn_if_not_finite,
+)
+
+_MAX_BROADCAST_ELEMENTS: int = 500_000_000
+"""Max elements in the (M, N, W) broadcast array before switching to chunked."""
 
 
 def similarity_euclidean(query: np.ndarray, reference: np.ndarray) -> float | np.ndarray:
@@ -38,6 +46,7 @@ def similarity_euclidean(query: np.ndarray, reference: np.ndarray) -> float | np
     validate_1d_or_2d(reference, name="reference")
     warn_if_not_finite(query, name="query")
     warn_if_not_finite(reference, name="reference")
+    validate_matching_width(query, reference)
 
     # 1D query vs 1D reference → scalar
     if query.ndim == 1 and reference.ndim == 1:
@@ -52,6 +61,14 @@ def similarity_euclidean(query: np.ndarray, reference: np.ndarray) -> float | np
         return np.linalg.norm(query - reference, axis=1)  # type: ignore[no-any-return]
 
     # 2D query vs 2D reference → (M, N)
-    # Use broadcasting: (M, 1, W) - (1, N, W) → (M, N, W), then norm along W
+    m, w = query.shape
+    n = reference.shape[0]
+    max_elements = m * n * w
+    if max_elements > _MAX_BROADCAST_ELEMENTS:
+        # Chunked computation to avoid allocating (M, N, W) intermediate
+        result = np.empty((m, n), dtype=np.float64)
+        for i in range(m):
+            result[i] = np.linalg.norm(reference - query[i], axis=1)
+        return result
     diff = query[:, np.newaxis, :] - reference[np.newaxis, :, :]
     return np.linalg.norm(diff, axis=2)  # type: ignore[no-any-return]

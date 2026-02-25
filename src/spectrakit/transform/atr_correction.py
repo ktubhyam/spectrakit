@@ -11,7 +11,7 @@ import logging
 
 import numpy as np
 
-from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d, warn_if_not_finite
+from spectrakit._validate import ensure_float64, validate_1d_or_2d, warn_if_not_finite
 
 logger = logging.getLogger(__name__)
 
@@ -49,23 +49,48 @@ def transform_atr_correction(
     Raises:
         SpectrumShapeError: If input is not 1-D or 2-D.
         EmptySpectrumError: If input has zero elements.
+        ValueError: If physics parameters are invalid (non-positive
+            refractive indices, angle outside (0, 90), or angle below
+            the critical angle for the given crystal/sample pair).
     """
     intensities = ensure_float64(intensities)
     wavenumbers = ensure_float64(wavenumbers)
     validate_1d_or_2d(intensities)
     warn_if_not_finite(intensities)
 
+    # Validate physics parameters
+    if n_crystal <= 0:
+        raise ValueError(f"n_crystal must be positive, got {n_crystal}")
+    if n_sample <= 0:
+        raise ValueError(f"n_sample must be positive, got {n_sample}")
+    if not 0 < angle < 90:
+        raise ValueError(f"angle must be in (0, 90) degrees, got {angle}")
+
+    n_ratio = n_sample / n_crystal
+    if n_ratio >= 1.0:
+        raise ValueError(
+            f"n_sample ({n_sample}) must be less than n_crystal ({n_crystal}) "
+            "for total internal reflection"
+        )
+
     # Compute penetration depth factor: dp ∝ 1 / (ν * sqrt(sin²θ - (n2/n1)²))
     theta = np.radians(angle)
-    n_ratio = n_sample / n_crystal
     sin2_theta = np.sin(theta) ** 2
 
     discriminant = sin2_theta - n_ratio**2
-    discriminant = np.maximum(discriminant, EPSILON)
+    if discriminant <= 0:
+        raise ValueError(
+            f"Angle {angle}° is below the critical angle for n_crystal={n_crystal}, "
+            f"n_sample={n_sample}. No total internal reflection occurs."
+        )
 
-    # Effective penetration depth proportional to 1/(ν * sqrt(discriminant))
-    # Correction factor: multiply by ν to compensate
-    correction = wavenumbers / np.max(wavenumbers)
+    # Penetration depth: dp = λ / (2π * n1 * sqrt(sin²θ - (n2/n1)²))
+    # Since λ = 1/ν (in cm⁻¹), dp ∝ 1 / (ν * sqrt(discriminant))
+    # Correction: multiply absorbance by ν * sqrt(discriminant) to remove
+    # the path-length dependence, then normalize so the correction factor
+    # at the maximum wavenumber equals 1.
+    dp_inv = wavenumbers * np.sqrt(discriminant)
+    correction = dp_inv / np.max(dp_inv)
 
     if intensities.ndim == 1:
         return intensities * correction  # type: ignore[no-any-return]

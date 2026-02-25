@@ -4,7 +4,13 @@ from __future__ import annotations
 
 import numpy as np
 
-from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d, warn_if_not_finite
+from spectrakit._validate import (
+    EPSILON,
+    ensure_float64,
+    validate_1d_or_2d,
+    validate_matching_width,
+    warn_if_not_finite,
+)
 
 
 def similarity_pearson(query: np.ndarray, reference: np.ndarray) -> float | np.ndarray:
@@ -36,6 +42,7 @@ def similarity_pearson(query: np.ndarray, reference: np.ndarray) -> float | np.n
     validate_1d_or_2d(reference, name="reference")
     warn_if_not_finite(query, name="query")
     warn_if_not_finite(reference, name="reference")
+    validate_matching_width(query, reference)
 
     # 1D query vs 1D reference → scalar
     if query.ndim == 1 and reference.ndim == 1:
@@ -72,5 +79,6 @@ def similarity_pearson(query: np.ndarray, reference: np.ndarray) -> float | np.n
     numerator = qc @ rc.T
     norms_q = np.linalg.norm(qc, axis=1, keepdims=True)
     norms_r = np.linalg.norm(rc, axis=1, keepdims=True)
-    denoms = np.where(norms_q @ norms_r.T < EPSILON, 1.0, norms_q @ norms_r.T)
+    denom_matrix = norms_q @ norms_r.T
+    denoms = np.where(denom_matrix < EPSILON, 1.0, denom_matrix)
     return numerator / denoms  # type: ignore[no-any-return]

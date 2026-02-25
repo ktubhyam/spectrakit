@@ -145,6 +145,33 @@ def validate_file_size(path_size: int, *, path_name: str = "") -> None:
         )
 
 
+def validate_matching_width(
+    query: np.ndarray,
+    reference: np.ndarray,
+    *,
+    query_name: str = "query",
+    reference_name: str = "reference",
+) -> None:
+    """Check that two arrays have the same spectral width (last dimension).
+
+    Args:
+        query: First array, shape ``(..., W)``.
+        reference: Second array, shape ``(..., W)``.
+        query_name: Human-readable name for the first array.
+        reference_name: Human-readable name for the second array.
+
+    Raises:
+        SpectrumShapeError: If the last dimensions do not match.
+    """
+    q_w = query.shape[-1]
+    r_w = reference.shape[-1]
+    if q_w != r_w:
+        raise SpectrumShapeError(
+            f"{query_name} has {q_w} spectral points but "
+            f"{reference_name} has {r_w}"
+        )
+
+
 def apply_along_spectra(
     fn: Callable[..., np.ndarray],
     intensities: np.ndarray,

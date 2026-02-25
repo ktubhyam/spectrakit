@@ -42,8 +42,9 @@ def normalize_snv(intensities: np.ndarray) -> np.ndarray:
 
     means = np.mean(intensities, axis=1, keepdims=True)
     stds = np.std(intensities, axis=1, keepdims=True)
-    stds = np.where(stds < EPSILON, 1.0, stds)
-    n_constant = int(np.sum(stds == 1.0))
+    degenerate = stds < EPSILON
+    stds = np.where(degenerate, 1.0, stds)
+    n_constant = int(np.sum(degenerate))
     if n_constant > 0:
         warnings.warn(
             f"SNV: {n_constant} spectrum/spectra have near-zero std and "

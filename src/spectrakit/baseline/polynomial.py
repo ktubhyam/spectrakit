@@ -44,6 +44,11 @@ def baseline_polynomial(
         SpectrumShapeError: If input is not 1-D or 2-D.
         EmptySpectrumError: If input has zero elements.
     """
+    if degree < 0:
+        raise ValueError(f"degree must be non-negative, got {degree}")
+    if max_iter < 1:
+        raise ValueError(f"max_iter must be >= 1, got {max_iter}")
+
     intensities = ensure_float64(intensities)
     validate_1d_or_2d(intensities)
     warn_if_not_finite(intensities)

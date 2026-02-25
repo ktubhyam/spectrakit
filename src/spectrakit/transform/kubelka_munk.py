@@ -8,6 +8,7 @@ Reference:
 from __future__ import annotations
 
 import logging
+import warnings
 
 import numpy as np
 
@@ -39,6 +40,13 @@ def transform_kubelka_munk(reflectance: np.ndarray) -> np.ndarray:
     reflectance = ensure_float64(reflectance)
     validate_1d_or_2d(reflectance)
     warn_if_not_finite(reflectance)
+
+    if np.any(reflectance < 0) or np.any(reflectance > 1):
+        warnings.warn(
+            "Reflectance values outside [0, 1] detected. "
+            "Ensure you are passing reflectance, not absorbance.",
+            stacklevel=2,
+        )
 
     # Clamp reflectance to avoid division by zero
     r = np.clip(reflectance, EPSILON, 1.0 - EPSILON)

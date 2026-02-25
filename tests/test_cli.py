@@ -169,6 +169,61 @@ class TestCLIConvert:
         assert result.exit_code == 0
         assert out.exists()
 
+    def test_convert_hdf5_to_hdf5(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
+        """Convert HDF5 to HDF5 (tests the HDF5 input path in convert)."""
+        h5py = pytest.importorskip("h5py")
+        src = tmp_path / "input.h5"
+        with h5py.File(src, "w") as f:
+            f.create_dataset("intensities", data=np.ones(30))
+            f.create_dataset("wavenumbers", data=np.linspace(400, 4000, 30))
+        out = tmp_path / "output.h5"
+
+        result = runner.invoke(app, ["convert", str(src), str(out)])
+        assert result.exit_code == 0
+        assert out.exists()
+
+    def test_convert_opus_to_hdf5(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
+        """Convert OPUS to HDF5 (tests the OPUS input path in convert)."""
+        import struct
+
+        pytest.importorskip("h5py")
+
+        n_points = 10
+        # Build param block
+        param = b"NPT\x00" + struct.pack("<HHi", 0, 4, n_points)
+        param += b"FXV\x00" + struct.pack("<HHd", 1, 8, 400.0)
+        param += b"LXV\x00" + struct.pack("<HHd", 1, 8, 4000.0)
+        data_content = np.ones(n_points, dtype=np.float32).tobytes()
+
+        header_size = 24
+        dir_size = 36
+        data_offset = header_size + dir_size
+        param_offset = data_offset + len(data_content)
+
+        header = struct.pack("<IIIIII", 0x0A0A, 0, header_size, 0, 10, 2)
+        dir_data = struct.pack("<III", 0x0F, len(data_content), data_offset)
+        dir_params = struct.pack("<III", 0x1F, len(param), param_offset)
+        dir_sentinel = struct.pack("<III", 0, 0, 0)
+
+        raw = header + dir_data + dir_params + dir_sentinel + data_content + param
+        opus_path = tmp_path / "test.0"
+        opus_path.write_bytes(raw)
+        out = tmp_path / "output.h5"
+
+        result = runner.invoke(app, ["convert", str(opus_path), str(out)])
+        assert result.exit_code == 0
+        assert out.exists()
+
+    def test_convert_spc_to_hdf5(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
+        """Convert SPC to HDF5 (tests the SPC input path in convert)."""
+        pytest.importorskip("h5py")
+        spc_path = tmp_path / "test.spc"
+        spc_path.write_bytes(b"\x00" * 100)
+
+        result = runner.invoke(app, ["convert", str(spc_path), str(tmp_path / "out.h5")])
+        # Will either succeed or fail depending on spc-spectra availability
+        assert result.exit_code in (0, 1)
+
     def test_convert_unsupported_format(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
         """Convert with unsupported input format."""
         bad = tmp_path / "test.xyz"

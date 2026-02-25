@@ -60,6 +60,13 @@ def baseline_als(
     Examples:
         >>> corrected = intensities - baseline_als(intensities)
     """
+    if not 0 < p < 1:
+        raise ValueError(f"p (asymmetry) must be in (0, 1), got {p}")
+    if lam <= 0:
+        raise ValueError(f"lam (smoothness) must be positive, got {lam}")
+    if max_iter < 1:
+        raise ValueError(f"max_iter must be >= 1, got {max_iter}")
+
     intensities = ensure_float64(intensities)
     validate_1d_or_2d(intensities)
     warn_if_not_finite(intensities)

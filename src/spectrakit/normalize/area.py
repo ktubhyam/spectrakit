@@ -50,8 +50,9 @@ def normalize_area(
     areas = np.array([np.trapezoid(np.abs(row), x=wavenumbers) for row in intensities]).reshape(
         -1, 1
     )
-    areas = np.where(areas < EPSILON, 1.0, areas)  # type: ignore[assignment]
-    n_zero = int(np.sum(areas == 1.0))
+    degenerate = areas < EPSILON
+    areas = np.where(degenerate, 1.0, areas)  # type: ignore[assignment]
+    n_zero = int(np.sum(degenerate))
     if n_zero > 0:
         warnings.warn(
             f"Area normalization: {n_zero} spectrum/spectra have near-zero area "

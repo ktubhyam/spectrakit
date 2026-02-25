@@ -5,6 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from spectrakit.exceptions import SpectrumShapeError
 from spectrakit.peaks import PeakResult, peaks_find, peaks_integrate
 
 
@@ -121,3 +122,13 @@ class TestPeaksIntegrate:
     def test_ranges_without_wavenumbers_raises(self) -> None:
         with pytest.raises(ValueError, match="wavenumbers are required"):
             peaks_integrate(np.ones(100), ranges=[(0, 50)])
+
+
+class TestPeaksIntegrate2DRejection:
+    """Verify that peaks_integrate rejects 2D input."""
+
+    def test_peaks_integrate_2d_raises(self) -> None:
+        """2D input should raise SpectrumShapeError with a helpful message."""
+        batch = np.ones((5, 100))
+        with pytest.raises(SpectrumShapeError, match="1-D input"):
+            peaks_integrate(batch)

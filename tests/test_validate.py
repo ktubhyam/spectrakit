@@ -12,6 +12,7 @@ from spectrakit._validate import (
     ensure_float64,
     validate_1d_or_2d,
     validate_file_size,
+    validate_matching_width,
     warn_if_not_finite,
 )
 from spectrakit.exceptions import EmptySpectrumError, SpectrumShapeError
@@ -222,3 +223,35 @@ class TestMaxFileSizeEnvVar:
 
         with patch.dict("os.environ", {"SPECTRAKIT_MAX_FILE_SIZE": "not_a_number"}):
             assert _read_max_file_size() == _DEFAULT_MAX_FILE_SIZE
+
+
+class TestValidateMatchingWidth:
+    """Verify spectral width matching validation."""
+
+    def test_matching_widths_passes(self) -> None:
+        """1D arrays with same width should not raise."""
+        query = np.array([1.0, 2.0, 3.0])
+        reference = np.array([4.0, 5.0, 6.0])
+        # Should not raise
+        validate_matching_width(query, reference)
+
+    def test_mismatched_widths_raises(self) -> None:
+        """1D arrays with different widths should raise SpectrumShapeError."""
+        query = np.array([1.0, 2.0, 3.0])
+        reference = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+        with pytest.raises(SpectrumShapeError, match="3 spectral points.*5"):
+            validate_matching_width(query, reference)
+
+    def test_2d_matching_passes(self) -> None:
+        """2D arrays with matching last dimension should not raise."""
+        query = np.ones((2, 3))
+        reference = np.ones((4, 3))
+        # Should not raise — last dim (3) matches
+        validate_matching_width(query, reference)
+
+    def test_2d_mismatched_raises(self) -> None:
+        """2D arrays with different last dimensions should raise."""
+        query = np.ones((2, 3))
+        reference = np.ones((4, 5))
+        with pytest.raises(SpectrumShapeError, match="3 spectral points.*5"):
+            validate_matching_width(query, reference)

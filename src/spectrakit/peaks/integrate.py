@@ -6,7 +6,8 @@ import logging
 
 import numpy as np
 
-from spectrakit._validate import ensure_float64, warn_if_not_finite
+from spectrakit._validate import ensure_float64, validate_1d_or_2d, warn_if_not_finite
+from spectrakit.exceptions import SpectrumShapeError
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +39,12 @@ def peaks_integrate(
         ValueError: If *ranges* is specified but *wavenumbers* is ``None``.
     """
     intensities = ensure_float64(intensities)
+    validate_1d_or_2d(intensities)
+    if intensities.ndim != 1:
+        raise SpectrumShapeError(
+            f"peaks_integrate requires 1-D input, got shape {intensities.shape}. "
+            "Apply row-by-row for 2-D batches."
+        )
     warn_if_not_finite(intensities)
 
     if ranges is None:

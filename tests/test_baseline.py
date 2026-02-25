@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from spectrakit.baseline import (
     baseline_als,
@@ -122,3 +123,61 @@ class TestBaselineRubberband:
         # Endpoints should be in the hull
         assert bl[0] <= y[0] + 0.01
         assert bl[2] <= y[2] + 0.01
+
+
+class TestBaselineParameterValidation:
+    """Verify parameter validation for baseline methods."""
+
+    def test_als_invalid_p_zero(self) -> None:
+        """p=0 is outside (0, 1) and should raise ValueError."""
+        y = np.ones(100)
+        with pytest.raises(ValueError, match="p.*must be in.*0.*1"):
+            baseline_als(y, p=0.0)
+
+    def test_als_invalid_p_one(self) -> None:
+        """p=1 is outside (0, 1) and should raise ValueError."""
+        y = np.ones(100)
+        with pytest.raises(ValueError, match="p.*must be in.*0.*1"):
+            baseline_als(y, p=1.0)
+
+    def test_als_invalid_p_negative(self) -> None:
+        """p=-1 is outside (0, 1) and should raise ValueError."""
+        y = np.ones(100)
+        with pytest.raises(ValueError, match="p.*must be in.*0.*1"):
+            baseline_als(y, p=-1.0)
+
+    def test_als_invalid_lam_zero(self) -> None:
+        """lam=0 should raise ValueError (must be positive)."""
+        y = np.ones(100)
+        with pytest.raises(ValueError, match="lam.*must be positive"):
+            baseline_als(y, lam=0.0)
+
+    def test_als_invalid_lam_negative(self) -> None:
+        """lam=-1 should raise ValueError (must be positive)."""
+        y = np.ones(100)
+        with pytest.raises(ValueError, match="lam.*must be positive"):
+            baseline_als(y, lam=-1.0)
+
+    def test_als_invalid_max_iter_zero(self) -> None:
+        """max_iter=0 should raise ValueError (must be >= 1)."""
+        y = np.ones(100)
+        with pytest.raises(ValueError, match="max_iter.*must be >= 1"):
+            baseline_als(y, max_iter=0)
+
+    def test_polynomial_invalid_degree_negative(self) -> None:
+        """degree=-1 should raise ValueError (must be non-negative)."""
+        y = np.ones(100)
+        with pytest.raises(ValueError, match="degree must be non-negative"):
+            baseline_polynomial(y, degree=-1)
+
+    def test_polynomial_invalid_max_iter(self) -> None:
+        """max_iter=0 should raise ValueError (must be >= 1)."""
+        y = np.ones(100)
+        with pytest.raises(ValueError, match="max_iter.*must be >= 1"):
+            baseline_polynomial(y, max_iter=0)
+
+    def test_snip_invalid_max_half_window(self) -> None:
+        """max_half_window=0 should raise ValueError."""
+        y = np.ones(100)
+        with pytest.raises(ValueError, match="max_half_window.*must be >= 1"):
+            baseline_snip(y, max_half_window=0)

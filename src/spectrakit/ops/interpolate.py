@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import warnings
 
 import numpy as np
 from scipy.interpolate import interp1d
@@ -47,6 +48,14 @@ def spectral_interpolate(
     new_wavenumbers = ensure_float64(new_wavenumbers)
     validate_1d_or_2d(intensities)
     warn_if_not_finite(intensities)
+
+    if new_wavenumbers.min() < wavenumbers.min() or new_wavenumbers.max() > wavenumbers.max():
+        warnings.warn(
+            "new_wavenumbers extends beyond the original range "
+            f"[{wavenumbers.min():.2f}, {wavenumbers.max():.2f}]. "
+            "Extrapolated values may be unreliable.",
+            stacklevel=2,
+        )
 
     return apply_along_spectra(
         _interpolate_1d,

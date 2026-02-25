@@ -48,6 +48,9 @@ def baseline_snip(
         SpectrumShapeError: If input is not 1-D or 2-D.
         EmptySpectrumError: If input has zero elements.
     """
+    if max_half_window < 1:
+        raise ValueError(f"max_half_window must be >= 1, got {max_half_window}")
+
     intensities = ensure_float64(intensities)
     validate_1d_or_2d(intensities)
     warn_if_not_finite(intensities)
@@ -74,12 +77,8 @@ def _baseline_snip_1d(
         window_range = range(1, max_half_window + 1)
 
     for hw in window_range:
-        n = len(y)
-        y_new = y.copy()
-        for i in range(hw, n - hw):
-            avg = (y[i - hw] + y[i + hw]) / 2.0
-            y_new[i] = min(y[i], avg)
-        y = y_new
+        avg = (y[: -2 * hw] + y[2 * hw :]) / 2.0
+        y[hw:-hw] = np.minimum(y[hw:-hw], avg)
 
     baseline = (np.exp(np.exp(y) - 1) - 1) ** 2 - EPSILON
     return np.maximum(baseline, 0.0)  # type: ignore[no-any-return]

@@ -4,7 +4,13 @@ from __future__ import annotations
 
 import numpy as np
 
-from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d, warn_if_not_finite
+from spectrakit._validate import (
+    EPSILON,
+    ensure_float64,
+    validate_1d_or_2d,
+    validate_matching_width,
+    warn_if_not_finite,
+)
 
 
 def similarity_spectral_angle(query: np.ndarray, reference: np.ndarray) -> float | np.ndarray:
@@ -35,6 +41,7 @@ def similarity_spectral_angle(query: np.ndarray, reference: np.ndarray) -> float
     validate_1d_or_2d(reference, name="reference")
     warn_if_not_finite(query, name="query")
     warn_if_not_finite(reference, name="reference")
+    validate_matching_width(query, reference)
 
     # 1D query vs 1D reference → scalar
     if query.ndim == 1 and reference.ndim == 1:

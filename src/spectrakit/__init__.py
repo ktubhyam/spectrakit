@@ -34,7 +34,7 @@ from spectrakit.io import read_csv, read_hdf5, read_jcamp, read_opus, read_spc, 
 from spectrakit.normalize import normalize_area, normalize_minmax, normalize_snv, normalize_vector
 
 # Operations
-from spectrakit.ops import spectral_average, spectral_interpolate, spectral_subtract
+from spectrakit.ops import spectral_average, spectral_crop, spectral_interpolate, spectral_subtract
 
 # Peaks
 from spectrakit.peaks import PeakResult, peaks_find, peaks_integrate
@@ -61,7 +61,12 @@ from spectrakit.smooth import smooth_savgol, smooth_whittaker
 from spectrakit.spectrum import Spectrum
 
 # Transform
-from spectrakit.transform import transform_atr_correction, transform_kubelka_munk
+from spectrakit.transform import (
+    transform_absorbance_to_transmittance,
+    transform_atr_correction,
+    transform_kubelka_munk,
+    transform_transmittance_to_absorbance,
+)
 
 __all__ = [
     "__version__",
@@ -99,9 +104,12 @@ __all__ = [
     "scatter_emsc",
     "transform_kubelka_munk",
     "transform_atr_correction",
+    "transform_absorbance_to_transmittance",
+    "transform_transmittance_to_absorbance",
     "spectral_subtract",
     "spectral_average",
     "spectral_interpolate",
+    "spectral_crop",
     "peaks_find",
     "peaks_integrate",
     "PeakResult",
