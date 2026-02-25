@@ -54,13 +54,7 @@ class TestCLIInfo:
 
     def test_info_jcamp(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
         """info command reads a JCAMP file and prints metadata."""
-        content = (
-            "##TITLE=Test\n"
-            "##XYDATA=(X++(Y..Y))\n"
-            "400.0 0.1 0.2 0.3\n"
-            "700.0 0.4 0.5\n"
-            "##END=\n"
-        )
+        content = "##TITLE=Test\n##XYDATA=(X++(Y..Y))\n400.0 0.1 0.2 0.3\n700.0 0.4 0.5\n##END=\n"
         jdx = tmp_path / "sample.dx"
         jdx.write_text(content)
 
@@ -121,13 +115,7 @@ class TestCLIInfo:
 
     def test_info_with_metadata(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
         """info command shows metadata section."""
-        content = (
-            "##TITLE=Ethanol\n"
-            "##ORIGIN=Lab\n"
-            "##XYDATA=(X++(Y..Y))\n"
-            "400.0 0.5\n"
-            "##END=\n"
-        )
+        content = "##TITLE=Ethanol\n##ORIGIN=Lab\n##XYDATA=(X++(Y..Y))\n400.0 0.5\n##END=\n"
         jdx = tmp_path / "meta.dx"
         jdx.write_text(content)
 
@@ -143,11 +131,7 @@ class TestCLIConvert:
         """Convert JCAMP to HDF5."""
         pytest.importorskip("h5py")
         content = (
-            "##TITLE=Convert Test\n"
-            "##XYDATA=(X++(Y..Y))\n"
-            "400.0 0.1 0.2 0.3\n"
-            "700.0 0.4 0.5\n"
-            "##END=\n"
+            "##TITLE=Convert Test\n##XYDATA=(X++(Y..Y))\n400.0 0.1 0.2 0.3\n700.0 0.4 0.5\n##END=\n"
         )
         jdx = tmp_path / "input.dx"
         jdx.write_text(content)

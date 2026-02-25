@@ -194,11 +194,7 @@ class TestReadJCAMP:
 
     def test_empty_xydata_raises(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
         """File without XYDATA values should raise FileFormatError."""
-        content = (
-            "##TITLE=Empty\n"
-            "##JCAMP-DX=4.24\n"
-            "##END=\n"
-        )
+        content = "##TITLE=Empty\n##JCAMP-DX=4.24\n##END=\n"
         jdx_path = tmp_path / "empty.dx"
         jdx_path.write_text(content)
 
@@ -233,12 +229,7 @@ class TestReadJCAMP:
 
     def test_label_from_filename(self, tmp_path) -> None:  # type: ignore[no-untyped-def]
         """Label should be set from the file stem."""
-        content = (
-            "##TITLE=Label Test\n"
-            "##XYDATA=(X++(Y..Y))\n"
-            "100.0 1.0\n"
-            "##END=\n"
-        )
+        content = "##TITLE=Label Test\n##XYDATA=(X++(Y..Y))\n100.0 1.0\n##END=\n"
         jdx_path = tmp_path / "my_sample.jdx"
         jdx_path.write_text(content)
 
