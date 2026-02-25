@@ -6,7 +6,7 @@ that lets you use any SpectraKit function inside an `sklearn.pipeline.Pipeline`.
 ## Installation
 
 ```bash
-pip install spectrakit[sklearn]
+pip install pyspectrakit[sklearn]
 ```
 
 ## Basic Usage

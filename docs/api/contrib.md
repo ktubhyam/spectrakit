@@ -5,7 +5,7 @@ Optional backends that wrap third-party libraries for advanced functionality.
 ## pybaselines Backend
 
 !!! note
-    Requires pybaselines: `pip install spectrakit[baselines]`
+    Requires pybaselines: `pip install pyspectrakit[baselines]`
 
 ::: spectrakit.contrib._pybaselines.pybaselines_method
 
@@ -14,7 +14,7 @@ Optional backends that wrap third-party libraries for advanced functionality.
 ## lmfit Backend
 
 !!! note
-    Requires lmfit: `pip install spectrakit[fitting]`
+    Requires lmfit: `pip install pyspectrakit[fitting]`
 
 ::: spectrakit.contrib._lmfit.fit_peaks
 

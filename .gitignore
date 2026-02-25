@@ -12,6 +12,7 @@ venv/
 htmlcov/
 .mypy_cache/
 .ruff_cache/
+.hypothesis/
 site/
 docs/examples/
 .vscode/

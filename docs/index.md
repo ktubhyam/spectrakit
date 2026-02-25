@@ -52,7 +52,7 @@ result = pipe.transform(spectra)
 ## Installation
 
 ```bash
-pip install spectrakit
+pip install pyspectrakit
 ```
 
 See the [installation guide](getting-started/installation.md) for optional dependencies.

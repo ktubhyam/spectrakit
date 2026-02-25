@@ -1,7 +1,7 @@
 # Plotting
 
 !!! note
-    Requires matplotlib: `pip install spectrakit[plot]`
+    Requires matplotlib: `pip install pyspectrakit[plot]`
 
 ::: spectrakit.plot.plot_spectrum
 
