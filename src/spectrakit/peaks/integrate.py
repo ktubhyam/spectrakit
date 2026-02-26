@@ -13,7 +13,7 @@ from spectrakit.exceptions import SpectrumShapeError
 try:
     from numpy import trapezoid as _trapezoid
 except ImportError:
-    from numpy import trapz as _trapezoid
+    from numpy import trapz as _trapezoid  # type: ignore[attr-defined,no-redef]
 
 logger = logging.getLogger(__name__)
 

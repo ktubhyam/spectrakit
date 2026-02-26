@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.9.4] - 2026-02-26
+
+### Fixed
+- Add mypy type-ignore comments for numpy trapezoid/trapz compat (fixes CI mypy errors on NumPy 2.0+)
+
 ## [1.9.3] - 2026-02-26
 
 ### Fixed

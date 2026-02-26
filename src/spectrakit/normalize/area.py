@@ -13,7 +13,7 @@ from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d, war
 try:
     from numpy import trapezoid as _trapezoid
 except ImportError:
-    from numpy import trapz as _trapezoid
+    from numpy import trapz as _trapezoid  # type: ignore[attr-defined,no-redef]
 
 logger = logging.getLogger(__name__)
 
