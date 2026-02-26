@@ -38,6 +38,7 @@ pip install pyspectrakit[baselines]  # pybaselines backend (200+ methods)
 pip install pyspectrakit[fitting]    # lmfit peak fitting
 pip install pyspectrakit[sklearn]    # scikit-learn integration
 pip install pyspectrakit[plot]       # Plotting utilities
+pip install pyspectrakit[widgets]    # Jupyter interactive viewer
 pip install pyspectrakit[all]        # Everything above
 ```
 
@@ -191,6 +192,21 @@ from spectrakit.plot import plot_spectrum, plot_comparison, plot_baseline
 ```
 
 Requires `pip install pyspectrakit[plot]`.
+
+### Jupyter Widget
+
+Interactive spectrum viewer for Jupyter notebooks, powered by
+[SpectraView](https://github.com/ktubhyam/spectraview):
+
+```python
+from spectrakit.widgets import SpectrumViewer
+
+viewer = SpectrumViewer()
+viewer.set_spectrum(wavenumbers, intensities, label="ethanol")
+viewer
+```
+
+Requires `pip install pyspectrakit[widgets]`.
 
 ## Spectrum Container
 
