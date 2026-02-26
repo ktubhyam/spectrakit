@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.9.5] - 2026-02-26
+
+### Changed
+- Rebuild Jupyter widget frontend bundle with spectraview 1.8.4 (was 0.1.1)
+
 ## [1.9.4] - 2026-02-26
 
 ### Fixed
