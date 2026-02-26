@@ -10,8 +10,10 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-# numpy 2.0 renamed trapz -> trapezoid; support both
-_trapezoid = getattr(np, "trapezoid", None) or getattr(np, "trapz")
+try:
+    from numpy import trapezoid as _trapezoid
+except ImportError:
+    from numpy import trapz as _trapezoid
 
 from spectrakit import (
     baseline_als,

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.9.3] - 2026-02-26
+
+### Fixed
+- Use `try/except ImportError` pattern for numpy trapezoid compat (fixes ruff B009 and E402 lint errors in CI)
+
 ## [1.9.2] - 2026-02-26
 
 ### Fixed

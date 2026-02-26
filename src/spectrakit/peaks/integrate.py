@@ -10,7 +10,10 @@ from spectrakit._validate import ensure_float64, validate_1d_or_2d, warn_if_not_
 from spectrakit.exceptions import SpectrumShapeError
 
 # numpy 2.0 renamed trapz -> trapezoid; support both
-_trapezoid = getattr(np, "trapezoid", None) or getattr(np, "trapz")
+try:
+    from numpy import trapezoid as _trapezoid
+except ImportError:
+    from numpy import trapz as _trapezoid
 
 logger = logging.getLogger(__name__)
 
