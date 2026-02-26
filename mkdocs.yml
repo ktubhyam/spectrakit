@@ -75,6 +75,7 @@ nav:
       - Overview: api/index.md
       - Spectrum: api/spectrum.md
       - Pipeline: api/pipeline.md
+      - ConvergenceInfo: api/convergence.md
       - Baseline: api/baseline.md
       - Normalize: api/normalize.md
       - Smooth: api/smooth.md
@@ -88,6 +89,7 @@ nav:
       - Similarity: api/similarity.md
       - IO: api/io.md
       - Plot: api/plot.md
+      - Widgets: api/widgets.md
       - Contrib: api/contrib.md
       - sklearn: api/sklearn.md
       - Exceptions: api/exceptions.md

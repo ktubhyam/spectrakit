@@ -47,7 +47,7 @@ def spectral_correlate(
         - ``"full"``: ``(2W - 1,)`` or ``(N, 2W - 1)``
         - ``"same"``: ``(W,)`` or ``(N, W)``
         - ``"valid"``: ``(1,)`` or ``(N, 1)`` (when query and reference
-          have the same width)
+            have the same width)
 
     Raises:
         SpectrumShapeError: If *query* is not 1-D or 2-D, or *reference*

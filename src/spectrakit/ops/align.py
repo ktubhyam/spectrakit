@@ -43,8 +43,8 @@ def spectral_align(
 
         - *aligned* has the same shape as *intensities*.
         - *shifts* is the integer offset applied (positive = shifted
-          right, negative = shifted left).  Scalar ``int`` for 1-D,
-          ``np.ndarray`` of shape ``(N,)`` for 2-D.
+            right, negative = shifted left).  Scalar ``int`` for 1-D,
+            ``np.ndarray`` of shape ``(N,)`` for 2-D.
 
     Raises:
         SpectrumShapeError: If *intensities* is not 1-D or 2-D, or

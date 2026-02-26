@@ -6,6 +6,8 @@
 
 ::: spectrakit.ops.spectral_interpolate
 
+::: spectrakit.ops.spectral_crop
+
 ::: spectrakit.ops.spectral_correlate
 
 ::: spectrakit.ops.spectral_align
