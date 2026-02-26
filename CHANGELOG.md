@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.9.2] - 2026-02-26
+
+### Fixed
+- Fix `np.trapezoid`/`np.trapz` compat shim to work on both NumPy <2.0 and >=2.0 (lazy evaluation prevents `AttributeError` on either version)
+
 ## [1.9.1] - 2026-02-26
 
 ### Fixed

@@ -12,7 +12,7 @@ from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays
 
 # numpy 2.0 renamed trapz -> trapezoid; support both
-_trapezoid = getattr(np, "trapezoid", np.trapz)
+_trapezoid = getattr(np, "trapezoid", None) or getattr(np, "trapz")
 
 from spectrakit import (
     normalize_area,

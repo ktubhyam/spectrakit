@@ -11,7 +11,7 @@ import numpy as np
 import pytest
 
 # numpy 2.0 renamed trapz -> trapezoid; support both
-_trapezoid = getattr(np, "trapezoid", np.trapz)
+_trapezoid = getattr(np, "trapezoid", None) or getattr(np, "trapz")
 
 from spectrakit import (
     baseline_als,

@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 # numpy 2.0 renamed trapz -> trapezoid; support both
-_trapezoid = getattr(np, "trapezoid", np.trapz)
+_trapezoid = getattr(np, "trapezoid", None) or getattr(np, "trapz")
 
 from spectrakit.normalize import normalize_area, normalize_minmax, normalize_snv, normalize_vector
 

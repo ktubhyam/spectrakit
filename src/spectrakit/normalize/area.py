@@ -10,7 +10,7 @@ import numpy as np
 from spectrakit._validate import EPSILON, ensure_float64, validate_1d_or_2d, warn_if_not_finite
 
 # numpy 2.0 renamed trapz -> trapezoid; support both
-_trapezoid = getattr(np, "trapezoid", np.trapz)
+_trapezoid = getattr(np, "trapezoid", None) or getattr(np, "trapz")
 
 logger = logging.getLogger(__name__)
 
