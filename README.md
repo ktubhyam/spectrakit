@@ -9,6 +9,7 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Typed](https://img.shields.io/badge/typing-strict-blue.svg)](https://peps.python.org/pep-0561/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18802442.svg)](https://doi.org/10.5281/zenodo.18802442)
 
 SpectraKit is a lightweight, pip-installable library for preprocessing and analyzing
 spectral data from IR, Raman, and NIR spectroscopy. It follows a functional design
