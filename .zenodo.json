@@ -1,0 +1,39 @@
+{
+  "title": "SpectraKit",
+  "description": "Python toolkit for spectral data processing: baseline correction, normalization, peak analysis, similarity matching, and multi-format I/O.",
+  "creators": [
+    {
+      "name": "Karthikeyan, Tubhyam",
+      "orcid": "0009-0001-4424-7297",
+      "affiliation": "Institute of Chemical Technology, Mumbai"
+    }
+  ],
+  "license": "MIT",
+  "upload_type": "software",
+  "access_right": "open",
+  "keywords": [
+    "spectroscopy",
+    "chemometrics",
+    "baseline correction",
+    "peak analysis",
+    "data processing",
+    "Python"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://tubhyam.dev/libraries/spectrakit",
+      "relation": "isDocumentedBy",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/ktubhyam/spectrakit",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://pypi.org/project/pyspectrakit/",
+      "relation": "isIdenticalTo",
+      "scheme": "url"
+    }
+  ]
+}
